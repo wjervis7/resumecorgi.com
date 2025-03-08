@@ -1,12 +1,24 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import * as pdfjsLib from 'pdfjs-dist';
 
 function Preview() {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [engine, setEngine] = useState(null);
+  const canvasRef = useRef(null);
+  const [pdfDoc, setPdfDoc] = useState(null);
+  const [pageRendering, setPageRendering] = useState(false);
+  const [pageNumPending, setPageNumPending] = useState(null);
+  const [numPages, setNumPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const scale = 1;
 
   useEffect(() => {
     let mounted = true;
+
+    console.log(pdfjsLib.GlobalWorkerOptions);
+
+    pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
 
     const loadScript = (src) => {
       return new Promise((resolve, reject) => {
@@ -43,9 +55,18 @@ function Preview() {
         pdfTeXEngine.writeMemFSFile("main.tex", ExampleLaTeX);
         pdfTeXEngine.setEngineMainFile("main.tex");
 
-        let r = await pdfTeXEngine.compileLaTeX();
+        let result = await pdfTeXEngine.compileLaTeX();
+        console.log(result.pdf);
 
-        console.log(r);
+        // load the PDF
+        const loadingTask = pdfjsLib.getDocument({ data: result.pdf.buffer });
+        loadingTask.promise.then(pdf => {
+          setPdfDoc(pdf);
+          setNumPages(pdf.numPages);
+          renderPage(pdf, 1);
+        }).catch(error => {
+          console.error('Error loading PDF:', error);
+        });
 
         setIsLoading(false);
       } catch (err) {
@@ -55,6 +76,64 @@ function Preview() {
           setIsLoading(false);
         }
       }
+    };
+
+    const renderPage = (pdf, pageNum) => {
+      if (pageRendering) {
+        setPageNumPending(pageNum);
+        return;
+      }
+  
+      setPageRendering(true);
+      
+      // Using promise to fetch the page
+      console.log(pdf);
+      pdf.getPage(pageNum).then(page => {
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d');
+        ctx.imageSmoothingQuality = 'high';
+        
+        const resolution = 2;
+        const viewport = page.getViewport({ scale });
+        canvas.height = resolution * viewport.height;
+        canvas.width = resolution * viewport.width;
+        canvas.style.height = viewport.height + "px";
+        canvas.style.width = viewport.width + "px";
+        
+        // Render PDF page into canvas context
+        const renderContext = {
+          canvasContext: ctx,
+          viewport: viewport,
+          transform: [resolution, 0, 0, resolution, 0, 0]
+        };
+  
+        const renderTask = page.render(renderContext);
+        
+        // Wait for rendering to finish
+        renderTask.promise.then(() => {
+          setPageRendering(false);
+          if (pageNumPending !== null) {
+            // New page rendering is pending
+            renderPage(pageNumPending);
+            setPageNumPending(null);
+          }
+        }).catch(error => {
+          console.error('Error rendering page:', error);
+          setPageRendering(false);
+        });
+      });
+  
+      setCurrentPage(pageNum);
+    };
+
+    const previousPage = () => {
+      if (currentPage <= 1) return;
+      renderPage(currentPage - 1);
+    };
+  
+    const nextPage = () => {
+      if (currentPage >= numPages) return;
+      renderPage(currentPage + 1);
     };
 
     initEngine();
@@ -69,13 +148,17 @@ function Preview() {
       <h2 className="text-lg sr-only">Preview</h2>
       {isLoading && (
         <>
-          <p className="text-white">Loading...</p>
+          <p className="text-white text-gray-900 dark:text-gray-200">Loading...</p>
         </>
       )}
 
       {!isLoading && (
         <>
-          <p className="text-white">Loaded</p>
+          <div className="pdf-viewer flex justify-center items-center w-full">
+            <div className="canvas-container overflow-x-auto">
+              <canvas ref={canvasRef} className="shadow-lg shadow-gray-300 dark:shadow-slate-700"></canvas>
+            </div>
+          </div>
         </>
       )}
     </>
@@ -114,32 +197,26 @@ right=0.5in]{geometry}              % specify right page margin
 \\begin{document}
 
 % name
-\\centerline{\\Huge Chad Golden}
+\\centerline{\\Huge James P. Sullivan}
 
 \\vspace{5pt}
 
 % contact information
-\\centerline{\\href{mailto:chad@chadgolden.com}{chad@chadgolden.com} | \\href{https://github.com/chadgolden1}{github.com/chadgolden1} | \\href{https://www.linkedin.com/in/chad-golden-979383171}{linkedin.com/in/chad-golden-979383171}}
+\\centerline{\\href{mailto:james.sullivan@monstersinc.com}{james.sullivan@monstersinc.com} | \\href{https://www.linkedin.com/in/sully-0834673}{linkedin.com/in/sully-0834673}}
 
 \\vspace{-10pt}
 
 \\section*{Summary}
-{Software Engineer with 10 years of experience driving multi-million-dollar cost savings and performance improvements. Passionate about creating optimized experiences that deliver measurable business value through technical excellence in code, cloud, and DevOps practices.}
+{Expert scarer with more than 25 years of experience in terrifying children. Led scare metrics for 15 years.}
 \\vspace{-10pt}
 
 % experience section
 \\section*{Experience}
-\\textbf{Senior Software Engineer,} {U.S. Office of Personnel Management (OPM)} -- Remote, USA \\hfill Feb. 2021 -- Feb. 2025 \\\\
+\\textbf{Distinguished Scarer,} {Monsters, Inc.} -- Pixar Studios, USA \\hfill Feb. 1990 -- Present \\\\
 \\vspace{-9pt}
 \\begin{itemize}
-  \\item Created petabyte-scale data pipelines using JavaScript, resulting in optimal networking bandwith usage
-  \\item Created and enhanced features for large-scale transactional web application for 500K+ customers using JavaScript/TypeScript, resulting in 25\\% increase in customer satisfaction surveys
-  \\item Executed a \\$35 million/year system migration to cloud platforms, achieving \\$2+ million annual savings through storage, network optimization, infrastructure automation, and configuration management
-  \\item Integrated Akamai CDN products e.g. App \\& API Protector and Edge DNS to optimize content delivery of large enterprise web application, reducing outbound network bandwidth consumption by 98\\%
-  \\item Scaled mission-critical web application, resulting in 100X increases in concurrent users by optimizing reporting and data analysis SQL queries through use of ETL data pipeline buildout
-  \\item Architected 5+ million daily transaction asynchronous processing pipeline using concurrent, multi-threaded programming patterns (e.g. JavaScript/Java), resulting in 95\\% end-to-end latency reductions
-  \\item Modernized .NET/C\\#/JavaScript applications to run cross-platform (Linux/UNIX), resulting in immediate savings of 50\\% in cloud computing costs using Linux hosts
-  \\item Onboarded 40+ web applications to enterprise observability solution using OpenTelemetry/KQL, resulting in 25\\% reductions in time-to-repair metrics and increased ability to performance tune, troubleshoot applications
+  \\item Mentor developed synergies
+  \\item Qualified balanced skill tactics
 \\end{itemize}
 
 \\end{document}
