@@ -8,11 +8,14 @@ import Experience from './forms/Experience.jsx'
 import Education from './forms/Education.jsx'
 import Card from '../components/Card.jsx'
 import Skills from './forms/Skills.jsx'
+import CheckboxButton from '../components/CheckboxButton.jsx'
 
 function Editor({onStartOver}) {
-  const initialSections = [
-    'personalInfo'
-  ]
+  const initialSections = {
+    personalInfo: true,
+    experience: false,
+    education: false
+  }
 
   const initialFormData = {
     personalInfo: {
@@ -45,6 +48,7 @@ function Editor({onStartOver}) {
   const [formData, setFormData] = useState(initialFormData);
   const [updateKey, setUpdateKey] = useState(0);
   const [sections, setSections] = useState(initialSections);
+  const [selectedSections, setSelectedSections] = useState([]);
 
   const handleFormUpdate = useCallback(() => {
     // Increment update key to trigger Preview re-render
@@ -60,6 +64,13 @@ function Editor({onStartOver}) {
         [field]: value
       }
     }));
+  };
+
+  const handleSectionChecked = (checked, value) => {
+    console.log('click', checked, value, selectedSections)
+    setSelectedSections(prev => 
+      checked ? [...prev, value] : prev.filter(item => item !== value)
+    );
   };
 
   const onChooseNext = () => {
@@ -88,7 +99,7 @@ function Editor({onStartOver}) {
       <div className="grid grid-cols-5 gap-0 w-full h-screen">
         <div className="
             col-span-2
-            overflow-x-auto mt-[55px]
+            overflow-x-auto mt-[54px]
             [&::-webkit-scrollbar]:w-1.5
             [&::-webkit-scrollbar-track]:bg-zinc-200
             [&::-webkit-scrollbar-thumb]:bg-zinc-400
@@ -102,9 +113,9 @@ function Editor({onStartOver}) {
             <p class="text-slate-800 mb-4.5 dark:text-gray-200 w-3/4">
               Which sections do you want to include in your resume? These are optional, and you can change your selections at any time.
             </p>
-              <Button text="Experience" /><span className="ms-1"></span>
-              <Button text="Education" /><span className="ms-1"></span>
-              <Button text="Skills" />
+              <CheckboxButton text="Experience" isChecked={selectedSections.includes('Experience')} onChange={handleSectionChecked} /><span className="ms-1.5"></span>
+              <CheckboxButton text="Education" isChecked={selectedSections.includes('Education')} onChange={handleSectionChecked} /><span className="ms-1.5"></span>
+              <CheckboxButton text="Skills" isChecked={selectedSections.includes('Skills')} onChange={handleSectionChecked} /><span className="ms-1.5"></span>
             </Card>
 
             <Card>
@@ -112,24 +123,30 @@ function Editor({onStartOver}) {
               <div className="-mb-1.5"></div>
             </Card>
 
-            <Card>
-              <Experience experience={formData.experience} handleChange={handleChange} />
-            </Card>
+            {selectedSections.includes("Experience") &&
+              <Card>
+                <Experience experience={formData.experience} handleChange={handleChange} />
+              </Card>
+            }
 
-            <Card>
-              <Education education={formData.education} handleChange={handleChange} />
-            </Card>
+            {selectedSections.includes("Education") &&
+              <Card>
+                <Education education={formData.education} handleChange={handleChange} />
+              </Card>
+            }
 
-            <Card>
-              <Skills />
-            </Card>
+            {selectedSections.includes("Skills") &&
+              <Card>
+                <Skills />
+              </Card>
+            }
 
           </div>
         </div>
 
         <div className="
             col-span-3
-            overflow-x-auto mt-[55px]
+            overflow-x-auto mt-[54px]
             p-5
             bg-zinc-500 dark:bg-gray-900
             border-l-1 border-slate-700 
@@ -139,7 +156,7 @@ function Editor({onStartOver}) {
             [&::-webkit-scrollbar-thumb]:bg-zinc-400
             dark:[&::-webkit-scrollbar-track]:bg-zinc-800
             dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600">
-            <Preview formData={formData} updateKey={updateKey} />
+            <Preview formData={formData} selectedSections={selectedSections} />
         </div>
       </div>
 
@@ -241,7 +258,7 @@ function Editor({onStartOver}) {
           </div>
         </div>
         <div className="col-span-3 bg-zinc-500 dark:bg-gray-950 border-l-1 border-slate-700 dark:text-white p-4">
-          <Preview formData={formData} updateKey={updateKey} />
+          <Preview formData={formData} selectedSections={selectedSections}  />
         </div>
       </div>
     </>

@@ -3,8 +3,9 @@ import * as pdfjsLib from 'pdfjs-dist';
 import EngineManager from "../components/EngineManager";
 import Skeleton from "../components/Skeleton";
 
-function Preview({ formData }) {
+function Preview({ formData, selectedSections }) {
   const prevFormDataRef = useRef(null);
+  const prevSelectedSectionsRef = useRef(null);
   const debounceTimerRef = useRef(null);
   
   const [error, setError] = useState(null);
@@ -21,22 +22,28 @@ function Preview({ formData }) {
 
   // Use memoized LaTeX to avoid recreating it on every render
   const compiledLaTeX = useMemo(() => {
-    return createLaTeXFromFormData(formData);
-  }, [formData]);
+    let laTeX = createLaTeXFromFormData(formData, selectedSections);
+    console.log('LaTex: ', laTeX);
+    return laTeX;
+  }, [formData, selectedSections]);
 
   useEffect(() => {
     // Use JSON.stringify for deep comparison
     const currentFormDataString = JSON.stringify(formData);
     const prevFormDataString = JSON.stringify(prevFormDataRef.current);
 
+    const currentSelectedSectionsString = JSON.stringify(selectedSections);
+    const prevSelectedSectionsString = JSON.stringify(prevSelectedSectionsRef.current);
+
     // Skip if data hasn't changed
-    if (pageRendered && currentFormDataString === prevFormDataString) {
+    if (pageRendered && currentFormDataString === prevFormDataString && currentSelectedSectionsString === prevSelectedSectionsString) {
       console.log('No changes detected. Skipping compilation');
       return;
     }
     
     // Store current values for next comparison
     prevFormDataRef.current = JSON.parse(currentFormDataString);
+    prevSelectedSectionsRef.current = JSON.parse(currentSelectedSectionsString);
     
     // Clear any pending debounce timer
     if (debounceTimerRef.current) {
@@ -54,7 +61,7 @@ function Preview({ formData }) {
         clearTimeout(debounceTimerRef.current);
       }
     };
-  }, [formData, compiledLaTeX]);
+  }, [formData, selectedSections, compiledLaTeX]);
 
   const compileLaTeX = async () => {
     let mounted = true;
@@ -188,7 +195,7 @@ function Preview({ formData }) {
 }
 
 // Helper function to create LaTeX from formData
-function createLaTeXFromFormData(formData) {
+function createLaTeXFromFormData(formData, selectedSections) {
   // Format the name
   const name = formData.personalInfo.name || 'Your Name';
   
@@ -240,9 +247,7 @@ function createLaTeXFromFormData(formData) {
 
 ${formatSummary(formData.personalInfo.summary)}
 
-% experience section
-\\section*{Experience}
-${formatExperience(formData.experience)}
+${selectedSections.includes('Experience') ? formatExperience(formData.experience) : ''}
 
 % education section
 \\section*{Education}
@@ -274,7 +279,9 @@ function formatSummary(summary) {
 // Helper to format experience
 function formatExperience(experience) {
   if (!experience || !experience.length) {
-    return `\\textbf{Position Title,} {Company Name} -- Location \\hfill Start -- End \\\\
+    return `% experience section
+\\section*{Experience}
+\\textbf{Position Title,} {Company Name} -- Location \\hfill Start -- End \\\\
 \\vspace{-9pt}
 \\begin{itemize}
   \\item Describe your responsibilities and achievements
@@ -290,7 +297,9 @@ function formatExperience(experience) {
       ? job.accomplishments.split('\n').map(item => `  \\item ${item}`).join('\n')
       : '  \\item Describe your responsibilities and achievements\n  \\item Quantify your results when possible';
     
-    return `\\textbf{${title},} {${company}} \\hfill ${dateRange} \\\\
+    return `% experience section
+\\section*{Experience}
+\\textbf{${title},} {${company}} \\hfill ${dateRange} \\\\
 \\vspace{-9pt}
 \\begin{itemize}
 ${accomplishments}

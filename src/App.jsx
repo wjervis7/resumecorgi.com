@@ -3,6 +3,7 @@ import './App.css'
 import Landing from './views/Landing.jsx'
 import Editor from './views/Editor.jsx'
 import Button from './components/Button.jsx'
+import Corgi from './components/Corgi.jsx'
 
 function App() {
   const [viewState, setViewState] = useState('landing')
@@ -52,17 +53,24 @@ function App() {
             </>
           )}
 
-          <div 
-            className="
+          <div className="
               fixed left-0 top-0 w-full 
               bg-white dark:bg-slate-800
               border-b-1 dark:border-slate-600
-              p-2.5
-              text-right">
-            <Button
-              className="text-sm"
-              text={(darkMode) ? "Enable Light Mode 🌞" : "Enable Dark Mode 🌚"}
-              onClick={() => setDarkMode(!darkMode)} />
+              p-2.5">
+            <div className="grid grid-cols-2">
+              <div className="col-span-1 text-left">
+                <div>
+                  <Corgi size={33} className="inline-block brightness-0 dark:brightness-10000 me-2.5" /> <span className="inline-block absolute top-3 font-[700] text-lg text-gray-900 dark:text-gray-100">Resume Buddy</span>
+                </div>
+              </div>
+              <div className="col-span-1 text-right">
+                <Button
+                  className="text-sm"
+                  text={(darkMode) ? "Enable Light Mode 🌞" : "Enable Dark Mode 🌚"}
+                  onClick={() => setDarkMode(!darkMode)} />
+              </div>
+            </div>
           </div>
 
           <div 
@@ -71,7 +79,7 @@ function App() {
               bg-white dark:bg-slate-800
               border-t-1 dark:border-slate-600
               p-0.75
-              text-center text-sm dark:text-gray-200">
+              text-center text-sm text-gray-900 dark:text-gray-200">
             Copyright &copy; 2025 Chad Golden
           </div>
         </div>
