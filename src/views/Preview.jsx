@@ -1,225 +1,316 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import * as pdfjsLib from 'pdfjs-dist';
+import EngineManager from "../components/EngineManager";
+import Skeleton from "../components/Skeleton";
 
-function Preview() {
+function Preview({ formData }) {
+  const prevFormDataRef = useRef(null);
+  const debounceTimerRef = useRef(null);
+  
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [engine, setEngine] = useState(null);
   const canvasRef = useRef(null);
+  const prevCanvasRef = useRef(null);
   const [pdfDoc, setPdfDoc] = useState(null);
+  const [pageRendered, setPageRendered] = useState(false);
   const [pageRendering, setPageRendering] = useState(false);
   const [pageNumPending, setPageNumPending] = useState(null);
   const [numPages, setNumPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const scale = 1;
 
+  // Use memoized LaTeX to avoid recreating it on every render
+  const compiledLaTeX = useMemo(() => {
+    return createLaTeXFromFormData(formData);
+  }, [formData]);
+
   useEffect(() => {
+    // Use JSON.stringify for deep comparison
+    const currentFormDataString = JSON.stringify(formData);
+    const prevFormDataString = JSON.stringify(prevFormDataRef.current);
+
+    // Skip if data hasn't changed
+    if (pageRendered && currentFormDataString === prevFormDataString) {
+      console.log('No changes detected. Skipping compilation');
+      return;
+    }
+    
+    // Store current values for next comparison
+    prevFormDataRef.current = JSON.parse(currentFormDataString);
+    
+    // Clear any pending debounce timer
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    
+    // Set debounce timer (500ms)
+    debounceTimerRef.current = setTimeout(() => {
+      compileLaTeX();
+    }, 500);
+    
+    // Cleanup
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, [formData, compiledLaTeX]);
+
+  const compileLaTeX = async () => {
     let mounted = true;
+    
+    try {
+      setIsLoading(true);
+      setError(null);
 
-    console.log(pdfjsLib.GlobalWorkerOptions);
-
-    pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
-
-    const loadScript = (src) => {
-      return new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = src;
-        script.async = true;
-        script.type = "text/javascript";
-        
-        script.onload = () => resolve();
-        script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
-        
-        document.body.appendChild(script);
-      });
-    };
-
-    const initEngine = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        // Load the main PdfTeXEngine script
-        await loadScript("./PdfTeXEngine.js");
-        
-        if (!mounted) return;
-        
-        // Initialize the engine
-        const pdfTeXEngine = new window.PdfTeXEngine();
-        await pdfTeXEngine.loadEngine();
-        
-        if (!mounted) return;
-        
-        setEngine(pdfTeXEngine);
-
-        pdfTeXEngine.writeMemFSFile("main.tex", ExampleLaTeX);
-        pdfTeXEngine.setEngineMainFile("main.tex");
-
-        let result = await pdfTeXEngine.compileLaTeX();
-        console.log(result.pdf);
-
-        // load the PDF
-        const loadingTask = pdfjsLib.getDocument({ data: result.pdf.buffer });
-        loadingTask.promise.then(pdf => {
-          setPdfDoc(pdf);
-          setNumPages(pdf.numPages);
-          renderPage(pdf, 1);
-        }).catch(error => {
-          console.error('Error loading PDF:', error);
-        });
-
-        setIsLoading(false);
-      } catch (err) {
-        if (mounted) {
-          console.error("Failed to initialize PdfTeXEngine:", err);
-          setError(`Failed to initialize LaTeX engine: ${err.message}`);
-          setIsLoading(false);
-        }
-      }
-    };
-
-    const renderPage = (pdf, pageNum) => {
-      if (pageRendering) {
-        setPageNumPending(pageNum);
-        return;
-      }
-  
-      setPageRendering(true);
+      // Get the engine instance
+      const engine = await EngineManager.getInstance();
       
-      // Using promise to fetch the page
-      console.log(pdf);
-      pdf.getPage(pageNum).then(page => {
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext('2d');
-        ctx.imageSmoothingQuality = 'high';
-        
-        const resolution = 2;
-        const viewport = page.getViewport({ scale });
-        canvas.height = resolution * viewport.height;
-        canvas.width = resolution * viewport.width;
-        canvas.style.height = viewport.height + "px";
-        canvas.style.width = viewport.width + "px";
-        
-        // Render PDF page into canvas context
-        const renderContext = {
-          canvasContext: ctx,
-          viewport: viewport,
-          transform: [resolution, 0, 0, resolution, 0, 0]
-        };
-  
-        const renderTask = page.render(renderContext);
-        
-        // Wait for rendering to finish
-        renderTask.promise.then(() => {
-          setPageRendering(false);
-          if (pageNumPending !== null) {
-            // New page rendering is pending
-            renderPage(pageNumPending);
-            setPageNumPending(null);
-          }
-        }).catch(error => {
-          console.error('Error rendering page:', error);
-          setPageRendering(false);
-        });
+      if (!mounted) return;
+
+      // Prepare and compile the LaTeX
+      engine.writeMemFSFile("main.tex", compiledLaTeX);
+      engine.setEngineMainFile("main.tex");
+
+      let result = await engine.compileLaTeX();
+      
+      if (!mounted) return;
+      
+      // Load the PDF
+      const loadingTask = pdfjsLib.getDocument({ data: result.pdf.buffer });
+      loadingTask.promise.then(pdf => {
+        setPdfDoc(pdf);
+        setNumPages(pdf.numPages);
+        renderPage(pdf, 1);
+        setPageRendered(true);
+        setIsLoading(false);
+      }).catch(error => {
+        console.error('Error loading PDF:', error);
+        setError(`Error loading PDF: ${error.message}`);
+        setIsLoading(false);
       });
-  
-      setCurrentPage(pageNum);
-    };
 
-    const previousPage = () => {
-      if (currentPage <= 1) return;
-      renderPage(currentPage - 1);
-    };
-  
-    const nextPage = () => {
-      if (currentPage >= numPages) return;
-      renderPage(currentPage + 1);
-    };
-
-    initEngine();
-
+    } catch (err) {
+      if (mounted) {
+        console.error("Failed to compile LaTeX:", err);
+        setError(`Failed to compile LaTeX: ${err.message}`);
+        setIsLoading(false);
+      }
+    }
+    
     return () => {
       mounted = false;
     };
-  }, []);
+  };
+
+  const renderPage = (pdf, pageNum) => {
+    if (pageRendering) {
+      setPageNumPending(pageNum);
+      return;
+    }
+
+    setPageRendering(true);
+    
+    // Using promise to fetch the page
+    pdf.getPage(pageNum).then(page => {
+      const canvas = canvasRef.current;
+      prevCanvasRef.current = canvas;
+
+      if (!canvas) {
+        setPageRendering(false);
+        return;
+      }
+
+      const ctx = canvas.getContext('2d');
+      ctx.imageSmoothingQuality = 'high';
+      ctx.imageSmoothingEnabled = false;
+      
+      const resolution = 2.5;
+      const viewport = page.getViewport({ scale });
+      canvas.height = resolution * viewport.height;
+      canvas.width = resolution * viewport.width;
+      canvas.style.width = "100%";
+      canvas.style.maxWidth = "800px";
+      
+      // Render PDF page into canvas context
+      const renderContext = {
+        canvasContext: ctx,
+        viewport: viewport,
+        transform: [resolution, 0, 0, resolution, 0, 0]
+      };
+
+      const renderTask = page.render(renderContext);
+      
+      // Wait for rendering to finish
+      renderTask.promise.then(() => {
+        setPageRendering(false);
+        if (pageNumPending !== null) {
+          // New page rendering is pending
+          renderPage(pdfDoc, pageNumPending);
+          setPageNumPending(null);
+        }
+      }).catch(error => {
+        console.error('Error rendering page:', error);
+        setPageRendering(false);
+      });
+    }).catch(error => {
+      console.error('Error getting page:', error);
+      setPageRendering(false);
+    });
+
+    setCurrentPage(pageNum);
+  };
+
+  const previousPage = () => {
+    if (currentPage <= 1 || !pdfDoc) return;
+    renderPage(pdfDoc, currentPage - 1);
+  };
+
+  const nextPage = () => {
+    if (currentPage >= numPages || !pdfDoc) return;
+    renderPage(pdfDoc, currentPage + 1);
+  };
 
   return (
     <>
-      <h2 className="text-lg sr-only">Preview</h2>
-      {isLoading && (
-        <>
-          <p className="text-white text-gray-900 dark:text-gray-200">Loading...</p>
-        </>
-      )}
+      <h2 className="text-lg sr-only">PDF Preview</h2>
+      {isLoading && <Skeleton />}
 
       {!isLoading && (
-        <>
-          <div className="pdf-viewer flex justify-center items-center w-full">
-            <div className="canvas-container overflow-x-auto">
-              <canvas ref={canvasRef} className="shadow-lg shadow-gray-300 dark:shadow-slate-700"></canvas>
-            </div>
+        <div className="pdf-viewer flex justify-center items-center w-full">
+          <div className="canvas-container">
+            <canvas ref={canvasRef} className="shadow-md shadow-slate-800 dark:shadow-slate-600"></canvas>
           </div>
-        </>
+        </div>
       )}
     </>
-  )
+  );
 }
 
-const ExampleLaTeX = `
-\\documentclass[11pt]{article}       % set main text size
-\\usepackage[letterpaper,                % set paper size to letterpaper. change to a4paper for resumes outside of North America
-top=0.5in,                          % specify top page margin
-bottom=0.5in,                       % specify bottom page margin
-left=0.5in,                         % specify left page margin
-right=0.5in]{geometry}              % specify right page margin
-                       
-\\usepackage{XCharter}               % set font. comment this line out if you want to use the default LaTeX font Computer Modern
-\\usepackage[T1]{fontenc}            % output encoding
-\\usepackage[utf8]{inputenc}         % input encoding
-\\usepackage{enumitem}               % enable lists for bullet points: itemize and \item
-\\usepackage[hidelinks]{hyperref}    % format hyperlinks
-\\usepackage{titlesec}               % enable section title customization
-\\raggedright                        % disable text justification
-\\pagestyle{empty}                   % disable page numbering
+// Helper function to create LaTeX from formData
+function createLaTeXFromFormData(formData) {
+  // Format the name
+  const name = formData.personalInfo.name || 'Your Name';
+  
+  // Format contacts (filtering out empty ones)
+  const contacts = [
+    formData.personalInfo.contact0,
+    formData.personalInfo.contact1,
+    formData.personalInfo.contact2
+  ].filter(Boolean);
+  
+  // Format contact line
+  const contactLine = contacts.length > 0 
+    ? contacts.map(c => `\\href{${getHref(c)}}{${c}}`).join(' | ')
+    : 'your.email@example.com';
+  
+  // Get summary
+  const summary = formData.summary?.text || '';
 
-% ensure PDF output will be all-Unicode and machine-readable
+  return `
+\\documentclass[11pt]{article}
+\\usepackage[letterpaper, top=0.5in, bottom=0.5in, left=0.5in, right=0.5in]{geometry}
+\\usepackage{XCharter}
+\\usepackage[T1]{fontenc}
+\\usepackage[utf8]{inputenc}
+\\usepackage{enumitem}
+\\usepackage[hidelinks]{hyperref}
+\\usepackage{titlesec}
+\\raggedright
+\\pagestyle{empty}
+
 \\input{glyphtounicode}
 \\pdfgentounicode=1
 
-% format section headings: bolding, size, white space above and below
 \\titleformat{\\section}{\\bfseries\\large}{}{0pt}{}[\\vspace{1pt}\\titlerule\\vspace{-6.5pt}]
-
-% format bullet points: size, white space above and below, white space between bullets
 \\renewcommand\\labelitemi{$\\vcenter{\\hbox{\\small$\\bullet$}}$}
-\\setlist[itemize]{itemsep=-2pt, leftmargin=12pt, topsep=7pt} %%% Test various topsep values to fix vertical spacing errors
+\\setlist[itemize]{itemsep=-2pt, leftmargin=12pt, topsep=7pt}
 
-% resume starts here
 \\begin{document}
 
 % name
-\\centerline{\\Huge James P. Sullivan}
+\\centerline{\\Huge ${name}}
 
 \\vspace{5pt}
 
 % contact information
-\\centerline{\\href{mailto:james.sullivan@monstersinc.com}{james.sullivan@monstersinc.com} | \\href{https://www.linkedin.com/in/sully-0834673}{linkedin.com/in/sully-0834673}}
+\\centerline{${contactLine}}
 
 \\vspace{-10pt}
 
-\\section*{Summary}
-{Expert scarer with more than 25 years of experience in terrifying children. Led scare metrics for 15 years.}
-\\vspace{-10pt}
+${formatSummary(formData.personalInfo.summary)}
 
 % experience section
 \\section*{Experience}
-\\textbf{Distinguished Scarer,} {Monsters, Inc.} -- Pixar Studios, USA \\hfill Feb. 1990 -- Present \\\\
-\\vspace{-9pt}
-\\begin{itemize}
-  \\item Mentor developed synergies
-  \\item Qualified balanced skill tactics
-\\end{itemize}
+${formatExperience(formData.experience)}
+
+% education section
+\\section*{Education}
+${formatEducation(formData.education)}
 
 \\end{document}
-`
+`;
+}
 
-export default Preview
+// Helper function for links
+function getHref(contact) {
+  if (contact.includes('@')) return `mailto:${contact}`;
+  if (contact.includes('linkedin')) return `https://www.${contact.replace(/^(https?:\/\/)?(www\.)?/, '')}`;
+  if (contact.includes('http')) return contact;
+  return `https://${contact}`;
+}
+
+function formatSummary(summary) {
+  if (!summary || !summary.length) {
+    return ``;
+  }
+
+  return `
+\\section*{Summary}
+{${summary}}
+\\vspace{-10pt}`;
+}
+
+// Helper to format experience
+function formatExperience(experience) {
+  if (!experience || !experience.length) {
+    return `\\textbf{Position Title,} {Company Name} -- Location \\hfill Start -- End \\\\
+\\vspace{-9pt}
+\\begin{itemize}
+  \\item Describe your responsibilities and achievements
+  \\item Quantify your results when possible
+\\end{itemize}`;
+  }
+  
+  return experience.map(job => {
+    const title = job.title || 'Position Title';
+    const company = job.company || 'Company Name';
+    const dateRange = `${job.start || 'Start'} -- ${job.end || 'End'}`;
+    const accomplishments = job.accomplishments 
+      ? job.accomplishments.split('\n').map(item => `  \\item ${item}`).join('\n')
+      : '  \\item Describe your responsibilities and achievements\n  \\item Quantify your results when possible';
+    
+    return `\\textbf{${title},} {${company}} \\hfill ${dateRange} \\\\
+\\vspace{-9pt}
+\\begin{itemize}
+${accomplishments}
+\\end{itemize}`;
+  }).join('\n\n');
+}
+
+// Helper to format education
+function formatEducation(education) {
+  if (!education || !education.length) {
+    return `\\textbf{Degree,} Institution \\hfill Year`;
+  }
+  
+  return education.map(edu => {
+    const degree = edu.degree || 'Degree';
+    const institution = edu.institution || 'Institution';
+    const year = edu.year || 'Year';
+    
+    return `\\textbf{${degree},} ${institution} \\hfill ${year}`;
+  }).join('\n\n');
+}
+
+export default Preview;

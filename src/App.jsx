@@ -52,8 +52,27 @@ function App() {
             </>
           )}
 
-          <div className="fixed left-4 bottom-4">
-            <Button text={(darkMode) ? "Enable Light Mode 🌞" : "Enable Dark Mode 🌚"} onClick={() => setDarkMode(!darkMode)} />
+          <div 
+            className="
+              fixed left-0 top-0 w-full 
+              bg-white dark:bg-slate-800
+              border-b-1 dark:border-slate-600
+              p-2.5
+              text-right">
+            <Button
+              className="text-sm"
+              text={(darkMode) ? "Enable Light Mode 🌞" : "Enable Dark Mode 🌚"}
+              onClick={() => setDarkMode(!darkMode)} />
+          </div>
+
+          <div 
+            className="
+              fixed left-0 bottom-0 w-full 
+              bg-white dark:bg-slate-800
+              border-t-1 dark:border-slate-600
+              p-0.75
+              text-center text-sm dark:text-gray-200">
+            Copyright &copy; 2025 Chad Golden
           </div>
         </div>
       </div>

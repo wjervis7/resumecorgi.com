@@ -1,6 +1,7 @@
 import './Landing.css'
 import logo from '../assets/bread-loaf-corgi-2-001.png'
 import Button from '../components/Button.jsx'
+import Corgi from '../components/Corgi.jsx'
 
 function Landing({ onStart }) {
   return (
@@ -15,20 +16,14 @@ function Landing({ onStart }) {
                   <h1 class="text-xl font-bold text-gray-900 dark:text-gray-100">Welcome to Resume Buddy!</h1>
                 </div>
                 <p class="text-slate-800 mb-4 dark:text-gray-200">
-                  Now, let's make a beautiful resume that showcases your awesomeness.
+                  Let's make a beautiful resume that showcases your awesomeness.
                 </p>
                 <Button onClick={onStart} text="Let's get started! ✒️🐶" />
               </div>
             </div>
           </div>
           <div class="me-auto sm:mb-0">
-            <img
-              src={logo}
-              alt="Corgi resume writing buddy"
-              height="148"
-              width="148"
-              class="max-w-md mx-auto animate-corgi-bounce"
-            />
+            <Corgi />
           </div>
         </div>
       </div>
