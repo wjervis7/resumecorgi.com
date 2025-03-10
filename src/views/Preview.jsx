@@ -186,7 +186,7 @@ function Preview({ formData, selectedSections }) {
       {!isLoading && (
         <div className="pdf-viewer flex justify-center items-center w-full">
           <div className="canvas-container">
-            <canvas ref={canvasRef} className="shadow-md shadow-slate-800 dark:shadow-slate-600"></canvas>
+            <canvas ref={canvasRef} className="shadow-md dark:shadow-lg shadow-gray-800 dark:shadow-zinc-700"></canvas>
           </div>
         </div>
       )}
@@ -247,7 +247,7 @@ function createLaTeXFromFormData(formData, selectedSections) {
 
 ${formatSummary(formData.personalInfo.summary)}
 
-${selectedSections.includes('Experience') ? formatExperience(formData.experience) : ''}
+${selectedSections.find(s => s.id === 'experience').selected ? formatExperience(formData.experience) : ''}
 
 % education section
 \\section*{Education}

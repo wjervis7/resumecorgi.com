@@ -9,13 +9,15 @@ import Education from './forms/Education.jsx'
 import Card from '../components/Card.jsx'
 import Skills from './forms/Skills.jsx'
 import CheckboxButton from '../components/CheckboxButton.jsx'
+import Sidebar from './Sidebar.jsx'
 
 function Editor({onStartOver}) {
-  const initialSections = {
-    personalInfo: true,
-    experience: false,
-    education: false
-  }
+  const initialSections = [
+    { id: 'personalInfo', displayName: 'About You', href: 'start', selected: true, originalOrder: 0, sortOrder: 0, required: true },
+    { id: 'experience', displayName: 'Experience', href: 'experience', selected: true, originalOrder: 1, sortOrder: 1, required: false },
+    { id: 'education', displayName: 'Education', href: 'education', selected: true, originalOrder: 2, sortOrder: 2, required: false },
+    { id: 'skills', displayName: 'Skills', href: 'skills', selected: false, originalOrder: 3, sortOrder: 3, required: false },
+  ]
 
   const initialFormData = {
     personalInfo: {
@@ -66,6 +68,16 @@ function Editor({onStartOver}) {
     }));
   };
 
+  const handleSectionSelected = (sectionId, checked) => {
+    setSections(prevSections => 
+      prevSections.map(section => 
+        section.id === sectionId 
+          ? { ...section, selected: checked } 
+          : section
+      )
+    );
+  };
+
   const handleSectionChecked = (checked, value) => {
     console.log('click', checked, value, selectedSections)
     setSelectedSections(prev => 
@@ -96,26 +108,41 @@ function Editor({onStartOver}) {
 
   return (
     <>
-      <div className="grid grid-cols-5 gap-0 w-full h-screen">
+      <div className="grid grid-cols-12 gap-0 w-full h-screen">
         <div className="
-            col-span-2
-            overflow-x-auto mt-[54px]
+          col-span-2 
+          bg-zinc-100 dark:bg-zinc-900
+          mt-[62px]">
+          <Sidebar sections={sections} />
+        </div>
+        <div className="
+            col-span-4
+            border-l-1 border-zinc-500 dark:border-zinc-600
+            overflow-x-auto mt-[62px]
             [&::-webkit-scrollbar]:w-1.5
             [&::-webkit-scrollbar-track]:bg-zinc-200
             [&::-webkit-scrollbar-thumb]:bg-zinc-400
             dark:[&::-webkit-scrollbar-track]:bg-zinc-800
             dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600">
-          <div class="w-full px-5 pt-5 mb-25">
-            <Card rightElement={<Corgi size={100} />}>
+          <div class="w-full px-5 pt-5 mb-[75vh]">
+            <Card rightElement={<Corgi size={110} />}>
             <div class="flex items-center -mt-1 mb-2">
-              <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Let's Get Started!</h2>
+              <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2" id="start">Let's Get Started!</h2>
             </div>
-            <p class="text-slate-800 mb-4.5 dark:text-gray-200 w-3/4">
+            <p class="text-zinc-800 mb-4.5 dark:text-gray-200 w-3/4">
               Which sections do you want to include in your resume? These are optional, and you can change your selections at any time.
             </p>
-              <CheckboxButton text="Experience" isChecked={selectedSections.includes('Experience')} onChange={handleSectionChecked} /><span className="ms-1.5"></span>
+              {/* <CheckboxButton text="Experience" isChecked={selectedSections.includes('Experience')} onChange={handleSectionChecked} /><span className="ms-1.5"></span>
               <CheckboxButton text="Education" isChecked={selectedSections.includes('Education')} onChange={handleSectionChecked} /><span className="ms-1.5"></span>
-              <CheckboxButton text="Skills" isChecked={selectedSections.includes('Skills')} onChange={handleSectionChecked} /><span className="ms-1.5"></span>
+              <CheckboxButton text="Skills" isChecked={selectedSections.includes('Skills')} onChange={handleSectionChecked} /><span className="ms-3.5"></span> */}
+
+              {sections.map(section => (
+                !section.required && (
+                  <>
+                    <CheckboxButton text={section.displayName} value={section.id} isChecked={section.selected} onChange={(checked) => handleSectionSelected(section.id, checked)} /><span className="ms-1.5"></span>
+                  </>)
+              ))}
+              
             </Card>
 
             <Card>
@@ -123,19 +150,19 @@ function Editor({onStartOver}) {
               <div className="-mb-1.5"></div>
             </Card>
 
-            {selectedSections.includes("Experience") &&
+            {sections.find(s => s.id === 'experience').selected &&
               <Card>
                 <Experience experience={formData.experience} handleChange={handleChange} />
               </Card>
             }
 
-            {selectedSections.includes("Education") &&
+            {sections.find(s => s.id === 'education').selected &&
               <Card>
                 <Education education={formData.education} handleChange={handleChange} />
               </Card>
             }
 
-            {selectedSections.includes("Skills") &&
+            {sections.find(s => s.id === 'skills').selected &&
               <Card>
                 <Skills />
               </Card>
@@ -145,120 +172,22 @@ function Editor({onStartOver}) {
         </div>
 
         <div className="
-            col-span-3
-            overflow-x-auto mt-[54px]
+            col-span-6
+            overflow-x-auto mt-[62px]
             p-5
-            bg-zinc-500 dark:bg-gray-900
-            border-l-1 border-slate-700 
+            bg-zinc-600 dark:bg-zinc-800
+            border-l-1 border-zinc-700 
             dark:text-white
             [&::-webkit-scrollbar]:w-1.5
             [&::-webkit-scrollbar-track]:bg-zinc-200
             [&::-webkit-scrollbar-thumb]:bg-zinc-400
             dark:[&::-webkit-scrollbar-track]:bg-zinc-800
             dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600">
-            <Preview formData={formData} selectedSections={selectedSections} />
-        </div>
-      </div>
-
-
-      <div className="grid grid-cols-5 gap-7 w-full h-screen" style={{display: 'none'}}>
-        <div className="ps-6 mt-6 col-span-2">
-          <div class="w-full">
-            <div class="flex flex-co w-full mb-6 xs:flex-row">
-              <div class="w-full sm:mb-0">
-                <div class="relative h-full ml-0 mr-0">
-                  <span class="absolute top-0 left-0 w-full h-full mt-1 bg-black dark:bg-gray-200 rounded-xl"></span>
-                  <div class="relative h-full p-5 bg-white dark:bg-slate-900 border-1 border-black dark:border-gray-200 rounded-xl px-5 py-7">
-
-                    {currentForm === 'personalInfo' && 
-                      <PersonalInfo personalInfo={formData.personalInfo} handleChange={handleChange} />
-                    }
-
-                    {currentForm === 'chooseNext' && 
-                      <ChooseNext onNextChosen={onNextChosen} />
-                    }
-
-                    {currentForm === 'experience' &&
-                      <Experience experience={formData.experience} handleChange={handleChange} />
-                    }
-
-                    {currentForm === 'education' &&
-                      <Education education={formData.education} handleChange={handleChange} />
-                    }
-
-                    {/* <div className="mb-5"></div>
-
-                    {currentForm !== 'chooseNext' &&
-                      <>
-                        <Button text="Continue" onClick={onChooseNext} />
-                        <span className="ms-3"></span>
-                      </>
-                    }
-                    <Button text="I'm done!" className="dark:bg-slate-900 bg-slate-100" onClick={onStartOver} />
-                    <span className="ms-3"></span>
-                    <Button text="Start over" className="dark:bg-slate-900 bg-slate-100" onClick={onStartOver} /> */}
-                  </div>
-                  <div className="absolute right-8 top-6">
-                    <Corgi size={100} />
-                  </div>
-                </div>
-              </div>
-              {/* <Button text="Add Experience" onClick={onStartOver} /> */}
+            <Preview formData={formData} selectedSections={sections} />
+            <div 
+              className="pt-12 text-center text-sm text-gray-100 dark:text-gray-200">
+              Copyright &copy; 2025 Resume Corgi
             </div>
-
-            <div class="flex flex-co w-full mb-6 xs:flex-row">
-              <Button text="Add Experience" onClick={onStartOver} />
-              <span className="ms-1"></span>
-              <Button text="Add Education" onClick={onStartOver} />
-              <span className="ms-1"></span>
-              <Button text="Add Skills" onClick={onStartOver} />
-            </div>
-
-            <div class="flex flex-co w-full mb-10 xs:flex-row">
-              <div class="w-full sm:mb-0">
-                <div class="relative h-full ml-0 mr-0">
-                  <span class="absolute top-0 left-0 w-full h-full mt-1 bg-black dark:bg-gray-200 rounded-xl"></span>
-                  <div class="relative h-full p-5 bg-white dark:bg-slate-900 border-1 border-black dark:border-gray-200 rounded-xl px-5 py-7">
-
-                    {currentForm === 'personalInfo' && 
-                      <PersonalInfo personalInfo={formData.personalInfo} handleChange={handleChange} />
-                    }
-
-                    {currentForm === 'chooseNext' && 
-                      <ChooseNext onNextChosen={onNextChosen} />
-                    }
-
-                    {currentForm === 'experience' &&
-                      <Experience experience={formData.experience} handleChange={handleChange} />
-                    }
-
-                    {currentForm === 'education' &&
-                      <Education education={formData.education} handleChange={handleChange} />
-                    }
-
-                    {/* <div className="mb-5"></div>
-
-                    {currentForm !== 'chooseNext' &&
-                      <>
-                        <Button text="Continue" onClick={onChooseNext} />
-                        <span className="ms-3"></span>
-                      </>
-                    }
-                    <Button text="I'm done!" className="dark:bg-slate-900 bg-slate-100" onClick={onStartOver} />
-                    <span className="ms-3"></span>
-                    <Button text="Start over" className="dark:bg-slate-900 bg-slate-100" onClick={onStartOver} /> */}
-                  </div>
-                  <div className="absolute right-8 top-6">
-                    <Corgi size={100} />
-                  </div>
-                </div>
-              </div>
-              {/* <Button text="Add Experience" onClick={onStartOver} /> */}
-            </div>
-          </div>
-        </div>
-        <div className="col-span-3 bg-zinc-500 dark:bg-gray-950 border-l-1 border-slate-700 dark:text-white p-4">
-          <Preview formData={formData} selectedSections={selectedSections}  />
         </div>
       </div>
     </>

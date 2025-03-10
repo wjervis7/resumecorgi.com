@@ -6,7 +6,7 @@ function Experience({ experience }) {
   return (
     <>
       <div class="flex items-center -mt-1 mb-2">
-        <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Experience</h2>
+        <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2" id="experience">Experience</h2>
       </div>
       <p class="text-slate-800 mb-4 dark:text-gray-200 mb-6 w-2/3">
         Let's jot down where you went to work, starting with your most recent organization.
@@ -33,7 +33,10 @@ function Experience({ experience }) {
 
       <div className="mb-5"></div>
 
-      <Button text="Add Another Company" className="dark:bg-blue-700! dark:hover:bg-lime-500! hover:bg-lime-200! dark:text-white bg-blue-200! text-gray-900" onClick={() => onNextChosen('education') } />
+      <Button
+        text="Add Another Company"
+        theme="interaction"
+        onClick={() => onNextChosen('education') } />
       
       <div className="mb-12"></div>
     </>
