@@ -6,14 +6,14 @@ function CheckboxButton({ text = "", value = "", isChecked = false, onChange }) 
   };
 
   return (
-    <div className="relative inline-block group">
+    <div className="relative group">
       <span className="
         absolute top-0 left-0 
         w-full h-full 
-        mt-[0.55rem]
+        mt-[0.2rem]
         bg-black dark:bg-zinc-500
         rounded-[0.5rem]
-        group-hover:mt-[0.65rem]
+        group-hover:mt-[0.3rem]
       "></span>
       <input 
         type="checkbox"
@@ -29,7 +29,7 @@ function CheckboxButton({ text = "", value = "", isChecked = false, onChange }) 
         aria-checked={isChecked}
         className="
           ${className}
-          relative w-full
+          relative block w-full
           px-3 py-1.5
           font-bold text-black dark:text-white
           bg-gray-100 dark:bg-zinc-800
@@ -43,7 +43,7 @@ function CheckboxButton({ text = "", value = "", isChecked = false, onChange }) 
               handleToggle(e);
             }
           }}
-        >{text}</label>
+        >{text}{isChecked ? ' ✅' : ''}</label>
     </div>
   );
 }

@@ -15,8 +15,8 @@ function Editor({onStartOver}) {
   const initialSections = [
     { id: 'personalInfo', displayName: 'About You', href: 'start', selected: true, originalOrder: 0, sortOrder: 0, required: true },
     { id: 'experience', displayName: 'Experience', href: 'experience', selected: true, originalOrder: 1, sortOrder: 1, required: false },
-    // { id: 'education', displayName: 'Education', href: 'education', selected: true, originalOrder: 2, sortOrder: 2, required: false },
-    // { id: 'skills', displayName: 'Skills', href: 'skills', selected: false, originalOrder: 3, sortOrder: 3, required: false },
+    { id: 'education', displayName: 'Education', href: 'education', selected: true, originalOrder: 2, sortOrder: 2, required: false },
+    { id: 'skills', displayName: 'Skills', href: 'skills', selected: false, originalOrder: 3, sortOrder: 3, required: false },
   ]
 
   const initialFormData = {
@@ -120,7 +120,7 @@ function Editor({onStartOver}) {
           col-span-2 
           bg-zinc-100 dark:bg-zinc-900
           mt-[62px]">
-          <Sidebar sections={sections} />
+          <Sidebar sections={sections} handleSectionSelected={handleSectionSelected} />
         </div>
         <div className="
             col-span-4
@@ -132,7 +132,7 @@ function Editor({onStartOver}) {
             dark:[&::-webkit-scrollbar-track]:bg-zinc-800
             dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600">
           <div class="w-full px-5 pt-5 mb-[75vh]">
-            <Card rightElement={<Corgi size={110} />}>
+            {/* <Card rightElement={<Corgi size={110} />}>
             <div class="flex items-center -mt-1 mb-2">
               <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2" id="start">Let's Get Started!</h2>
             </div>
@@ -147,9 +147,9 @@ function Editor({onStartOver}) {
                 </>)
             ))}
               
-            </Card>
+            </Card> */}
 
-            <Card>
+            <Card rightElement={<Corgi size={110} />}>
               <PersonalInfo personalInfo={formData.personalInfo} handleChange={handleChange} />
               <div className="-mb-1.5"></div>
             </Card>

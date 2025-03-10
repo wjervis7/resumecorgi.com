@@ -1,15 +1,12 @@
 import LinkButton from "../components/LinkButton";
+import SectionManager from "./SectionManager";
 
-function Sidebar({ sections }) {
-  // Convert section names to display format (capitalize first letter)
-  const formatSectionName = (sectionId) => {
-    return sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
-  };
-
+function Sidebar({ sections, handleSectionSelected }) {
   return (
     <>
-      <div className="h-full px-3 py-7.5 overflow-y-auto">
-        <ul className="space-y-1 font-medium">
+      <div className="h-full px-3 py-5 overflow-y-auto">
+        <SectionManager sections={sections} handleSectionSelected={handleSectionSelected} />
+        <ul className="space-y-1 font-medium mt-3">
           {sections.map(section => (
             section.selected && (
               <li key={section.id} className="mb-1">

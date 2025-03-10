@@ -8,7 +8,7 @@ function PersonalInfo({ personalInfo, handleChange }) {
       <div class="flex items-center -mt-1 mb-2">
         <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2" id="personalInfo">About You</h2>
       </div>
-      <p class="text-slate-800 mb-4 dark:text-gray-200 mb-4">
+      <p class="text-slate-800 mb-4 dark:text-gray-200 mb-4 w-2/3">
         Tell us about yourself. Your edits will be visible in the preview panel as you type.
       </p>
 
