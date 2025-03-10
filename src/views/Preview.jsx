@@ -23,7 +23,6 @@ function Preview({ formData, selectedSections }) {
   // Use memoized LaTeX to avoid recreating it on every render
   const compiledLaTeX = useMemo(() => {
     let laTeX = createLaTeXFromFormData(formData, selectedSections);
-    console.log('LaTex: ', laTeX);
     return laTeX;
   }, [formData, selectedSections]);
 
@@ -250,8 +249,9 @@ ${formatSummary(formData.personalInfo.summary)}
 ${selectedSections.find(s => s.id === 'experience').selected ? formatExperience(formData.experience) : ''}
 
 % education section
-\\section*{Education}
-${formatEducation(formData.education)}
+% \\vspace{-15pt}
+% \\section*{Education}
+% ${formatEducation(formData.education)}
 
 \\end{document}
 `;
@@ -288,22 +288,30 @@ function formatExperience(experience) {
   \\item Quantify your results when possible
 \\end{itemize}`;
   }
-  
-  return experience.map(job => {
+
+  const sectionHeading = `\\section*{Experience}
+`;
+
+  return sectionHeading + experience.map(job => {
     const title = job.title || 'Position Title';
     const company = job.company || 'Company Name';
     const dateRange = `${job.start || 'Start'} -- ${job.end || 'End'}`;
-    const accomplishments = job.accomplishments 
-      ? job.accomplishments.split('\n').map(item => `  \\item ${item}`).join('\n')
-      : '  \\item Describe your responsibilities and achievements\n  \\item Quantify your results when possible';
-    
+
+    // // Extract bullet points as array of strings
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = job.accomplishments || '<ul><li>Describe your responsibilities and achievements, quantified if possible</li></ul>';
+    const accomplishments = Array.from(tempDiv.querySelectorAll('li'))
+      .map(li => li.textContent.trim())
+      .filter(item => item && item.length > 0)
+      .map(item => `  \\item ${item}`).join('\n');
+
     return `% experience section
-\\section*{Experience}
 \\textbf{${title},} {${company}} \\hfill ${dateRange} \\\\
 \\vspace{-9pt}
 \\begin{itemize}
 ${accomplishments}
-\\end{itemize}`;
+\\end{itemize}
+\\vspace{-4pt}`;
   }).join('\n\n');
 }
 

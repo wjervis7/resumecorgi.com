@@ -15,8 +15,8 @@ function Editor({onStartOver}) {
   const initialSections = [
     { id: 'personalInfo', displayName: 'About You', href: 'start', selected: true, originalOrder: 0, sortOrder: 0, required: true },
     { id: 'experience', displayName: 'Experience', href: 'experience', selected: true, originalOrder: 1, sortOrder: 1, required: false },
-    { id: 'education', displayName: 'Education', href: 'education', selected: true, originalOrder: 2, sortOrder: 2, required: false },
-    { id: 'skills', displayName: 'Skills', href: 'skills', selected: false, originalOrder: 3, sortOrder: 3, required: false },
+    // { id: 'education', displayName: 'Education', href: 'education', selected: true, originalOrder: 2, sortOrder: 2, required: false },
+    // { id: 'skills', displayName: 'Skills', href: 'skills', selected: false, originalOrder: 3, sortOrder: 3, required: false },
   ]
 
   const initialFormData = {
@@ -34,7 +34,7 @@ function Editor({onStartOver}) {
         company: '',
         start: '1990',
         end: 'Current',
-        accomplishments: ''
+        accomplishments: '<ul class=\"list-disc list-inside\"><li>Describe your accomplishments and achievements, quantified if possible</li><li><br></li></ul>'
       }
     ],
     education: [
@@ -65,6 +65,13 @@ function Editor({onStartOver}) {
         ...prevData[section],
         [field]: value
       }
+    }));
+  };
+
+  const handleArrayChange = (section, value) => {
+    setFormData(prevData => ({
+      ...prevData,
+      [section]: value
     }));
   };
 
@@ -132,16 +139,13 @@ function Editor({onStartOver}) {
             <p class="text-zinc-800 mb-4.5 dark:text-gray-200 w-3/4">
               Which sections do you want to include in your resume? These are optional, and you can change your selections at any time.
             </p>
-              {/* <CheckboxButton text="Experience" isChecked={selectedSections.includes('Experience')} onChange={handleSectionChecked} /><span className="ms-1.5"></span>
-              <CheckboxButton text="Education" isChecked={selectedSections.includes('Education')} onChange={handleSectionChecked} /><span className="ms-1.5"></span>
-              <CheckboxButton text="Skills" isChecked={selectedSections.includes('Skills')} onChange={handleSectionChecked} /><span className="ms-3.5"></span> */}
 
-              {sections.map(section => (
-                !section.required && (
-                  <>
-                    <CheckboxButton text={section.displayName} value={section.id} isChecked={section.selected} onChange={(checked) => handleSectionSelected(section.id, checked)} /><span className="ms-1.5"></span>
-                  </>)
-              ))}
+            {sections.map(section => (
+              !section.required && (
+                <>
+                  <CheckboxButton text={section.displayName} value={section.id} isChecked={section.selected} onChange={(checked) => handleSectionSelected(section.id, checked)} /><span className="ms-1.5"></span>
+                </>)
+            ))}
               
             </Card>
 
@@ -152,11 +156,11 @@ function Editor({onStartOver}) {
 
             {sections.find(s => s.id === 'experience').selected &&
               <Card>
-                <Experience experience={formData.experience} handleChange={handleChange} />
+                <Experience experiences={formData.experience} handleChange={handleChange} setFormData={setFormData} />
               </Card>
             }
 
-            {sections.find(s => s.id === 'education').selected &&
+            {/* {sections.find(s => s.id === 'education').selected &&
               <Card>
                 <Education education={formData.education} handleChange={handleChange} />
               </Card>
@@ -166,7 +170,7 @@ function Editor({onStartOver}) {
               <Card>
                 <Skills />
               </Card>
-            }
+            } */}
 
           </div>
         </div>
