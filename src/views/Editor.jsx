@@ -15,7 +15,7 @@ function Editor({onStartOver}) {
   const initialSections = [
     { id: 'personalInfo', displayName: 'About You', href: '#start', selected: true, originalOrder: 0, sortOrder: 0, required: true, sortable: false },
     { id: 'experience', displayName: 'Experience', href: '#experience', selected: true, originalOrder: 1, sortOrder: 1, required: false, sortable: true },
-    { id: 'education', displayName: 'Education', href: '#education', selected: false, originalOrder: 2, sortOrder: 2, required: false, sortable: true },
+    { id: 'education', displayName: 'Education', href: '#education', selected: true, originalOrder: 2, sortOrder: 2, required: false, sortable: true },
     { id: 'skills', displayName: 'Skills', href: '#skills', selected: false, originalOrder: 3, sortOrder: 3, required: false, sortable: true },
   ]
 
@@ -46,7 +46,6 @@ function Editor({onStartOver}) {
     ],
   };
 
-  const [currentForm, setCurrentForm] = useState('personalInfo');
   const [formData, setFormData] = useState(initialFormData);
   const [updateKey, setUpdateKey] = useState(0);
   const [sections, setSections] = useState(initialSections);
@@ -68,12 +67,12 @@ function Editor({onStartOver}) {
     }));
   };
 
-  const handleArrayChange = (section, value) => {
-    setFormData(prevData => ({
-      ...prevData,
-      [section]: value
-    }));
-  };
+  // const handleArrayChange = (section, value) => {
+  //   setFormData(prevData => ({
+  //     ...prevData,
+  //     [section]: value
+  //   }));
+  // };
 
   const handleSectionSelected = (sectionId, checked) => {
     setSections(prevSections => 
@@ -84,13 +83,58 @@ function Editor({onStartOver}) {
       )
     );
   };
-
-  const handleSectionChecked = (checked, value) => {
-    console.log('click', checked, value, selectedSections)
-    setSelectedSections(prev => 
-      checked ? [...prev, value] : prev.filter(item => item !== value)
-    );
+  const moveUp = (index) => {
+    // Get the current sorted order for reference
+    const sortedSections = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
+    
+    // Get the item to move from the sorted array
+    const sortedIndex = sortedSections.findIndex(section => section.id === sections[index].id);
+    const item = sortedSections[sortedIndex];
+    
+    // Cannot move up if it's the first sortable item or not sortable
+    if (sortedIndex <= 1 || !item.sortable) return;
+    
+    // Get the item above it in the sorted array
+    const prevItem = sortedSections[sortedIndex - 1];
+    
+    // Update sections with swapped sortOrders
+    setSections(sections.map(section => {
+      if (section.id === item.id) {
+        return { ...section, sortOrder: prevItem.sortOrder };
+      }
+      if (section.id === prevItem.id) {
+        return { ...section, sortOrder: item.sortOrder };
+      }
+      return section;
+    }));
   };
+
+  const moveDown = (index) => {
+    // Get the current sorted order for reference
+    const sortedSections = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
+    
+    // Get the item to move from the sorted array
+    const sortedIndex = sortedSections.findIndex(section => section.id === sections[index].id);
+    const item = sortedSections[sortedIndex];
+    
+    // Cannot move down if it's the last item or not sortable
+    if (sortedIndex >= sortedSections.length - 1 || !item.sortable) return;
+    
+    // Get the item below it in the sorted array
+    const nextItem = sortedSections[sortedIndex + 1];
+    
+    // Update sections with swapped sortOrders
+    setSections(sections.map(section => {
+      if (section.id === item.id) {
+        return { ...section, sortOrder: nextItem.sortOrder };
+      }
+      if (section.id === nextItem.id) {
+        return { ...section, sortOrder: item.sortOrder };
+      }
+      return section;
+    }));
+  };
+
 
   const onChooseNext = () => {
     setCurrentForm('chooseNext');
@@ -105,13 +149,13 @@ function Editor({onStartOver}) {
   }
 
   // Debounce the update - only triggers after 500ms of no changes
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      handleFormUpdate();
-    }, 1000);
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     handleFormUpdate();
+  //   }, 1000);
     
-    return () => clearTimeout(timer);
-  }, [formData, handleFormUpdate]);
+  //   return () => clearTimeout(timer);
+  // }, [formData, handleFormUpdate]);
 
   return (
     <>
@@ -120,7 +164,7 @@ function Editor({onStartOver}) {
           col-span-2 
           bg-zinc-100 dark:bg-zinc-900
           mt-[62px]">
-          <Sidebar sections={sections} handleSectionSelected={handleSectionSelected} />
+          <Sidebar sections={sections} handleSectionSelected={handleSectionSelected} handleMoveUp={moveUp} handleMoveDown={moveDown} />
         </div>
         <div className="
             col-span-4
@@ -132,41 +176,25 @@ function Editor({onStartOver}) {
             dark:[&::-webkit-scrollbar-track]:bg-zinc-800
             dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600">
           <div className="w-full px-5 pt-5 mb-[75vh]" id="start">
-            {/* <Card rightElement={<Corgi size={110} />}>
-            <div class="flex items-center -mt-1 mb-2">
-              <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2" id="start">Let's Get Started!</h2>
-            </div>
-            <p class="text-zinc-800 mb-4.5 dark:text-gray-200 w-3/4">
-              Which sections do you want to include in your resume? These are optional, and you can change your selections at any time.
-            </p>
-
-            {sections.map(section => (
-              !section.required && (
-                <>
-                  <CheckboxButton text={section.displayName} value={section.id} isChecked={section.selected} onChange={(checked) => handleSectionSelected(section.id, checked)} /><span className="ms-1.5"></span>
-                </>)
-            ))}
-              
-            </Card> */}
 
             <Card rightElement={<Corgi size={110} />}>
               <PersonalInfo personalInfo={formData.personalInfo} handleChange={handleChange} />
               <div className="-mb-1.5"></div>
             </Card>
 
-            {sections.find(s => s.id === 'experience').selected &&
+            {sections.some(s => s.id === 'experience' && s.selected) &&
               <Card>
                 <Experience experiences={formData.experience} handleChange={handleChange} setFormData={setFormData} />
               </Card>
             }
 
-            {sections.find(s => s.id === 'education').selected &&
+            {sections.some(s => s.id === 'education' && s.selected) &&
               <Card>
                 <Education education={formData.education} handleChange={handleChange} />
               </Card>
             }
 
-            {sections.find(s => s.id === 'skills').selected &&
+            {sections.some(s => s.id === 'skills' && s.selected) &&
               <Card>
                 <Skills />
               </Card>

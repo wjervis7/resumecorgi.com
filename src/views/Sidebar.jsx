@@ -1,12 +1,23 @@
-import LinkButton from "../components/LinkButton";
+import { values } from "lodash";
 import SectionManager from "./SectionManager";
 
-function Sidebar({ sections, handleSectionSelected }) {
+function Sidebar({ sections, handleMoveUp, handleMoveDown, handleSectionSelected }) {
+  const sortedSections = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
+  const moveIndexOffset = 2;
+
+  const canMoveUp = (section) => {
+    return section.sortable && section.sortOrder >= moveIndexOffset;
+  }
+
+  const canMoveDown = (section) => {
+    return section.sortable && section.sortOrder <= sortedSections.filter(s => s.selected).length - moveIndexOffset;
+  }
+
   return (
     <>
       <div className="h-full px-3 py-5 mt-0.5">
         <ul className="space-y-1 mb-">
-          {sections.map(section => (
+          {sortedSections.map((section, index) => (
             section.selected && (
               <li key={section.id} className="mb-1">
                 <div className="flex items-center justify-between w-full">
@@ -28,9 +39,9 @@ function Sidebar({ sections, handleSectionSelected }) {
                   </a>
                   <div className="flex items-center space-x-1 me-1">
                     <button
-                      onClick={() => handleEdit(section.id)}
+                      onClick={() => handleMoveUp(sections.findIndex(s => s.id === section.id))}
                       className={`
-                        ${ !section.sortable ? 'invisible' : 'visible' }
+                        ${ !canMoveUp(section) ? 'invisible' : 'visible' }
                         p-2 rounded-full text-gray-600 hover:text-sky-800 hover:bg-sky-100 dark:text-zinc-300 dark:hover:text-blue-200 dark:hover:bg-blue-900/30 hover:cursor-pointer`
                         }>
                       <svg xmlns="http://www.w3.org/2000/svg" className="w-[1rem] h-[1rem]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -38,9 +49,9 @@ function Sidebar({ sections, handleSectionSelected }) {
                     </svg>
                     </button>
                     <button
-                      onClick={() => handleEdit(section.id)}
+                      onClick={() => handleMoveDown(sections.findIndex(s => s.id === section.id))}
                       className={`
-                        ${ !section.sortable ? 'invisible' : 'visible' }
+                        ${ !canMoveDown(section) ? 'invisible' : 'visible' }
                         p-2 rounded-full text-gray-600 hover:text-sky-800 hover:bg-sky-100 dark:text-zinc-300 dark:hover:text-blue-200 dark:hover:bg-blue-900/30 hover:cursor-pointer`
                         }>
                       <svg xmlns="http://www.w3.org/2000/svg" className="w-[1rem] h-[1rem]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
