@@ -7,6 +7,7 @@ function Preview({ formData, selectedSections }) {
   const prevFormDataRef = useRef(null);
   const prevSelectedSectionsRef = useRef(null);
   const debounceTimerRef = useRef(null);
+  const cleanupRef = useRef(null);
   
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -49,7 +50,7 @@ function Preview({ formData, selectedSections }) {
       clearTimeout(debounceTimerRef.current);
     }
     
-    // Set debounce timer (500ms)
+    // Set debounce timer
     debounceTimerRef.current = setTimeout(() => {
       compileLaTeX();
     }, 500);
@@ -59,12 +60,22 @@ function Preview({ formData, selectedSections }) {
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
       }
+
+      // Cancel any in-progress compilation
+      cleanupRef.current?.();
     };
   }, [formData, selectedSections, compiledLaTeX]);
 
   const compileLaTeX = async () => {
     let mounted = true;
     
+    // Return cleanup function immediately
+    const cleanup = () => {
+      mounted = false;
+    };
+
+    cleanupRef.current = cleanup;
+
     try {
       setIsLoading(true);
       setError(null);
@@ -72,7 +83,7 @@ function Preview({ formData, selectedSections }) {
       // Get the engine instance
       const engine = await EngineManager.getInstance();
       
-      if (!mounted) return;
+      if (!mounted) return cleanup;
 
       // Prepare and compile the LaTeX
       engine.writeMemFSFile("main.tex", compiledLaTeX);
@@ -80,22 +91,26 @@ function Preview({ formData, selectedSections }) {
 
       let result = await engine.compileLaTeX();
       
-      if (!mounted) return;
+      if (!mounted) return cleanup;
       
       // Load the PDF
       const loadingTask = pdfjsLib.getDocument({ data: result.pdf.buffer });
       loadingTask.promise.then(pdf => {
+        if (!mounted) return;
+        
         setPdfDoc(pdf);
         setNumPages(pdf.numPages);
         renderPage(pdf, 1);
         setPageRendered(true);
         setIsLoading(false);
+        console.log('Loading task results', EngineManager.isReady(), EngineManager.isLoading());
       }).catch(error => {
+        if (!mounted) return;
+        
         console.error('Error loading PDF:', error);
         setError(`Error loading PDF: ${error.message}`);
         setIsLoading(false);
       });
-
     } catch (err) {
       if (mounted) {
         console.error("Failed to compile LaTeX:", err);
@@ -104,9 +119,7 @@ function Preview({ formData, selectedSections }) {
       }
     }
     
-    return () => {
-      mounted = false;
-    };
+    return cleanup;
   };
 
   const renderPage = (pdf, pageNum) => {
@@ -180,9 +193,10 @@ function Preview({ formData, selectedSections }) {
   return (
     <>
       <h2 className="text-lg sr-only">PDF Preview</h2>
-      {isLoading && <Skeleton />}
 
-      {!isLoading && (
+      {(isLoading || error) && <Skeleton />}
+
+      {!isLoading && !error && (
         <div className="pdf-viewer flex justify-center items-center w-full">
           <div className="canvas-container">
             <canvas ref={canvasRef} className="shadow-md dark:shadow-lg shadow-gray-800 dark:shadow-zinc-700"></canvas>
