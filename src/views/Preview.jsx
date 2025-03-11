@@ -11,6 +11,9 @@ function Preview({ formData, selectedSections }) {
   const prevSelectedSectionsRef = useRef(null);
   const debounceTimerRef = useRef(null);
   const cleanupRef = useRef(null);
+  const activeCanvasRef = useRef(null);
+  const displayCanvasRef = useRef(null);
+  const canvasContainerRef = useRef(null);
   
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -96,6 +99,7 @@ function Preview({ formData, selectedSections }) {
     cleanupRef.current = cleanup;
   
     try {
+      // Keep the previous PDF visible during loading
       setIsLoading(true);
       setError(null);
   
@@ -132,7 +136,6 @@ function Preview({ formData, selectedSections }) {
         setPdfDoc(pdf);
         setNumPages(pdf.numPages);
         renderPage(pdf, 1);
-        setPageRendered(true);
         setIsLoading(false);
         
         resolve(pdf); // Resolve the promise with the result
@@ -179,19 +182,19 @@ function Preview({ formData, selectedSections }) {
       setPageNumPending(pageNum);
       return;
     }
-
+  
     setPageRendering(true);
     
     // Using promise to fetch the page
     pdf.getPage(pageNum).then(page => {
-      const canvas = canvasRef.current;
-      prevCanvasRef.current = canvas;
-
+      // Use the hidden active canvas for rendering
+      const canvas = activeCanvasRef.current;
+  
       if (!canvas) {
         setPageRendering(false);
         return;
       }
-
+  
       const ctx = canvas.getContext('2d');
       ctx.imageSmoothingQuality = 'high';
       ctx.imageSmoothingEnabled = false;
@@ -200,8 +203,6 @@ function Preview({ formData, selectedSections }) {
       const viewport = page.getViewport({ scale });
       canvas.height = resolution * viewport.height;
       canvas.width = resolution * viewport.width;
-      canvas.style.width = "100%";
-      canvas.style.maxWidth = "800px";
       
       // Render PDF page into canvas context
       const renderContext = {
@@ -209,12 +210,28 @@ function Preview({ formData, selectedSections }) {
         viewport: viewport,
         transform: [resolution, 0, 0, resolution, 0, 0]
       };
-
+  
       const renderTask = page.render(renderContext);
       
       // Wait for rendering to finish
       renderTask.promise.then(() => {
+        // When render is complete, swap the canvas contents to the display canvas
+        const displayCanvas = displayCanvasRef.current;
+        if (displayCanvas) {
+          // Match the dimensions
+          displayCanvas.width = canvas.width;
+          displayCanvas.height = canvas.height;
+          displayCanvas.style.width = "100%";
+          displayCanvas.style.maxWidth = "800px";
+          
+          // Copy content from active canvas to display canvas
+          const displayCtx = displayCanvas.getContext('2d');
+          displayCtx.drawImage(canvas, 0, 0);
+        }
+        
+        setPageRendered(true);
         setPageRendering(false);
+        
         if (pageNumPending !== null) {
           // New page rendering is pending
           renderPage(pdfDoc, pageNumPending);
@@ -228,7 +245,7 @@ function Preview({ formData, selectedSections }) {
       console.error('Error getting page:', error);
       setPageRendering(false);
     });
-
+  
     setCurrentPage(pageNum);
   };
 
@@ -245,16 +262,38 @@ function Preview({ formData, selectedSections }) {
   return (
     <>
       <h2 className="text-lg sr-only">PDF Preview</h2>
-
-      {(isLoading || error) && <Skeleton />}
-
-      {!isLoading && !error && (
-        <div className="pdf-viewer flex justify-center items-center w-full">
-          <div className="canvas-container">
-            <canvas ref={canvasRef} className="shadow-md dark:shadow-lg shadow-gray-800 dark:shadow-zinc-700"></canvas>
-          </div>
+  
+      <div className="pdf-viewer flex justify-center items-center w-full">
+        <div ref={canvasContainerRef} className="canvas-container relative">
+          {/* Display canvas - always visible */}
+          {!error && (
+            <>
+              <div className="absolute block left-0 right-0 mt-5 px-5 font-light" role="status" hidden={!isLoading}>
+                <svg aria-hidden="true" class="w-10 h-10 text-gray-200 animate-spin fill-gray-500" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
+                  <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill" />
+                </svg>
+                <span class="sr-only">Loading...</span>
+              </div>
+              <canvas
+                ref={displayCanvasRef}
+                className={`shadow-md dark:shadow-lg shadow-gray-800 dark:shadow-zinc-700 ${!pageRendered ? 'hidden' : ''}`}
+              ></canvas>
+            </>
+          )}
+          
+          {/* Active canvas - hidden, used for rendering */}
+          <canvas 
+            ref={activeCanvasRef} 
+            className="hidden"
+          ></canvas>
+          
+          {/* Only show skeleton when no canvas has been rendered yet */}
+          {(isLoading && !pageRendered) && <Skeleton />}
+          
+          {error && <div className="error-message p-4 text-red-500">{error}</div>}
         </div>
-      )}
+      </div>
     </>
   );
 }
