@@ -43,6 +43,44 @@ function Editor() {
     ],
   };
 
+  const sectionRenderMapping = [
+    {
+      id: 'personalInfo',
+      renderFunc: () =>
+        <>
+          <Card rightElement={<Corgi size={110} />}>
+            <PersonalInfo personalInfo={formData.personalInfo} handleChange={handleChange} />
+            <div className="-mb-1.5"></div>
+          </Card>
+        </>
+    },
+    {
+      id: 'experience',
+      renderFunc: () =>
+        <>
+          <Card>
+            <Experience experiences={formData.experience} handleChange={handleChange} setFormData={setFormData} />
+          </Card>
+        </>
+    },
+    {
+      id: 'education', renderFunc: () =>
+        <>
+          <Card>
+            <Education education={formData.education} handleChange={handleChange} />
+          </Card>
+        </>
+    },
+    {
+      id: 'skills', renderFunc: () =>
+        <>
+          <Card>
+            <Skills />
+          </Card>
+        </>
+    },
+  ];
+
   const [formData, setFormData] = useState(initialFormData);
   const [sections, setSections] = useState(initialSections);
     
@@ -119,6 +157,8 @@ function Editor() {
     }));
   };
 
+  const sortedSections = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
+
   return (
     <>
       <div className="grid grid-cols-12 gap-0 w-full h-screen">
@@ -139,28 +179,13 @@ function Editor() {
             dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600">
           <div className="w-full px-5 pt-5 mb-[75vh]" id="start">
 
-            <Card rightElement={<Corgi size={110} />}>
-              <PersonalInfo personalInfo={formData.personalInfo} handleChange={handleChange} />
-              <div className="-mb-1.5"></div>
-            </Card>
-
-            {sections.some(s => s.id === 'experience' && s.selected) &&
-              <Card>
-                <Experience experiences={formData.experience} handleChange={handleChange} setFormData={setFormData} />
-              </Card>
-            }
-
-            {sections.some(s => s.id === 'education' && s.selected) &&
-              <Card>
-                <Education education={formData.education} handleChange={handleChange} />
-              </Card>
-            }
-
-            {sections.some(s => s.id === 'skills' && s.selected) &&
-              <Card>
-                <Skills />
-              </Card>
-            }
+            {sortedSections
+              .filter(section => section.selected)
+              .map(section => (
+                <div key={section.id}>
+                  { sectionRenderMapping.find(srm => srm.id === section.id).renderFunc() }
+                </div>
+              ))}
 
           </div>
         </div>
