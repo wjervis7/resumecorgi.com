@@ -50,16 +50,16 @@ const StatusIndicator = ({ error, isLoading, pageRendered }) => {
   }
 
   return (
-    <div className="mt-5 block text-center">
+    <div className="block text-center">
       <span className="sr-only">Status: {status.text}</span>
       <span className={`
         inline-flex items-center
         ${status.bgLight} ${status.bgDark}
-        ${status.textLight} ${status.textDark}
+        ${status.textLight} ${status.textDark} text-sm
         px-3 py-0.5
         rounded-full`}>
-        <span className={`absolute inline-flex size-2.25 ${status.animation} rounded-full ${status.dotLight} ${status.dotDark}`}></span>
-        <span className={`relative inline-flex size-2.25 me-2.25 ${status.dotLight} ${status.dotDark} rounded-full`}></span>
+        <span className={`absolute inline-flex size-2 ${status.animation} rounded-full ${status.dotLight} ${status.dotDark}`}></span>
+        <span className={`relative inline-flex size-2 me-2.25 ${status.dotLight} ${status.dotDark} rounded-full`}></span>
         {status.text}
       </span>
     </div>

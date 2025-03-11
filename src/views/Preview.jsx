@@ -264,8 +264,13 @@ function Preview({ formData, selectedSections }) {
     <>
       <h2 className="text-lg sr-only">PDF Preview</h2>
   
-      <div className="pdf-viewer flex justify-center items-center w-full">
+      <div className="absolute z-50">
+        <StatusIndicator error={error} isLoading={isLoading} pageRendered={pageRendered} />
+      </div>
+
+      <div className="pdf-viewer flex justify-center items-center w-full mt-14">
         <div ref={canvasContainerRef} className="canvas-container relative">
+
           {/* Display canvas - always visible */}
           {!error && (
             <>
@@ -284,8 +289,6 @@ function Preview({ formData, selectedSections }) {
           
           {/* Only show skeleton when no canvas has been rendered yet */}
           {(isLoading && !pageRendered) && <Skeleton />}
-          
-          <StatusIndicator error={error} isLoading={isLoading} pageRendered={pageRendered} />
         </div>
       </div>
     </>

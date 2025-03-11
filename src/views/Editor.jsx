@@ -187,10 +187,14 @@ function Editor() {
     <>
       <div className="grid grid-cols-12 gap-0 w-full h-screen">
         <div className="
+          relative
           col-span-2 
           bg-zinc-100 dark:bg-zinc-900
           mt-[62px]">
           <Sidebar sections={sections} handleSectionSelected={handleSectionSelected} handleMoveUp={moveUp} handleMoveDown={moveDown} />
+          <div className="absolute bottom-0 left-0 right-0 w-full text-center text-xs text-gray-700 dark:text-zinc-300 pb-2">
+              Copyright &copy; 2025 Resume Corgi
+          </div>
         </div>
         <div className="
             col-span-4
@@ -227,10 +231,6 @@ function Editor() {
             dark:[&::-webkit-scrollbar-track]:bg-zinc-800
             dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600">
             <Preview formData={formData} selectedSections={sections} />
-            <div 
-              className="pt-12 text-center text-sm text-gray-100 dark:text-gray-200">
-              Copyright &copy; 2025 Resume Corgi
-            </div>
         </div>
       </div>
     </>
