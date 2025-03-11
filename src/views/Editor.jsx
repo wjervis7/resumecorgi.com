@@ -1,17 +1,14 @@
-import Button from '../components/Button.jsx'
 import Preview from './Preview.jsx'
-import { useState, useEffect, useCallback } from 'react'
+import { useState } from 'react'
 import Corgi from '../components/Corgi.jsx'
 import PersonalInfo from './forms/PersonalInfo.jsx'
-import ChooseNext from './forms/ChooseNext.jsx'
 import Experience from './forms/Experience.jsx'
 import Education from './forms/Education.jsx'
 import Card from '../components/Card.jsx'
 import Skills from './forms/Skills.jsx'
-import CheckboxButton from '../components/CheckboxButton.jsx'
 import Sidebar from './Sidebar.jsx'
 
-function Editor({onStartOver}) {
+function Editor() {
   const initialSections = [
     { id: 'personalInfo', displayName: 'About You', href: '#start', selected: true, originalOrder: 0, sortOrder: 0, required: true, sortable: false },
     { id: 'experience', displayName: 'Experience', href: '#experience', selected: true, originalOrder: 1, sortOrder: 1, required: false, sortable: true },
@@ -47,14 +44,7 @@ function Editor({onStartOver}) {
   };
 
   const [formData, setFormData] = useState(initialFormData);
-  const [updateKey, setUpdateKey] = useState(0);
   const [sections, setSections] = useState(initialSections);
-  const [selectedSections, setSelectedSections] = useState([]);
-
-  const handleFormUpdate = useCallback(() => {
-    // Increment update key to trigger Preview re-render
-    setUpdateKey(prev => prev + 1);
-  }, []);
     
   // Handle form changes and trigger debounced update
   const handleChange = (section, field, value) => {
@@ -67,13 +57,6 @@ function Editor({onStartOver}) {
     }));
   };
 
-  // const handleArrayChange = (section, value) => {
-  //   setFormData(prevData => ({
-  //     ...prevData,
-  //     [section]: value
-  //   }));
-  // };
-
   const handleSectionSelected = (sectionId, checked) => {
     setSections(prevSections => 
       prevSections.map(section => 
@@ -83,6 +66,7 @@ function Editor({onStartOver}) {
       )
     );
   };
+
   const moveUp = (index) => {
     // Get the current sorted order for reference
     const sortedSections = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
@@ -134,28 +118,6 @@ function Editor({onStartOver}) {
       return section;
     }));
   };
-
-
-  const onChooseNext = () => {
-    setCurrentForm('chooseNext');
-  }
-
-  const onNextChosen = (newSection) => {
-    setSections(prevData => ({
-      ...prevData,
-      newSection
-    }));
-    setCurrentForm(newSection);
-  }
-
-  // Debounce the update - only triggers after 500ms of no changes
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     handleFormUpdate();
-  //   }, 1000);
-    
-  //   return () => clearTimeout(timer);
-  // }, [formData, handleFormUpdate]);
 
   return (
     <>

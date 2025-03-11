@@ -2,7 +2,7 @@ import { useState } from "react";
 import Card from "../components/Card";
 import CheckboxButton from "../components/CheckboxButton";
 
-function SectionManager({ sections, handleSectionSelected }) {
+function SectionEditor({ sections, handleSectionSelected }) {
   const [isOpen, setOpen] = useState(false);
 
   return (
@@ -47,4 +47,4 @@ function SectionManager({ sections, handleSectionSelected }) {
   )
 }
 
-export default SectionManager;
+export default SectionEditor;

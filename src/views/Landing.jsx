@@ -1,5 +1,4 @@
 import './Landing.css'
-import logo from '../assets/bread-loaf-corgi-2-001.png'
 import Button from '../components/Button.jsx'
 import Corgi from '../components/Corgi.jsx'
 import Card from '../components/Card.jsx'

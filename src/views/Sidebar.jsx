@@ -1,5 +1,5 @@
 import { values } from "lodash";
-import SectionManager from "./SectionManager";
+import SectionEditor from "./SectionEditor";
 
 function Sidebar({ sections, handleMoveUp, handleMoveDown, handleSectionSelected }) {
   const sortedSections = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
@@ -76,7 +76,7 @@ function Sidebar({ sections, handleMoveUp, handleMoveDown, handleSectionSelected
             )
           ))}
         </ul>
-        <SectionManager sections={sections} handleSectionSelected={handleSectionSelected} />
+        <SectionEditor sections={sections} handleSectionSelected={handleSectionSelected} />
       </div>
     </>
   );
