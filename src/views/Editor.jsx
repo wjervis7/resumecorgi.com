@@ -109,15 +109,27 @@ function Editor() {
     // Get the current sorted order for reference
     const sortedSections = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
     
-    // Get the item to move from the sorted array
-    const sortedIndex = sortedSections.findIndex(section => section.id === sections[index].id);
+    // Find the section in the sortedSections array by id
+    const sectionId = sections[index].id;
+    const sortedIndex = sortedSections.findIndex(section => section.id === sectionId);
     const item = sortedSections[sortedIndex];
     
-    // Cannot move up if it's the first sortable item or not sortable
-    if (sortedIndex <= 1 || !item.sortable) return;
+    // Cannot move if it's not sortable
+    if (!item.sortable) return;
     
-    // Get the item above it in the sorted array
-    const prevItem = sortedSections[sortedIndex - 1];
+    // Find the previous sortable item (if any)
+    let prevSortableIndex = -1;
+    for (let i = sortedIndex - 1; i >= 0; i--) {
+      if (sortedSections[i].sortable) {
+        prevSortableIndex = i;
+        break;
+      }
+    }
+    
+    // If no previous sortable item, we can't move up
+    if (prevSortableIndex === -1) return;
+    
+    const prevItem = sortedSections[prevSortableIndex];
     
     // Update sections with swapped sortOrders
     setSections(sections.map(section => {
@@ -130,20 +142,32 @@ function Editor() {
       return section;
     }));
   };
-
+  
   const moveDown = (index) => {
     // Get the current sorted order for reference
     const sortedSections = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
     
-    // Get the item to move from the sorted array
-    const sortedIndex = sortedSections.findIndex(section => section.id === sections[index].id);
+    // Find the section in the sortedSections array by id
+    const sectionId = sections[index].id;
+    const sortedIndex = sortedSections.findIndex(section => section.id === sectionId);
     const item = sortedSections[sortedIndex];
     
-    // Cannot move down if it's the last item or not sortable
-    if (sortedIndex >= sortedSections.length - 1 || !item.sortable) return;
+    // Cannot move if it's not sortable
+    if (!item.sortable) return;
     
-    // Get the item below it in the sorted array
-    const nextItem = sortedSections[sortedIndex + 1];
+    // Find the next sortable item (if any)
+    let nextSortableIndex = -1;
+    for (let i = sortedIndex + 1; i < sortedSections.length; i++) {
+      if (sortedSections[i].sortable) {
+        nextSortableIndex = i;
+        break;
+      }
+    }
+    
+    // If no next sortable item, we can't move down
+    if (nextSortableIndex === -1) return;
+    
+    const nextItem = sortedSections[nextSortableIndex];
     
     // Update sections with swapped sortOrders
     setSections(sections.map(section => {
