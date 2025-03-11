@@ -4,6 +4,9 @@ import EngineManager from "../components/EngineManager";
 import Skeleton from "../components/Skeleton";
 
 function Preview({ formData, selectedSections }) {
+  const compilationQueue = useRef([]);
+  const isProcessing = useRef(false);
+
   const prevFormDataRef = useRef(null);
   const prevSelectedSectionsRef = useRef(null);
   const debounceTimerRef = useRef(null);
@@ -31,10 +34,10 @@ function Preview({ formData, selectedSections }) {
     // Use JSON.stringify for deep comparison
     const currentFormDataString = JSON.stringify(formData);
     const prevFormDataString = JSON.stringify(prevFormDataRef.current);
-
+  
     const currentSelectedSectionsString = JSON.stringify(selectedSections);
     const prevSelectedSectionsString = JSON.stringify(prevSelectedSectionsRef.current);
-
+  
     // Skip if data hasn't changed
     if (pageRendered && currentFormDataString === prevFormDataString && currentSelectedSectionsString === prevSelectedSectionsString) {
       console.log('No changes detected. Skipping compilation');
@@ -52,64 +55,107 @@ function Preview({ formData, selectedSections }) {
     
     // Set debounce timer
     debounceTimerRef.current = setTimeout(() => {
-      compileLaTeX();
-    }, 500);
+      compileLaTeX()
+        .then(() => console.log('Compilation completed successfully'))
+        .catch(err => console.error('Compilation failed:', err));
+    }, 600);
     
     // Cleanup
     return () => {
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
       }
-
+      
       // Cancel any in-progress compilation
       cleanupRef.current?.();
     };
   }, [formData, selectedSections, compiledLaTeX]);
 
   const compileLaTeX = async () => {
-    let mounted = true;
+    // Queue the compilation request and wait for it to process
+    return new Promise((resolve, reject) => {
+      compilationQueue.current.push({ resolve, reject });
+      processQueue();
+    });
+  };
+
+  const processQueue = async () => {
+    // If already processing or queue is empty, do nothing
+    if (isProcessing.current || compilationQueue.current.length === 0) return;
     
-    // Return cleanup function immediately
+    // Set processing flag to prevent concurrent executions
+    isProcessing.current = true;
+    
+    // Get the next item from the queue
+    const { resolve, reject } = compilationQueue.current.shift();
+    
+    let mounted = true;
     const cleanup = () => {
       mounted = false;
     };
-
     cleanupRef.current = cleanup;
-
+  
     try {
       setIsLoading(true);
       setError(null);
-
+  
       // Get the engine instance
       const engine = await EngineManager.getInstance();
       
-      if (!mounted) return cleanup;
-
+      if (!mounted) {
+        isProcessing.current = false;
+        processQueue(); // Process next in queue
+        return cleanup;
+      }
+  
       // Prepare and compile the LaTeX
       engine.writeMemFSFile("main.tex", compiledLaTeX);
       engine.setEngineMainFile("main.tex");
-
+  
       let result = await engine.compileLaTeX();
       
-      if (!mounted) return cleanup;
+      if (!mounted) {
+        isProcessing.current = false;
+        processQueue(); // Process next in queue
+        return cleanup;
+      }
       
       // Load the PDF
       const loadingTask = pdfjsLib.getDocument({ data: result.pdf.buffer });
       loadingTask.promise.then(pdf => {
-        if (!mounted) return;
+        if (!mounted) {
+          isProcessing.current = false;
+          processQueue(); // Process next in queue
+          return;
+        }
         
         setPdfDoc(pdf);
         setNumPages(pdf.numPages);
         renderPage(pdf, 1);
         setPageRendered(true);
         setIsLoading(false);
-        console.log('Loading task results', EngineManager.isReady(), EngineManager.isLoading());
+        
+        resolve(pdf); // Resolve the promise with the result
+        
+        // Set processing to false and process the next item in the queue
+        isProcessing.current = false;
+        processQueue();
       }).catch(error => {
-        if (!mounted) return;
+        if (!mounted) {
+          isProcessing.current = false;
+          processQueue(); // Process next in queue
+          return;
+        }
         
         console.error('Error loading PDF:', error);
         setError(`Error loading PDF: ${error.message}`);
         setIsLoading(false);
+        
+        reject(error); // Reject the promise with the error
+        
+        // Set processing to false and process the next item in the queue
+        isProcessing.current = false;
+        processQueue();
       });
     } catch (err) {
       if (mounted) {
@@ -117,6 +163,12 @@ function Preview({ formData, selectedSections }) {
         setError(`Failed to compile LaTeX: ${err.message}`);
         setIsLoading(false);
       }
+      
+      reject(err); // Reject the promise with the error
+      
+      // Set processing to false and process the next item in the queue
+      isProcessing.current = false;
+      processQueue();
     }
     
     return cleanup;
