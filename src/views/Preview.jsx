@@ -261,7 +261,8 @@ function Preview({ formData, selectedSections }) {
 
 // Helper function to create LaTeX from formData
 function createLaTeXFromFormData(formData, selectedSections) {
-  // Format the name
+  const sortedSections = [...selectedSections].sort((a, b) => a.sortOrder - b.sortOrder);
+
   const name = formData.personalInfo.name || 'Your Name';
   
   // Format contacts (filtering out empty ones)
@@ -279,6 +280,32 @@ function createLaTeXFromFormData(formData, selectedSections) {
   // Get summary
   const summary = formData.summary?.text || '';
 
+  const sectionFunctionMapping = [
+    { id: 'experience', renderFunc: (formData) => formatExperience(formData.experience) },
+    { id: 'education', renderFunc: (formData) => formatEducation(formData.education) },
+    { id: 'skills', renderFunc: (formData) => formatSkills(formData.skills) },
+  ];
+
+  const renderedSections2 = sortedSections
+    .map(section => {
+      if (sectionFunctionMapping.some(sfm => sfm.id === section.id && section.selected)) {
+        return sectionFunctionMapping.find(s => s.id === section.id)?.renderFunc(formData);
+      }
+    
+      return "";
+    })
+    .join('\n');
+
+  const renderedSections = sectionFunctionMapping
+    .map(sfm => {
+      if (selectedSections.some(s => s.id === sfm.id && s.selected)) {
+        return sfm.renderFunc(formData);
+      }
+    
+      return "";
+    })
+    .join('\n');
+
   return `
 \\documentclass[11pt]{article}
 \\usepackage[letterpaper, top=0.5in, bottom=0.5in, left=0.5in, right=0.5in]{geometry}
@@ -295,6 +322,7 @@ function createLaTeXFromFormData(formData, selectedSections) {
 \\pdfgentounicode=1
 
 \\titleformat{\\section}{\\bfseries\\large}{}{0pt}{}[\\vspace{1pt}\\titlerule\\vspace{-6.5pt}]
+\\titlespacing{\\section}{0pt}{10pt}{12pt}
 \\renewcommand\\labelitemi{$\\vcenter{\\hbox{\\small$\\bullet$}}$}
 \\setlist[itemize]{itemsep=-2pt, leftmargin=12pt, topsep=7pt}
 
@@ -308,13 +336,11 @@ function createLaTeXFromFormData(formData, selectedSections) {
 % contact information
 \\centerline{${contactLine}}
 
-\\vspace{-10pt}
+%\\vspace{-10pt}
 
 ${formatSummary(formData.personalInfo.summary)}
 
-${selectedSections.find(s => s.id === 'experience').selected ? formatExperience(formData.experience) : ''}
-
-${selectedSections.find(s => s.id === 'education').selected ? formatEducation(formData.education) : ''}
+${renderedSections2}
 
 \\end{document}
 `;
@@ -336,7 +362,7 @@ function formatSummary(summary) {
   return `
 \\section*{Summary}
 {${summary}}
-\\vspace{-10pt}`;
+%\\vspace{-10pt}`;
 }
 
 // Helper to format experience
@@ -390,11 +416,21 @@ function formatEducation(education) {
     const year = edu.year || 'Year';
 
     const sectionHeading = `% education section
-% \\vspace{-15pt}
-% \\section*{Education}`
+% \\vspace{-5pt}
+\\section*{Education}`
     
-    return sectionHeading + `\\textbf{${degree},} ${institution} \\hfill ${year}`;
+    return sectionHeading + `\\textbf{${degree},} ${institution} \\hfill ${year}
+\\vspace{10pt}`;
   }).join('\n\n');
+}
+
+function formatSkills(skills) {
+  const sectionHeading = `% skills section
+% \\vspace{-5pt}
+\\section*{Skills}
+%\\vspace{20pt}`
+    
+  return sectionHeading;
 }
 
 export default Preview;
