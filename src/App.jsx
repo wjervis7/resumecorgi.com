@@ -36,7 +36,7 @@ function App() {
 
   return (
     <>
-      <div className={"bg-gray-200 dark:bg-zinc-950"}>
+      <div className={"bg-gray-200 dark:bg-zinc-950 overflow-hidden"}>
         <div className={"relative flex flex-col justify-center items-center min-h-screen mx-auto xl:px-0"}>
 
           {viewState === 'landing' && (

@@ -13,10 +13,10 @@ import Sidebar from './Sidebar.jsx'
 
 function Editor({onStartOver}) {
   const initialSections = [
-    { id: 'personalInfo', displayName: 'About You', href: 'start', selected: true, originalOrder: 0, sortOrder: 0, required: true },
-    { id: 'experience', displayName: 'Experience', href: 'experience', selected: true, originalOrder: 1, sortOrder: 1, required: false },
-    { id: 'education', displayName: 'Education', href: 'education', selected: true, originalOrder: 2, sortOrder: 2, required: false },
-    { id: 'skills', displayName: 'Skills', href: 'skills', selected: false, originalOrder: 3, sortOrder: 3, required: false },
+    { id: 'personalInfo', displayName: 'About You', href: '#start', selected: true, originalOrder: 0, sortOrder: 0, required: true, sortable: false },
+    { id: 'experience', displayName: 'Experience', href: '#experience', selected: true, originalOrder: 1, sortOrder: 1, required: false, sortable: true },
+    { id: 'education', displayName: 'Education', href: '#education', selected: false, originalOrder: 2, sortOrder: 2, required: false, sortable: true },
+    { id: 'skills', displayName: 'Skills', href: '#skills', selected: false, originalOrder: 3, sortOrder: 3, required: false, sortable: true },
   ]
 
   const initialFormData = {
@@ -131,7 +131,7 @@ function Editor({onStartOver}) {
             [&::-webkit-scrollbar-thumb]:bg-zinc-400
             dark:[&::-webkit-scrollbar-track]:bg-zinc-800
             dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600">
-          <div class="w-full px-5 pt-5 mb-[75vh]">
+          <div className="w-full px-5 pt-5 mb-[75vh]" id="start">
             {/* <Card rightElement={<Corgi size={110} />}>
             <div class="flex items-center -mt-1 mb-2">
               <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2" id="start">Let's Get Started!</h2>
@@ -160,7 +160,7 @@ function Editor({onStartOver}) {
               </Card>
             }
 
-            {/* {sections.find(s => s.id === 'education').selected &&
+            {sections.find(s => s.id === 'education').selected &&
               <Card>
                 <Education education={formData.education} handleChange={handleChange} />
               </Card>
@@ -170,7 +170,7 @@ function Editor({onStartOver}) {
               <Card>
                 <Skills />
               </Card>
-            } */}
+            }
 
           </div>
         </div>

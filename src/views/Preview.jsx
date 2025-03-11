@@ -248,10 +248,7 @@ ${formatSummary(formData.personalInfo.summary)}
 
 ${selectedSections.find(s => s.id === 'experience').selected ? formatExperience(formData.experience) : ''}
 
-% education section
-% \\vspace{-15pt}
-% \\section*{Education}
-% ${formatEducation(formData.education)}
+${selectedSections.find(s => s.id === 'education').selected ? formatEducation(formData.education) : ''}
 
 \\end{document}
 `;
@@ -325,8 +322,12 @@ function formatEducation(education) {
     const degree = edu.degree || 'Degree';
     const institution = edu.institution || 'Institution';
     const year = edu.year || 'Year';
+
+    const sectionHeading = `% education section
+% \\vspace{-15pt}
+% \\section*{Education}`
     
-    return `\\textbf{${degree},} ${institution} \\hfill ${year}`;
+    return sectionHeading + `\\textbf{${degree},} ${institution} \\hfill ${year}`;
   }).join('\n\n');
 }
 

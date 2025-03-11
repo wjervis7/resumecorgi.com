@@ -277,14 +277,14 @@ function Experience({ experiences = [], handleChange, setFormData }) {
 
           <Input 
             type="text" 
-            label={`Name of Company #${index + 1}`} 
+            label={`Position Title at Company #${index + 1}`} 
             formData={{ 
-              id: `company${index}`, 
-              name: `company${index}`, 
-              value: experience.company
+              id: `title${index}`, 
+              name: `title${index}`, 
+              value: experience.title
             }} 
             handleChange={(e) => {
-              const updatedExperience = { ...experience, company: e.target.value };
+              const updatedExperience = { ...experience, title: e.target.value };
               const updatedExperiences = [...experiences];
               updatedExperiences[index] = updatedExperience;
               
@@ -294,17 +294,17 @@ function Experience({ experiences = [], handleChange, setFormData }) {
               }));
             }} 
           />
-          
+
           <Input 
             type="text" 
-            label={`Position Title at Company #${index + 1}`} 
+            label={`Name of Company #${index + 1}`} 
             formData={{ 
-              id: `title${index}`, 
-              name: `title${index}`, 
-              value: experience.title
+              id: `company${index}`, 
+              name: `company${index}`, 
+              value: experience.company
             }} 
             handleChange={(e) => {
-              const updatedExperience = { ...experience, title: e.target.value };
+              const updatedExperience = { ...experience, company: e.target.value };
               const updatedExperiences = [...experiences];
               updatedExperiences[index] = updatedExperience;
               
