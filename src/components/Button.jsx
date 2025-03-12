@@ -1,4 +1,4 @@
-function Button({ onClick, text = "", className = "", theme = "primary" }) {
+function Button({ onClick, text = "", className = "", theme = "primary", parentClassName = "" }) {
   const themeClasses = {
     primary:
       `
@@ -15,7 +15,7 @@ function Button({ onClick, text = "", className = "", theme = "primary" }) {
   }
 
   return (
-    <div className="relative inline-block group">
+    <div className={`${parentClassName} relative inline-block group`}>
       <span className="
         absolute top-0 left-0 
         w-full h-full 

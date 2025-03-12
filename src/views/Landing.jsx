@@ -1,4 +1,3 @@
-import './Landing.css'
 import Button from '../components/Button.jsx'
 import Corgi from '../components/Corgi.jsx'
 import Card from '../components/Card.jsx'

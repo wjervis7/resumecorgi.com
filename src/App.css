@@ -1,3 +1,35 @@
 @import "tailwindcss";
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@keyframes corgiBounce {
+  0%, 100% {
+    transform: translateY(-2%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: none;
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+.animate-corgi-bounce {
+  animation: corgiBounce 1s infinite;
+}
+
+section[contenteditable="true"] ul {
+  list-style-type: disc;
+  padding-left: 1.5em;
+  min-height: 1em;
+  outline: none;
+}
+
+section[contenteditable="true"] ul li {
+  padding: 0.25em;
+  position: relative;
+}
+
+section[contenteditable="true"] ul li:focus {
+  outline: 1px solid #4a90e2;
+  background-color: #f0f0f0;
+}

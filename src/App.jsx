@@ -3,7 +3,6 @@ import './App.css'
 import Landing from './views/Landing.jsx'
 import Editor from './views/Editor.jsx'
 import Button from './components/Button.jsx'
-import Corgi from './components/Corgi.jsx'
 import logo from './assets/resume-corgi-sm.png'
 
 function App() {
@@ -12,10 +11,6 @@ function App() {
   const handleStart = () => {
     setViewState('editor')
   };
-
-  const handleStartOver = () => {
-    setViewState('landing')
-  }
 
   const [darkMode, setDarkMode] = useState(
     localStorage.getItem('darkMode') === 'true' || 
@@ -44,7 +39,7 @@ function App() {
           )}
 
           {viewState === 'editor' && (
-            <Editor onStartOver={handleStartOver}/>
+            <Editor />
           )}
 
           {viewState === 'not-found' && (
@@ -62,7 +57,6 @@ function App() {
             <div className="grid grid-cols-2">
               <div className="col-span-1 text-left">
                 <div>
-                  {/* <Corgi size={33} className="inline-block brightness-0 dark:brightness-10000 me-2.5" /> */}
                   <img src={logo} width={81} className="inline-block absolute top-[0.3rem] left-[0.625rem]" />
                   <span className="inline-block absolute top-3.5 left-[6.125rem] font-[700] text-2xl text-gray-900 dark:text-gray-100">Resume Corgi</span>
                 </div>
@@ -75,16 +69,6 @@ function App() {
               </div>
             </div>
           </div>
-
-          {/* <div 
-            className="
-              fixed left-0 bottom-0 w-full 
-              bg-white dark:bg-zinc-900
-              border-t-1 dark:border-zinc-600
-              p-0.75
-              text-center text-sm text-gray-900 dark:text-gray-200">
-            Copyright &copy; 2025 Resume Corgi
-          </div> */}
         </div>
       </div>
     </>

@@ -1,5 +1,6 @@
 import Button from '../../components/Button.jsx'
 import Input from '../../components/Input.jsx'
+import RichTextbox from '../../components/RichTextbox.jsx';
 
 function Experience({ experiences = [], handleChange, setFormData }) {
   
@@ -141,18 +142,10 @@ function Experience({ experiences = [], handleChange, setFormData }) {
           <span className="block text-sm text-gray-800 dark:text-gray-300 mb-1">
             Accomplishments at Company #{index + 1}
           </span>
-          
-          <section
-            className="relative w-full px-3 py-3 text-sm text-black dark:text-white 
-              bg-slate-50 dark:bg-zinc-900 
-              border-1 border-black dark:border-zinc-500 rounded-lg
-              hover:border-lime-500 dark:hover:border-lime-400
-              hover:bg-lime-50 dark:hover:bg-lime-950
-              focus:outline-lime-500 focus:outline-3 focus:border-lime-500 focus:ring-lime-500 dark:focus:border-lime-300 dark:focus:border-transparent
-              focus:bg-lime-50 dark:focus:bg-lime-950"
-            contentEditable
-            suppressContentEditableWarning={true}
-            onInput={(e) => {
+
+          <RichTextbox
+             content={experience.accomplishments}
+             onInput={(e) => {
               const updatedExperience = { ...experience, accomplishments: e.currentTarget.innerHTML };
               const updatedExperiences = [...experiences];
               updatedExperiences[index] = updatedExperience;
@@ -161,12 +154,7 @@ function Experience({ experiences = [], handleChange, setFormData }) {
                 ...prevData,
                 experience: updatedExperiences
               }));
-            }}
-            >
-            <ul className="list-disc list-inside">
-              <li>Describe your accomplishments and achievements, quantified if possible</li>
-            </ul>
-          </section>
+            }} />
         </div>
       ))}
 

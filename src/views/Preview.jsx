@@ -3,6 +3,7 @@ import * as pdfjsLib from 'pdfjs-dist';
 import EngineManager from "../components/EngineManager";
 import Skeleton from "../components/Skeleton";
 import StatusIndicator from "../components/StatusIndicator";
+import Pagination from "../components/Pagination";
 
 function Preview({ formData, selectedSections }) {
   const compilationQueue = useRef([]);
@@ -290,6 +291,14 @@ function Preview({ formData, selectedSections }) {
           {/* Only show skeleton when no canvas has been rendered yet */}
           {(isLoading && !pageRendered) && <Skeleton />}
         </div>
+      </div>
+
+      <div className="flex justify-center mt-5 text-sm" hidden={numPages <= 1}>
+        <Pagination 
+          currentPage={currentPage}
+          totalPages={numPages}
+          onPrevious={() => previousPage()}
+          onNext={() => nextPage()} />
       </div>
     </>
   );
