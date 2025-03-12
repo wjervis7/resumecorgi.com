@@ -35,7 +35,7 @@ const EngineManager = (() => {
     loadPromise = (async () => {
       try {
         // Load the PdfTeXEngine script
-        await loadScript("./PdfTeXEngine.js");
+        await loadScript("PdfTeXEngine.js");
         
         // Initialize the engine
         const pdfTeXEngine = new window.PdfTeXEngine();
