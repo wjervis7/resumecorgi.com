@@ -244,7 +244,7 @@ function Editor() {
           mt-[62px]">
           <Sidebar sections={sortedSections} handleSectionSelected={handleSectionSelected} handleMoveUp={moveUp} handleMoveDown={moveDown} handleMoveTo={moveTo} />
           <div className="absolute bottom-0 left-0 right-0 w-full text-center text-xs text-gray-700 dark:text-zinc-300 pb-3">
-              Copyright &copy; 2025 Resume Corgi
+              Copyright &copy; 2025 Chad Golden
           </div>
         </div>
         <div className="
