@@ -13,7 +13,7 @@ function Editor() {
     { id: 'personalInfo', displayName: 'About You', href: '#start', selected: true, originalOrder: 0, sortOrder: 0, required: true, sortable: false },
     { id: 'experience', displayName: 'Experience', href: '#experience', selected: true, originalOrder: 1, sortOrder: 1, required: false, sortable: true },
     { id: 'education', displayName: 'Education', href: '#education', selected: true, originalOrder: 2, sortOrder: 2, required: false, sortable: true },
-    { id: 'skills', displayName: 'Skills', href: '#skills', selected: false, originalOrder: 3, sortOrder: 3, required: false, sortable: true },
+    { id: 'skills', displayName: 'Skills', href: '#skills', selected: true, originalOrder: 3, sortOrder: 3, required: false, sortable: true },
   ]
 
   const initialFormData = {
@@ -209,6 +209,29 @@ function Editor() {
     }));
   };
 
+  const moveTo = (oldIndex, newIndex) => {
+    // Create a copy of sorted sections
+    const sortedSections = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
+    
+    // Get items by actual array indices (not sort values)
+    const itemToMove = sortedSections[oldIndex];
+    
+    // Remove the item from its position
+    sortedSections.splice(oldIndex, 1);
+    
+    // Insert the item at the new position
+    sortedSections.splice(newIndex, 0, itemToMove);
+    
+    // Reassign all sortOrder values sequentially (0, 1, 2, 3, ...)
+    const updatedSections = sortedSections.map((section, index) => ({
+      ...section,
+      sortOrder: index
+    }));
+    
+    // Set the new state
+    setSections(updatedSections);
+  };
+
   const sortedSections = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
 
   return (
@@ -219,8 +242,8 @@ function Editor() {
           col-span-2 
           bg-zinc-100 dark:bg-zinc-900
           mt-[62px]">
-          <Sidebar sections={sections} handleSectionSelected={handleSectionSelected} handleMoveUp={moveUp} handleMoveDown={moveDown} />
-          <div className="absolute bottom-0 left-0 right-0 w-full text-center text-xs text-gray-700 dark:text-zinc-300 pb-2">
+          <Sidebar sections={sortedSections} handleSectionSelected={handleSectionSelected} handleMoveUp={moveUp} handleMoveDown={moveDown} handleMoveTo={moveTo} />
+          <div className="absolute bottom-0 left-0 right-0 w-full text-center text-xs text-gray-700 dark:text-zinc-300 pb-3">
               Copyright &copy; 2025 Resume Corgi
           </div>
         </div>
