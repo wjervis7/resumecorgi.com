@@ -43,7 +43,7 @@ function Experience({ experiences = [], handleChange, setFormData }) {
       {experiences.map((experience, index) => (
         <div key={index} className="mb-6">
           {index !== experiences.length && (
-            <div class="border-t-1 border-gray-500 dark:border-zinc-600 -mx-5 mb-5"></div>
+            <div className="border-t-1 border-gray-500 dark:border-zinc-600 -mx-5 mb-5"></div>
           )}
           <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-gray-200">
             {index === 0 ? 'Most Recent Position' : `Position #${index + 1}`}

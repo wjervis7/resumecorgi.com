@@ -29,15 +29,13 @@ function SectionEditor({ sections, handleSectionSelected }) {
             {sections.map(section => (
               !section.selected &&
               !section.required && (
-                <>
-                  <div className="mb-[0.5rem]">
-                    <CheckboxButton
-                      text={section.displayName}
-                      value={section.id}
-                      isChecked={section.selected}
-                      onChange={(checked) => handleSectionSelected(section.id, checked)} />
-                  </div>
-                </>)
+                <div key={section.id} className="mb-[0.5rem]">
+                  <CheckboxButton
+                    text={section.displayName}
+                    value={section.id}
+                    isChecked={section.selected}
+                    onChange={(checked) => handleSectionSelected(section.id, checked)} />
+                </div>)
             ))}
           </Card>
         </div>
