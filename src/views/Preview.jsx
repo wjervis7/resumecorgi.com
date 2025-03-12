@@ -16,11 +16,16 @@ function Preview({ formData, selectedSections }) {
   const activeCanvasRef = useRef(null);
   const displayCanvasRef = useRef(null);
   const canvasContainerRef = useRef(null);
-  
+  const lastEditTimeRef = useRef(0);
+  const inactivityTimerRef = useRef(null);
+  const [localPreviewState, setLocalPreviewState] = useState({
+    formData: null,
+    selectedSections: null,
+    compiling: false
+  });
+
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const canvasRef = useRef(null);
-  const prevCanvasRef = useRef(null);
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pageRendered, setPageRendered] = useState(false);
   const [pageRendering, setPageRendering] = useState(false);
@@ -28,6 +33,10 @@ function Preview({ formData, selectedSections }) {
   const [numPages, setNumPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const scale = 1;
+
+  const debounceShortMs = 100;
+  const debounceLongMs = 600;
+  const debounceInactivityIntervalMs = 1000;
 
   // Use memoized LaTeX to avoid recreating it on every render
   const compiledLaTeX = useMemo(() => {
@@ -53,22 +62,61 @@ function Preview({ formData, selectedSections }) {
     prevFormDataRef.current = JSON.parse(currentFormDataString);
     prevSelectedSectionsRef.current = JSON.parse(currentSelectedSectionsString);
     
+    // IMPROVEMENT: Update UI state immediately for responsiveness
+    setLocalPreviewState({
+      formData,
+      selectedSections,
+      compiling: true
+    });
+    
     // Clear any pending debounce timer
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current);
     }
+  
+    // Clear any pending inactivity timer
+    if (inactivityTimerRef.current) {
+      clearTimeout(inactivityTimerRef.current);
+    }
+    
+    // Determine if this is a "sparse" edit (long time since last edit)
+    const now = Date.now();
+    const timeSinceLastEdit = now - (lastEditTimeRef.current || 0);
+    const isSparseEdit = timeSinceLastEdit > debounceInactivityIntervalMs;
+    
+    // Fast response for sparse edits, regular debounce for active typing
+    const debounceTime = isSparseEdit ? debounceShortMs : debounceLongMs;
+    
+    // Update last edit timestamp
+    lastEditTimeRef.current = now;
     
     // Set debounce timer
     debounceTimerRef.current = setTimeout(() => {
       compileLaTeX()
-        .then(() => console.log('Compilation completed successfully'))
-        .catch(err => console.error('Compilation failed:', err));
-    }, 600);
+        .then(() => {
+          console.log('Compilation completed successfully');
+          setLocalPreviewState(prev => ({ ...prev, compiling: false }));
+          
+          // Start inactivity timer
+          inactivityTimerRef.current = setTimeout(() => {
+            // This will make the next edit considered "sparse"
+            lastEditTimeRef.current = 0;
+          }, 2000);
+        })
+        .catch(err => {
+          console.error('Compilation failed:', err);
+          setLocalPreviewState(prev => ({ ...prev, compiling: false }));
+        });
+    }, debounceTime);
     
     // Cleanup
     return () => {
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
+      }
+      
+      if (inactivityTimerRef.current) {
+        clearTimeout(inactivityTimerRef.current);
       }
       
       // Cancel any in-progress compilation
