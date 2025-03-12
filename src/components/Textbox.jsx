@@ -15,7 +15,13 @@ function Textbox({ rows = 3, label, placeholder = "", formData, handleChange }) 
                        hover:border-lime-500 dark:hover:border-lime-400
                        hover:bg-lime-50 dark:hover:bg-lime-950
                        focus:outline-lime-500 focus:outline-3 focus:border-lime-500 focus:ring-lime-500 dark:focus:border-lime-300 dark:focus:border-transparent
-                       focus:bg-lime-50 dark:focus:bg-lime-950"
+                       focus:bg-lime-50 dark:focus:bg-lime-950
+                       [&::-webkit-scrollbar]:w-3
+                       [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:rounded-full
+                       [&::-webkit-scrollbar-thumb]:border-[3px] [&::-webkit-scrollbar-thumb]:border-transparent [&::-webkit-scrollbar-track]:border-transparent
+                       [&::-webkit-scrollbar-thumb]:bg-zinc-400
+                       [&::-webkit-scrollbar-thumb]:bg-clip-padding
+                       dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600"
             placeholder={placeholder}
             rows={rows}
           />
