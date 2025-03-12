@@ -6,11 +6,11 @@ function Landing({ onStart }) {
   return (
     <>
       <div className="w-full">
-        <div className="flex flex-co w-full mb-10 xs:flex-row">
-          <div className="me-10 ms-auto sm:mb-0">
+        <div className="flex flex-col items-center w-full md:flex-row md:place-items-center px-5">
+          <div className="w-full max-w-md md:me-10 md:ms-auto">
             <div className="relative h-full ml-0 mr-0 text-lg">
               <Card>
-              <div className="flex items-center -mt-1 mb-2">
+                <div className="flex items-center -mt-1 mb-2">
                   <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Welcome to Resume Corgi!</h1>
                 </div>
                 <p className="text-slate-800 py-1 mb-3 dark:text-gray-200">
@@ -20,11 +20,10 @@ function Landing({ onStart }) {
               </Card>
             </div>
           </div>
-          <div className="me-auto sm:mb-0">
+          <div className="mt-4 md:mt-0 md:me-auto">
             <Corgi size={172} />
           </div>
         </div>
-        
       </div>
     </>
   )

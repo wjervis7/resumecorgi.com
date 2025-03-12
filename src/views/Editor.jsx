@@ -236,10 +236,10 @@ function Editor() {
 
   return (
     <>
-      <div className="grid grid-cols-12 gap-0 w-full h-screen">
+      <div className="grid md:grid-cols-12 grid-cols-12 gap-0 w-full h-screen">
         <div className="
           relative
-          col-span-2 
+          md:col-span-2 col-span-5
           bg-zinc-100 dark:bg-zinc-900
           mt-[62px]">
           <Sidebar sections={sortedSections} handleSectionSelected={handleSectionSelected} handleMoveUp={moveUp} handleMoveDown={moveDown} handleMoveTo={moveTo} />
@@ -248,7 +248,7 @@ function Editor() {
           </div>
         </div>
         <div className="
-            col-span-4
+            md:col-span-4 col-span-7
             border-l-1 border-zinc-500 dark:border-zinc-600
             overflow-x-auto mt-[62px]
             [&::-webkit-scrollbar]:w-1.5
@@ -270,7 +270,7 @@ function Editor() {
         </div>
 
         <div className="
-            col-span-6
+            md:col-span-6 col-span-12
             overflow-x-auto mt-[62px]
             p-5
             bg-zinc-600 dark:bg-zinc-800
