@@ -7,8 +7,11 @@ import Education from './forms/Education.jsx'
 import Card from '../components/Card.jsx'
 import Skills from './forms/Skills.jsx'
 import Sidebar from './Sidebar.jsx'
+import Button from '../components/Button.jsx'
 
 function Editor() {
+  const [currentMobileView, setCurrentMobileView] = useState('form');
+
   const initialSections = [
     { id: 'personalInfo', displayName: 'About You', href: '#start', selected: true, originalOrder: 0, sortOrder: 0, required: true, sortable: false },
     { id: 'experience', displayName: 'Experience', href: '#experience', selected: true, originalOrder: 1, sortOrder: 1, required: false, sortable: true },
@@ -237,25 +240,28 @@ function Editor() {
   return (
     <>
       <div className="grid md:grid-cols-12 grid-cols-12 gap-0 w-full h-screen">
-        <div className="
+        <div className={`
+          ${currentMobileView !== 'sections' ? "hidden" : ""} md:block
           relative
-          md:col-span-2 col-span-5
+          col-span-12 md:col-span-2
+          h-screen md:h-auto
           bg-zinc-100 dark:bg-zinc-900
-          mt-[62px]">
+          mt-[62px]`}>
           <Sidebar sections={sortedSections} handleSectionSelected={handleSectionSelected} handleMoveUp={moveUp} handleMoveDown={moveDown} handleMoveTo={moveTo} />
           <div className="absolute bottom-0 left-0 right-0 w-full text-center text-xs text-gray-700 dark:text-zinc-300 pb-3">
               Copyright &copy; 2025 Chad Golden
           </div>
         </div>
-        <div className="
-            md:col-span-4 col-span-7
+        <div className={`
+            ${currentMobileView !== 'form' ? "hidden" : ""} md:block
+            col-span-12 md:col-span-4
             border-l-1 border-zinc-500 dark:border-zinc-600
             overflow-x-auto mt-[62px]
             [&::-webkit-scrollbar]:w-1.5
             [&::-webkit-scrollbar-track]:bg-zinc-200
             [&::-webkit-scrollbar-thumb]:bg-zinc-400
             dark:[&::-webkit-scrollbar-track]:bg-zinc-800
-            dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600">
+            dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600`}>
           <div className="w-full px-5 pt-5 mb-[75vh]" id="start">
 
             {sortedSections
@@ -269,7 +275,8 @@ function Editor() {
           </div>
         </div>
 
-        <div className="
+        <div className={`
+            ${currentMobileView !== 'preview' ? "hidden md:block" : ""}
             md:col-span-6 col-span-12
             overflow-x-auto mt-[62px]
             p-5
@@ -280,9 +287,43 @@ function Editor() {
             [&::-webkit-scrollbar-track]:bg-zinc-200
             [&::-webkit-scrollbar-thumb]:bg-zinc-400
             dark:[&::-webkit-scrollbar-track]:bg-zinc-800
-            dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600">
+            dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600`}>
             <Preview formData={formData} selectedSections={sections} />
         </div>
+      </div>
+      <div className={`
+        fixed
+        text-gray-900 dark:text-gray-100
+        bg-white dark:bg-zinc-950
+        bottom-0 left-0 right-0 
+        md:hidden
+        px-2 pt-3 pb-3.5
+        flex justify-between space-1
+        border-t-1 border-gray-900 dark:border-zinc-600`}>
+          <div className="flex-1 pe-2">
+            <Button
+              theme={currentMobileView === 'sections' ? 'primary' : 'default' }
+              text="Sections" 
+              className="w-full" 
+              parentClassName="w-full"
+               onClick={() => setCurrentMobileView('sections')} />
+          </div>
+          <div className="flex-1 pe-2">
+            <Button
+              theme={currentMobileView === 'form' ? 'primary' : 'default' }
+              text="Form" 
+              className="w-full" 
+              parentClassName="w-full" 
+              onClick={() => setCurrentMobileView('form')} />
+          </div>
+          <div className="flex-1">
+            <Button
+              theme={currentMobileView === 'preview' ? 'primary' : 'default' }
+              text="Preview" 
+              className="w-full" 
+              parentClassName="w-full" 
+              onClick={() => setCurrentMobileView('preview')} />
+          </div>
       </div>
     </>
   )

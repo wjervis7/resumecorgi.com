@@ -1,16 +1,22 @@
 function Button({ onClick, text = "", className = "", theme = "primary", parentClassName = "" }) {
   const themeClasses = {
+    default:
+      `
+        bg-gray-100 dark:bg-zinc-800
+        group-hover:bg-gray-200 dark:group-hover:bg-zinc-700
+        group-active:bg-purple-200 dark:group-active:bg-zinc-700
+      `,
     primary:
       `
         bg-purple-100 dark:bg-purple-900
         group-hover:bg-purple-200 dark:group-hover:bg-purple-800
-        group-active:bg-purple-200
+        group-active:bg-purple-200 dark:group-active:bg-purple-800
       `,
     interaction:
       `
         bg-sky-100 dark:bg-blue-900
         group-hover:bg-sky-200 dark:group-hover:bg-blue-800
-        group-active:bg-sky-200
+        group-active:bg-sky-200 dark:group-active:bg-blue-800
       `,
   }
 
