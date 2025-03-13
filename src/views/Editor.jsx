@@ -8,6 +8,7 @@ import Card from '../components/Card.jsx'
 import Skills from './forms/Skills.jsx'
 import Sidebar from './Sidebar.jsx'
 import Button from '../components/Button.jsx'
+import Footer from '../components/Footer.jsx'
 
 function Editor() {
   const [currentMobileView, setCurrentMobileView] = useState('form');
@@ -246,32 +247,19 @@ function Editor() {
           col-span-12 md:col-span-2
           h-screen md:h-auto
           bg-gray-50 dark:bg-zinc-950
-          mt-[62px]`}>
+          mt-[74px]`}>
           <div className="px-3 pt-3">
             <Sidebar sections={sortedSections} handleSectionSelected={handleSectionSelected} handleMoveUp={moveUp} handleMoveDown={moveDown} handleMoveTo={moveTo} />
           </div>
-          
-          <div className="absolute bottom-[130px] md:bottom-0 left-0 right-0 w-full text-center pb-3">
-            <div className="px-5">
-              <div className="hidden md:block"><Corgi size={128} /></div>
-              <div className="block md:hidden"><Corgi size={96} /></div>
-            </div>
 
-            <div className="px-5 mt-0.5 mb-5">
-              <span className="text-lg:md text-gray-900 dark:text-gray-200">You've got this!</span>
-            </div>
-
-            <div className="text-xs text-gray-700 dark:text-zinc-300">
-              Copyright &copy; 2025 Chad Golden
-            </div>
-          </div>
+          <Footer />
         </div>
         <div className={`
             ${currentMobileView !== 'form' ? "hidden" : ""} md:block
             bg-gray-50 dark:bg-zinc-950
             col-span-12 md:col-span-4
             border-0 md:border-l-1 md:border-zinc-500 dark:border-zinc-600
-            overflow-x-auto mt-[62px]
+            overflow-x-auto mt-[74px]
             [&::-webkit-scrollbar]:w-1.5
             [&::-webkit-scrollbar-track]:bg-zinc-300
             [&::-webkit-scrollbar-thumb]:bg-zinc-400
@@ -293,7 +281,7 @@ function Editor() {
         <div className={`
             ${currentMobileView !== 'preview' ? "hidden md:block" : ""}
             md:col-span-6 col-span-12
-            overflow-x-auto mt-[62px]
+            overflow-x-auto mt-[74px]
             p-5
             bg-zinc-600 dark:bg-zinc-800
             border-l-1 border-zinc-700 
