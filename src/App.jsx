@@ -3,7 +3,7 @@ import './App.css'
 import Landing from './views/Landing.jsx'
 import Editor from './views/Editor.jsx'
 import Button from './components/Button.jsx'
-import logo from './assets/resume-corgi-sm.png'
+import logo from './assets/resume-corgi-xs.png'
 
 function App() {
   const [viewState, setViewState] = useState('landing')
@@ -31,7 +31,7 @@ function App() {
 
   return (
     <>
-      <div className={"bg-gray-100 dark:bg-zinc-900 overflow-hidden"}>
+      <div className={"bg-gray-100 dark:bg-[oklch(0.176_0.0055_285.85)] dark:bg-zinc- bg-blend-darken overflow-hidden"}>
         <div className={"relative flex flex-col justify-center items-center min-h-screen mx-auto xl:px-0"}>
 
           {viewState === 'landing' && (
