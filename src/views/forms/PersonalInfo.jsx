@@ -4,10 +4,10 @@ import Textbox from '../../components/Textbox.jsx'
 function PersonalInfo({ personalInfo, handleChange }) {
   return (
     <>
-      <div className="flex items-center -mt-1 mb-2">
+      <div className="flex items-center -mt-1">
         <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2" id="personalInfo">About You</h2>
       </div>
-      <p className="text-slate-800 mb-4 dark:text-gray-200 mb-4 w-2/3">
+      <p className="hidden text-slate-800 mb-4 dark:text-gray-200 mb-3 w-2/3">
         Tell us about yourself. Your edits will be visible in the preview panel as you type.
       </p>
 

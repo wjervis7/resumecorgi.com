@@ -36,16 +36,16 @@ function Experience({ experiences = [], handleChange, setFormData }) {
       <div className="flex items-center -mt-1 mb-2">
         <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2" id="experience">Experience</h2>
       </div>
-      <p className="text-slate-800 mb-4 dark:text-gray-200 mb-6 w-2/3">
+      <p className="hidden text-slate-800 mb-4 dark:text-gray-200 mb-6 w-2/3">
         Let's jot down where you went to work, starting with your most recent organization.
       </p>
 
       {experiences.map((experience, index) => (
-        <div key={index} className="mb-6">
-          {index !== experiences.length && (
-            <div className="border-t-1 border-gray-500 dark:border-zinc-600 -mx-5 mb-5"></div>
+        <div key={index} className="mb-3">
+          {index !== 0 && index !== experiences.length && (
+            <div className="border-t-1 border-gray-400 dark:border-zinc-700 -mx-3 mb-5"></div>
           )}
-          <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-gray-200">
+          <h3 className="text-medium font-bold mb-1.5 text-gray-900 dark:text-gray-200">
             {index === 0 ? 'Most Recent Position' : `Position #${index + 1}`}
             {index > 0 && (
               <>
@@ -53,6 +53,7 @@ function Experience({ experiences = [], handleChange, setFormData }) {
                 <Button
                   text="Remove"
                   onClick={() => removeExperience(index)}
+                  parentClassName="mb-1"
                   className="text-sm"
                 />
               </>

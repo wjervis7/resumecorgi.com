@@ -39,14 +39,16 @@ const SortableNavItem = ({ id, displayName, href, sortable }) => {
 
   if (!sortable) {
     return (
-      <div ref={setNodeRef} className={`relative block group mb-2`}>
+      <div ref={setNodeRef} className={`relative block group mb-[0.725rem]`}>
         <span className="
           absolute top-0 left-0 
           w-full h-full 
-          mt-[0.15rem]
-          bg-black dark:bg-zinc-500
+          mt-[0.2rem]
+          bg-black dark:bg-zinc-100
           rounded-[0.5rem]
-          group-hover:mt-[0.2rem]
+          group-hover:translate-x-[3px] group-hover:translate-y-[1px]
+          transition
+          duration-150
         "></span>
         <div
           className={`
@@ -55,7 +57,7 @@ const SortableNavItem = ({ id, displayName, href, sortable }) => {
             relative w-full
             ps-3 pe-1.5 py-1.5
             font-bold text-black dark:text-white
-            border-1 border-black dark:border-zinc-500 rounded-[0.45rem]
+            border-1 border-black dark:border-zinc-100 rounded-[0.45rem]
           `}>
           <div className="flex justify-between items-center w-full">
           <a href={href} className={`${anchorCss}`}>{displayName}</a>
@@ -73,14 +75,16 @@ const SortableNavItem = ({ id, displayName, href, sortable }) => {
   }
 
   return (
-    <div ref={setNodeRef} style={style} className={`relative block group mb-2`}>
+    <div ref={setNodeRef} style={style} className={`relative block group mb-[0.725rem]`}>
       <span className="
         absolute top-0 left-0 
         w-full h-full 
-        mt-[0.15rem]
-        bg-black dark:bg-zinc-500
+        mt-[0.2rem]
+        bg-black dark:bg-zinc-100
         rounded-[0.5rem]
-        group-hover:mt-[0.2rem]
+        group-hover:translate-x-[3px] group-hover:translate-y-[1px]
+        transition
+        duration-150
       "></span>
       <div
         className={`
@@ -89,7 +93,7 @@ const SortableNavItem = ({ id, displayName, href, sortable }) => {
           relative w-full
           ps-3 pe-1.5 py-1.5
           font-bold text-black dark:text-white
-          border-1 border-black dark:border-zinc-500 rounded-[0.45rem]
+          border-1 border-black dark:border-zinc-50 rounded-[0.45rem]
         `}>
         <div className="flex justify-between items-center w-full">
         <a href={href} className={`${anchorCss}`}>{displayName}</a>

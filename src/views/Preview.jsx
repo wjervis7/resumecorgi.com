@@ -61,8 +61,7 @@ function Preview({ formData, selectedSections }) {
     // Store current values for next comparison
     prevFormDataRef.current = JSON.parse(currentFormDataString);
     prevSelectedSectionsRef.current = JSON.parse(currentSelectedSectionsString);
-    
-    // IMPROVEMENT: Update UI state immediately for responsiveness
+
     setLocalPreviewState({
       formData,
       selectedSections,

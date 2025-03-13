@@ -79,7 +79,7 @@ function Editor() {
       id: 'personalInfo',
       renderFunc: () =>
         <>
-          <Card rightElement={<Corgi size={110} />}>
+          <Card>
             <PersonalInfo personalInfo={formData.personalInfo} handleChange={handleChange} />
             <div className="-mb-1.5"></div>
           </Card>
@@ -114,7 +114,7 @@ function Editor() {
 
   const [formData, setFormData] = useState(initialFormData);
   const [sections, setSections] = useState(initialSections);
-    
+
   // Handle form changes and trigger debounced update
   const handleChange = (section, field, value) => {
     setFormData(prevData => ({
@@ -127,10 +127,10 @@ function Editor() {
   };
 
   const handleSectionSelected = (sectionId, checked) => {
-    setSections(prevSections => 
-      prevSections.map(section => 
-        section.id === sectionId 
-          ? { ...section, selected: checked } 
+    setSections(prevSections =>
+      prevSections.map(section =>
+        section.id === sectionId
+          ? { ...section, selected: checked }
           : section
       )
     );
@@ -139,15 +139,15 @@ function Editor() {
   const moveUp = (index) => {
     // Get the current sorted order for reference
     const sortedSections = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
-    
+
     // Find the section in the sortedSections array by id
     const sectionId = sections[index].id;
     const sortedIndex = sortedSections.findIndex(section => section.id === sectionId);
     const item = sortedSections[sortedIndex];
-    
+
     // Cannot move if it's not sortable
     if (!item.sortable) return;
-    
+
     // Find the previous sortable item (if any)
     let prevSortableIndex = -1;
     for (let i = sortedIndex - 1; i >= 0; i--) {
@@ -156,12 +156,12 @@ function Editor() {
         break;
       }
     }
-    
+
     // If no previous sortable item, we can't move up
     if (prevSortableIndex === -1) return;
-    
+
     const prevItem = sortedSections[prevSortableIndex];
-    
+
     // Update sections with swapped sortOrders
     setSections(sections.map(section => {
       if (section.id === item.id) {
@@ -173,19 +173,19 @@ function Editor() {
       return section;
     }));
   };
-  
+
   const moveDown = (index) => {
     // Get the current sorted order for reference
     const sortedSections = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
-    
+
     // Find the section in the sortedSections array by id
     const sectionId = sections[index].id;
     const sortedIndex = sortedSections.findIndex(section => section.id === sectionId);
     const item = sortedSections[sortedIndex];
-    
+
     // Cannot move if it's not sortable
     if (!item.sortable) return;
-    
+
     // Find the next sortable item (if any)
     let nextSortableIndex = -1;
     for (let i = sortedIndex + 1; i < sortedSections.length; i++) {
@@ -194,12 +194,12 @@ function Editor() {
         break;
       }
     }
-    
+
     // If no next sortable item, we can't move down
     if (nextSortableIndex === -1) return;
-    
+
     const nextItem = sortedSections[nextSortableIndex];
-    
+
     // Update sections with swapped sortOrders
     setSections(sections.map(section => {
       if (section.id === item.id) {
@@ -215,22 +215,22 @@ function Editor() {
   const moveTo = (oldIndex, newIndex) => {
     // Create a copy of sorted sections
     const sortedSections = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
-    
+
     // Get items by actual array indices (not sort values)
     const itemToMove = sortedSections[oldIndex];
-    
+
     // Remove the item from its position
     sortedSections.splice(oldIndex, 1);
-    
+
     // Insert the item at the new position
     sortedSections.splice(newIndex, 0, itemToMove);
-    
+
     // Reassign all sortOrder values sequentially (0, 1, 2, 3, ...)
     const updatedSections = sortedSections.map((section, index) => ({
       ...section,
       sortOrder: index
     }));
-    
+
     // Set the new state
     setSections(updatedSections);
   };
@@ -245,30 +245,45 @@ function Editor() {
           relative
           col-span-12 md:col-span-2
           h-screen md:h-auto
-          bg-zinc-100 dark:bg-zinc-900
+          bg-gray-50 dark:bg-zinc-950
           mt-[62px]`}>
-          <Sidebar sections={sortedSections} handleSectionSelected={handleSectionSelected} handleMoveUp={moveUp} handleMoveDown={moveDown} handleMoveTo={moveTo} />
-          <div className="absolute bottom-0 left-0 right-0 w-full text-center text-xs text-gray-700 dark:text-zinc-300 pb-3">
+          <div className="px-3 pt-3">
+            <Sidebar sections={sortedSections} handleSectionSelected={handleSectionSelected} handleMoveUp={moveUp} handleMoveDown={moveDown} handleMoveTo={moveTo} />
+          </div>
+          
+          <div className="absolute bottom-[130px] md:bottom-0 left-0 right-0 w-full text-center pb-3">
+            <div className="px-5">
+              <div className="hidden md:block"><Corgi size={128} /></div>
+              <div className="block md:hidden"><Corgi size={96} /></div>
+            </div>
+
+            <div className="px-5 mt-0.5 mb-5">
+              <span className="text-lg:md text-gray-900 dark:text-gray-200">You've got this!</span>
+            </div>
+
+            <div className="text-xs text-gray-700 dark:text-zinc-300">
               Copyright &copy; 2025 Chad Golden
+            </div>
           </div>
         </div>
         <div className={`
             ${currentMobileView !== 'form' ? "hidden" : ""} md:block
+            bg-gray-50 dark:bg-zinc-950
             col-span-12 md:col-span-4
-            border-l-1 border-zinc-500 dark:border-zinc-600
+            border-0 md:border-l-1 md:border-zinc-500 dark:border-zinc-600
             overflow-x-auto mt-[62px]
             [&::-webkit-scrollbar]:w-1.5
-            [&::-webkit-scrollbar-track]:bg-zinc-200
+            [&::-webkit-scrollbar-track]:bg-zinc-300
             [&::-webkit-scrollbar-thumb]:bg-zinc-400
             dark:[&::-webkit-scrollbar-track]:bg-zinc-800
             dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600`}>
-          <div className="w-full px-5 pt-5 mb-[75vh]" id="start">
+          <div className="w-full px-3 pt-3 mb-[75vh]" id="start">
 
             {sortedSections
               .filter(section => section.selected)
               .map(section => (
                 <div key={section.id}>
-                  { sectionRenderMapping.find(srm => srm.id === section.id).renderFunc() }
+                  {sectionRenderMapping.find(srm => srm.id === section.id).renderFunc()}
                 </div>
               ))}
 
@@ -288,7 +303,7 @@ function Editor() {
             [&::-webkit-scrollbar-thumb]:bg-zinc-400
             dark:[&::-webkit-scrollbar-track]:bg-zinc-800
             dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600`}>
-            <Preview formData={formData} selectedSections={sections} />
+          <Preview formData={formData} selectedSections={sections} />
         </div>
       </div>
       <div className={`
@@ -300,30 +315,30 @@ function Editor() {
         px-2 pt-3 pb-3.5
         flex justify-between space-1
         border-t-1 border-gray-900 dark:border-zinc-600`}>
-          <div className="flex-1 pe-2">
-            <Button
-              theme={currentMobileView === 'sections' ? 'primary' : 'default' }
-              text="Sections" 
-              className="w-full" 
-              parentClassName="w-full"
-               onClick={() => setCurrentMobileView('sections')} />
-          </div>
-          <div className="flex-1 pe-2">
-            <Button
-              theme={currentMobileView === 'form' ? 'primary' : 'default' }
-              text="Form" 
-              className="w-full" 
-              parentClassName="w-full" 
-              onClick={() => setCurrentMobileView('form')} />
-          </div>
-          <div className="flex-1">
-            <Button
-              theme={currentMobileView === 'preview' ? 'primary' : 'default' }
-              text="Preview" 
-              className="w-full" 
-              parentClassName="w-full" 
-              onClick={() => setCurrentMobileView('preview')} />
-          </div>
+        <div className="flex-1 pe-2">
+          <Button
+            theme={currentMobileView === 'sections' ? 'primary' : 'default'}
+            text="Sections"
+            className="w-full"
+            parentClassName="w-full"
+            onClick={() => setCurrentMobileView('sections')} />
+        </div>
+        <div className="flex-1 pe-2">
+          <Button
+            theme={currentMobileView === 'form' ? 'primary' : 'default'}
+            text="Form"
+            className="w-full"
+            parentClassName="w-full"
+            onClick={() => setCurrentMobileView('form')} />
+        </div>
+        <div className="flex-1">
+          <Button
+            theme={currentMobileView === 'preview' ? 'primary' : 'default'}
+            text="Preview"
+            className="w-full"
+            parentClassName="w-full"
+            onClick={() => setCurrentMobileView('preview')} />
+        </div>
       </div>
     </>
   )

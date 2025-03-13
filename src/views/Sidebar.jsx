@@ -40,7 +40,7 @@ function Sidebar({ sections, handleMoveUp, handleMoveDown, handleSectionSelected
 
   return (
     <>
-      <div className="h-full px-3 py-5 mt-0.5">
+      <div className="">
         <SortableNav sections={sections} handleMoveTo={handleMoveTo}  />
       </div>
     </>

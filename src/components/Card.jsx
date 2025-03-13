@@ -1,10 +1,10 @@
 function Card({ children, rightElement }) {
   return (
-    <div className="flex flex-co w-full mb-6 xs:flex-row">
+    <div className="flex flex-co w-full mb-3 xs:flex-row">
       <div className="w-full sm:mb-0">
         <div className="relative h-full ml-0 mr-0">
-          <span className="absolute top-0 left-0 w-full h-full mt-1 bg-black dark:bg-zinc-500 rounded-xl"></span>
-          <div className="relative h-full p-5 bg-white dark:bg-zinc-900 border-1 border-black dark:border-zinc-600 rounded-xl px-5 py-6">
+          <span className="hidden absolute top-0 left-0 w-full h-full mt-1 bg-black dark:bg-zinc-100 rounded-xl"></span>
+          <div className="relative h-full p-5 bg-white dark:bg-zinc-900 border-1 border-gray-400 dark:border-zinc-700 rounded-xl px-3 py-3.5">
             {children}
           </div>
           {rightElement && (
