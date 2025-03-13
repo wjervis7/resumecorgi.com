@@ -46,9 +46,9 @@ function LightSwitch() {
   }, [currentTheme]);
 
   return (
-    <div className="relative z-0 inline-grid grid-cols-3 gap-0.5 rounded-full bg-gray-950/5 p-0.75 text-gray-950 dark:bg-white/10 dark:text-white border-1 border-gray-700 dark:border-zinc-600" role="radiogroup">
+    <div className="relative z-0 inline-grid grid-cols-3 gap-0.5 rounded-full bg-gray-950/5 text-gray-950 dark:bg-white/10 dark:text-white border-1 border-gray-700 dark:border-zinc-600" role="radiogroup">
       <span
-        className={`rounded-full p-1.5 *:size-7 sm:p-0 cursor-pointer ${
+        className={`rounded-full p-0.5 size-6 md:size-7 cursor-pointer ${
           currentTheme === 'system' 
             ? "bg-white ring inset-ring ring-gray-950/10 inset-ring-white/10 dark:bg-zinc-700 dark:text-white dark:ring-transparent" 
             : ""
@@ -73,7 +73,7 @@ function LightSwitch() {
         </svg>
       </span>
       <span
-        className={`rounded-full p-1.5 *:size-7 sm:p-0 cursor-pointer ${
+        className={`rounded-full p-0.5 size-6 md:size-7 cursor-pointer ${
           currentTheme === 'light' 
             ? "bg-white ring inset-ring ring-gray-950/10 inset-ring-white/10 dark:bg-zinc-700 dark:text-black dark:ring-transparent" 
             : ""
@@ -104,7 +104,7 @@ function LightSwitch() {
         </svg>
       </span>
       <span
-        className={`rounded-full p-1.5 *:size-7 sm:p-0 cursor-pointer ${
+        className={`rounded-full p-0.5 size-6 md:size-7 cursor-pointer ${
           currentTheme === 'dark' 
             ? "bg-white ring inset-ring ring-gray-950/10 inset-ring-white/10 dark:bg-zinc-700 dark:text-white dark:ring-transparent" 
             : ""

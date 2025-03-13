@@ -46,10 +46,6 @@ function App() {
                 </div>
               </div>
               <div className="col-span-1 text-right">
-                {/* <Button
-                  className="text-sm"
-                  text={(darkMode) ? "🌞" : "🌚"}
-                  onClick={() => setDarkMode(!darkMode)} /> */}
                   <LightSwitch />
               </div>
             </div>
