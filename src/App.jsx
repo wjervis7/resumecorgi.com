@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import './App.css'
 import Landing from './views/Landing.jsx'
 import Editor from './views/Editor.jsx'
 import Button from './components/Button.jsx'
 import logo from './assets/resume-corgi-xs.png'
+import LightSwitch from './components/LightSwitch.jsx'
 
 function App() {
   const [viewState, setViewState] = useState('landing')
@@ -11,23 +12,6 @@ function App() {
   const handleStart = () => {
     setViewState('editor')
   };
-
-  const [darkMode, setDarkMode] = useState(
-    localStorage.getItem('darkMode') === 'true' || 
-    window.matchMedia('(prefers-color-scheme: dark)').matches
-  )
-
-  useEffect(() => {
-    // Apply dark mode class to document
-    if (darkMode) {
-      document.documentElement.setAttribute('data-theme', 'dark')
-    } else {
-      document.documentElement.setAttribute('data-theme', 'light')
-    }
-    
-    // Save preference to localStorage
-    localStorage.setItem('darkMode', darkMode)
-  }, [darkMode])
 
   return (
     <>
@@ -62,10 +46,11 @@ function App() {
                 </div>
               </div>
               <div className="col-span-1 text-right">
-                <Button
+                {/* <Button
                   className="text-sm"
                   text={(darkMode) ? "🌞" : "🌚"}
-                  onClick={() => setDarkMode(!darkMode)} />
+                  onClick={() => setDarkMode(!darkMode)} /> */}
+                  <LightSwitch />
               </div>
             </div>
           </div>
