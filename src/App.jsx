@@ -15,7 +15,7 @@ function App() {
 
   return (
     <>
-      <div className={"bg-gray-50 dark:bg-[oklch(0.176_0.0055_285.85)] dark:bg-zinc- bg-blend-darken overflow-hidden"}>
+      <div className={"bg-gray-50 dark:bg-[oklch(0.176_0.0055_285.85)] overflow-hidden"}>
         <div className={"relative flex flex-col justify-center items-center min-h-screen mx-auto xl:px-0"}>
 
           {viewState === 'landing' && (
@@ -37,7 +37,8 @@ function App() {
               fixed left-0 top-0 w-full 
               bg-white dark:bg-zinc-950
               border-b-1 dark:border-zinc-600
-              py-[1.25rem] ps-1 pe-4">
+              py-[1.25rem] ps-1 pe-4
+              z-1000">
             <div className="grid grid-cols-2">
               <div className="col-span-1 text-left">
                 <div>

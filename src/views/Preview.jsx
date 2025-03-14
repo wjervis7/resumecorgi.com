@@ -4,6 +4,7 @@ import EngineManager from "../components/EngineManager";
 import Skeleton from "../components/Skeleton";
 import StatusIndicator from "../components/StatusIndicator";
 import Pagination from "../components/Pagination";
+import Toolbar from "../components/Toolbar";
 
 function Preview({ formData, selectedSections }) {
   const compilationQueue = useRef([]);
@@ -35,7 +36,7 @@ function Preview({ formData, selectedSections }) {
   const [canvasWidthPx, setCanvasWidthPx] = useState(768);
 
   const scale = 1;
-  const debounceShortMs = 100;
+  const debounceShortMs = 50;
   const debounceLongMs = 600;
   const debounceInactivityIntervalMs = 1000;
   const maxWidth = 768;
@@ -347,11 +348,19 @@ function Preview({ formData, selectedSections }) {
     <>
       <h2 className="text-lg sr-only">PDF Preview</h2>
   
-      <div className="absolute z-50">
-        <StatusIndicator error={error} isLoading={isLoading} pageRendered={pageRendered} />
+      <div className="sticky top-0 w-full z-50">
+        <Toolbar 
+          error={error} 
+          isLoading={isLoading} 
+          pageRendered={pageRendered} 
+          currentPage={currentPage}
+          totalPages={numPages}
+          onPrevious={() => previousPage()}
+          onNext={() => nextPage()}
+          />
       </div>
 
-      <div id="pdf-viewer-area" className="pdf-viewer flex justify-center items-center w-full mt-14">
+      <div id="pdf-viewer-area" className="pdf-viewer flex justify-center items-center w-full">
         <div ref={canvasContainerRef} className="canvas-container relative">
 
           {/* Display canvas - always visible */}
@@ -374,14 +383,6 @@ function Preview({ formData, selectedSections }) {
           {/* Only show skeleton when no canvas has been rendered yet */}
           {(isLoading && !pageRendered) && <Skeleton height={canvasHeightPx} width={canvasWidthPx} />}
         </div>
-      </div>
-
-      <div className="flex justify-center mt-5 text-sm" hidden={numPages <= 1}>
-        <Pagination 
-          currentPage={currentPage}
-          totalPages={numPages}
-          onPrevious={() => previousPage()}
-          onNext={() => nextPage()} />
       </div>
     </>
   );

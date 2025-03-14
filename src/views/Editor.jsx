@@ -290,7 +290,7 @@ function Editor() {
             ${currentMobileView !== 'preview' ? "hidden md:block" : ""}
             md:col-span-6 col-span-12
             overflow-x-auto mt-[74px]
-            p-3
+            px-3 pt-0 pb-3
             bg-zinc-600 dark:bg-zinc-800
             border-l-1 border-zinc-700 
             dark:text-white
