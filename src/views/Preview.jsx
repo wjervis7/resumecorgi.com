@@ -486,14 +486,7 @@ function formatSummary(summary) {
 // Helper to format experience
 function formatExperience(experience) {
   if (!experience || !experience.length) {
-    return `% experience section
-\\section*{Experience}
-\\textbf{Position Title,} {Company Name} -- Location \\hfill Start -- End \\\\
-\\vspace{-9pt}
-\\begin{itemize}
-  \\item Describe your responsibilities and achievements
-  \\item Quantify your results when possible
-\\end{itemize}`;
+    return ``;
   }
 
   const sectionHeading = `\\section*{Experience}
@@ -504,7 +497,7 @@ function formatExperience(experience) {
     const company = job.company || 'Company Name';
     const dateRange = `${job.start || 'Start'} -- ${job.end || 'End'}`;
 
-    // // Extract bullet points as array of strings
+    // Extract bullet points as array of strings
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = job.accomplishments || '<ul><li>Describe your responsibilities and achievements, quantified if possible</li></ul>';
     const accomplishments = Array.from(tempDiv.querySelectorAll('li'))
@@ -524,21 +517,42 @@ ${accomplishments}
 
 // Helper to format education
 function formatEducation(education) {
+  console.log(education);
   if (!education || !education.length) {
-    return `\\textbf{Degree,} Institution \\hfill Year`;
+    return ``;
   }
   
-  return education.map(edu => {
+  const sectionHeading = `% education section
+  % \\vspace{-5pt}
+  \\section*{Education}`
+
+  return sectionHeading + education.map((edu, index) => {
     const degree = edu.degree || 'Degree';
     const institution = edu.institution || 'Institution';
-    const year = edu.year || 'Year';
+    const year = edu.graduationDate || 'Year';
 
-    const sectionHeading = `% education section
-% \\vspace{-5pt}
-\\section*{Education}`
-    
-    return sectionHeading + `\\textbf{${degree},} ${institution} \\hfill ${year}
-\\vspace{10pt}`;
+    // Extract bullet points as array of strings
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = edu.accomplishments || '<ul><li>Describe your honors or achievements, if applicable</li></ul>';
+    const accomplishments = Array.from(tempDiv.querySelectorAll('li'))
+      .map(li => li.textContent.trim())
+      .filter(item => item && item.length > 0)
+      .map(item => `  \\item ${item}`).join('\n');
+
+    const locationText = edu.location && edu.location.length > 0 ? ` -- ${edu.location}` : "";
+    const mainLine = `\\textbf{${degree},} ${institution}${locationText} \\hfill ${year} \\\\`;
+    const gpaLine = `${edu.gpa && edu.gpa.length > 0 ? `\\textbf{GPA:} ${edu.gpa} \\\\` : "" }`
+
+    return `${mainLine}
+${gpaLine}
+${accomplishments && accomplishments.length > 0
+   ? `\\begin{itemize}
+\\vspace{-10pt}
+${accomplishments}
+\\end{itemize}
+\\vspace{-4pt}`
+  : ""}
+\\vspace{${index !== education.length - 1 ? `3`: `-5` }pt}`;
   }).join('\n\n');
 }
 

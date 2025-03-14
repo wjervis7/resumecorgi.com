@@ -70,7 +70,16 @@ function Editor() {
       {
         "degree": "Master of Scaring",
         "institution": "Monsters University",
-        "year": "1990"
+        "location": "",
+        "graduationDate": "1990",
+        "gpa": "",
+        "accomplishments": ""
+      }
+    ],
+    "skills": [
+      {
+        category: "Tools",
+        skillList: [ 'Scare-o-meter 9000']
       }
     ]
   };
@@ -99,7 +108,7 @@ function Editor() {
       id: 'education', renderFunc: () =>
         <>
           <Card>
-            <Education education={formData.education} handleChange={handleChange} />
+            <Education education={formData.education} handleChange={handleChange} setFormData={setFormData} />
           </Card>
         </>
     },
@@ -107,7 +116,7 @@ function Editor() {
       id: 'skills', renderFunc: () =>
         <>
           <Card>
-            <Skills />
+            <Skills education={formData.skills} handleChange={handleChange} setFormData={setFormData} />
           </Card>
         </>
     },
