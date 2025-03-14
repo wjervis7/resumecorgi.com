@@ -56,7 +56,8 @@ function Preview({ formData, selectedSections }) {
 
     const updateCanvasWidth = () => {
       if (pdfViewerArea) {
-        const viewerWidth = pdfViewerArea.clientWidth;
+        const viewerWidth = pdfViewerArea.clientWidth || document.body.clientWidth;
+        console.log('Updating canvas width', canvasWidthPx, viewerWidth)
         setCanvasWidthPx(Math.min(viewerWidth, maxWidth));
       }
     };
@@ -358,7 +359,7 @@ function Preview({ formData, selectedSections }) {
             <>
               <canvas
                 ref={displayCanvasRef}
-                style={{ height: canvasHeightPx + "px", width: canvasWidthPx + "px" }}
+                style={{ width: canvasWidthPx + "px" }}
                 className={`bg-white shadow-md dark:shadow-lg shadow-gray-800 dark:shadow-zinc-700 ${!pageRendered ? 'hidden' : ''}`}
               ></canvas>
             </>
