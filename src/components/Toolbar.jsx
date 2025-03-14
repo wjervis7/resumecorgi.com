@@ -2,7 +2,7 @@ import StatusIndicator from "./StatusIndicator";
 
 function Toolbar({ error, isLoading, pageRendered, currentPage, totalPages, onPrevious, onNext }) {
   const buttonCss =
-    `px-2 py-2
+    `px-2.5 py-2
     text-sm font-semibold text-gray-900 dark:text-white
     bg-gray-100
     border-gray-400
@@ -18,14 +18,14 @@ function Toolbar({ error, isLoading, pageRendered, currentPage, totalPages, onPr
           px-0 pt-[0.875rem] pb-3 mb-0 
           border-0 border-gray-400 dark:border-zinc-600
           rounded-m">
-        <div className="flex justify-center rounded-md" role="group">
+        <div className="flex justify-center rounded-lg" role="group">
           <div className="flex-1 inline-flex items-center">
             <StatusIndicator error={error} isLoading={isLoading} pageRendered={pageRendered} />
           </div>
 
           <div className="flex-1 inline-flex justify-center items-center">
             <span className="text-sm text-white dark:text-gray-200">
-              Page <span className="font-semibold text-white dark:text-white">{currentPage}</span> of <span className="font-semibold text-white dark:text-white">{totalPages}</span>
+              Page <span className="font-semibold text-white dark:text-white">{currentPage}</span> of <span className="font-semibold text-white dark:text-white">{totalPages > 0 ? totalPages : 1}</span>
             </span>
           </div>
 

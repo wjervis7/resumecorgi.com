@@ -27,7 +27,7 @@ const StatusIndicator = ({ error, isLoading, pageRendered }) => {
     status = {
       color: "purple",
       animation: "animate-ping",
-      text: "Initializing: This will take a few seconds...",
+      text: "Initializing...",
       bgLight: "bg-purple-100",
       bgDark: "dark:bg-purple-900",
       textLight: "text-purple-800",
