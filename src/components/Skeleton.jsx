@@ -1,10 +1,21 @@
-function Skeleton({ height = "994px", width = "768px" }) {
+function Skeleton({ width }) {
+  const aspectRatio = 11 / 8.5;
+  const calculatedHeight = width ? `${parseFloat(width) * aspectRatio}px` : "auto";
+  
+  // Use width prop or default to 100% of container
+  const displayWidth = width || "100%";
+  
   return (  
     <div className="overflow-x-auto animate-[pulse_5s_ease-in-out_infinite] brightness-85">
       <h2 className="sr-only">Your resume is rendering now. Please sit tight.</h2>
       <div
-        style={{ height: height, width: width }} 
-        className={`mx-auto p-10 shadow-md shadow-slate-800 dark:shadow-slate-600 bg-white`}>
+        style={{ 
+          width: displayWidth,
+          height: calculatedHeight,
+          maxWidth: "768px", // Max width to prevent it from getting too large
+          aspectRatio: "8.5/11" // Ensures ratio is maintained
+        }} 
+        className="mx-auto p-10 shadow-md shadow-slate-800 dark:shadow-slate-600 bg-white">
         <div className="flex animate-pulse space-x-4">
           <div className="flex-1 space-y-6 py-4">
             <div className="rounded bg-black w-50 h-5 justify-self-center mb-3"></div>
