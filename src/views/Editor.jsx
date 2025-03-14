@@ -289,13 +289,13 @@ function Editor() {
         <div className={`
             ${currentMobileView !== 'preview' ? "hidden md:block" : ""}
             md:col-span-6 col-span-12
-            overflow-x-auto mt-[74px]
-            px-3 pt-0 pb-3
+            overflow-x-none overflow-y-scroll mt-[74px]
+            ps-3 pe-2 pt-0 pb-3
             bg-zinc-600 dark:bg-zinc-800
             border-l-1 border-zinc-700 
             dark:text-white
             [&::-webkit-scrollbar]:w-1.5
-            [&::-webkit-scrollbar-track]:bg-zinc-200
+            [&::-webkit-scrollbar-track]:bg-zinc-600
             [&::-webkit-scrollbar-thumb]:bg-zinc-400
             dark:[&::-webkit-scrollbar-track]:bg-zinc-800
             dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600`}>
