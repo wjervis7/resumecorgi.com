@@ -27,7 +27,7 @@ function Editor() {
       "contact1": "linkedin.com/in/sully-0834673",
       "contact2": "",
       "contact3": "",
-      "summary": "Top-performing monster with over 30 years of elite scaring experience and proven leadership in energy collection innovation. Pioneered the industry-transforming shift from scream to laugh energy, solving Monstropolis's energy crisis. Expert in scare floor management, door technology optimization, and scarer talent development. Holds company record for highest lifetime scare score and led company to 6 consecutive years of record-breaking energy collection."
+      "summary": "Top-performing monster with over 30 years of elite scaring experience and proven leadership in energy collection innovation. Pioneered the industry-transforming shift from scream to laugh energy, solving Monstropolis's energy crisis. Expert in scare floor management, door technology optimization, and scarer talent development. Holds company record for highest lifetime scare score and led company to 6 consecutive years of record-breaking."
     },
     "experience": [
       {
