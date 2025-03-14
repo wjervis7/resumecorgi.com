@@ -79,7 +79,7 @@ function Editor() {
     "skills": [
       {
         category: "Tools",
-        skillList: [ 'Scare-o-meter 9000']
+        skillList: "Scare-o-meter 9000, Laugh-o-matic"
       }
     ]
   };
@@ -116,7 +116,7 @@ function Editor() {
       id: 'skills', renderFunc: () =>
         <>
           <Card>
-            <Skills education={formData.skills} handleChange={handleChange} setFormData={setFormData} />
+            <Skills skills={formData.skills} handleChange={handleChange} setFormData={setFormData} />
           </Card>
         </>
     },

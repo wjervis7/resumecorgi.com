@@ -464,7 +464,6 @@ ${renderedSections}
 `;
 }
 
-// Helper function for links
 function getHref(contact) {
   if (contact.includes('@')) return `mailto:${contact}`;
   if (contact.includes('linkedin')) return `https://www.${contact.replace(/^(https?:\/\/)?(www\.)?/, '')}`;
@@ -483,7 +482,6 @@ function formatSummary(summary) {
 %\\vspace{-10pt}`;
 }
 
-// Helper to format experience
 function formatExperience(experience) {
   if (!experience || !experience.length) {
     return ``;
@@ -515,9 +513,7 @@ ${accomplishments}
   }).join('\n\n');
 }
 
-// Helper to format education
 function formatEducation(education) {
-  console.log(education);
   if (!education || !education.length) {
     return ``;
   }
@@ -557,12 +553,25 @@ ${accomplishments}
 }
 
 function formatSkills(skills) {
+
+  if (!skills || !skills.length) {
+    return ``;
+  }
+
   const sectionHeading = `% skills section
 % \\vspace{-5pt}
 \\section*{Skills}
-%\\vspace{20pt}`
+%\\vspace{20pt}
+`;
     
-  return sectionHeading;
+  return sectionHeading + skills.map((skill, index) => {
+    const category = skill.category || "Category";
+    const skillsList = skill.skillList || "";
+
+    const skillLine = `\\textbf{${category}:} ${skillsList}`;
+
+    return skillLine;
+  }).join('\n\n');;
 }
 
 export default Preview;
