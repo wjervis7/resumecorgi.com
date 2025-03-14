@@ -1,8 +1,10 @@
-function Skeleton() {
-  return (
+function Skeleton({ height = "994px", width = "768px" }) {
+  return (  
     <div className="overflow-x-auto animate-[pulse_5s_ease-in-out_infinite] brightness-85">
       <h2 className="sr-only">Your resume is rendering now. Please sit tight.</h2>
-      <div className="mx-auto w-[768px] h-[994px] p-10 shadow-md shadow-slate-800 dark:shadow-slate-600 bg-white">
+      <div
+        style={{ height: height, width: width }} 
+        className={`mx-auto p-10 shadow-md shadow-slate-800 dark:shadow-slate-600 bg-white`}>
         <div className="flex animate-pulse space-x-4">
           <div className="flex-1 space-y-6 py-4">
             <div className="rounded bg-black w-50 h-5 justify-self-center mb-3"></div>

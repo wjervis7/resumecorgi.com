@@ -32,11 +32,13 @@ function Preview({ formData, selectedSections }) {
   const [pageNumPending, setPageNumPending] = useState(null);
   const [numPages, setNumPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const scale = 1;
+  const [canvasWidthPx, setCanvasWidthPx] = useState(768);
 
+  const scale = 1;
   const debounceShortMs = 100;
   const debounceLongMs = 600;
   const debounceInactivityIntervalMs = 1000;
+  const maxWidth = 768;
 
   // Use memoized LaTeX to avoid recreating it on every render
   const compiledLaTeX = useMemo(() => {
@@ -44,7 +46,33 @@ function Preview({ formData, selectedSections }) {
     return laTeX;
   }, [formData, selectedSections]);
 
+  const canvasHeightPx = useMemo(() => {
+    // Standard paper aspect ratio: 11/8.5 (letter size)
+    return Math.round(canvasWidthPx * (11 / 8.5));
+  }, [canvasWidthPx]);
+
   useEffect(() => {
+    const pdfViewerArea = document.getElementById('pdf-viewer-area');
+
+    const updateCanvasWidth = () => {
+      if (pdfViewerArea) {
+        const viewerWidth = pdfViewerArea.clientWidth;
+        setCanvasWidthPx(Math.min(viewerWidth, maxWidth));
+      }
+    };
+
+    // Initial sizing
+    updateCanvasWidth();
+
+    const resizeObserver = new ResizeObserver(() => {
+      updateCanvasWidth();
+    });
+
+    if (pdfViewerArea) {
+      resizeObserver.observe(pdfViewerArea);
+      resizeObserver.observe(document.body);
+    }
+
     // Use JSON.stringify for deep comparison
     const currentFormDataString = JSON.stringify(formData);
     const prevFormDataString = JSON.stringify(prevFormDataRef.current);
@@ -118,6 +146,12 @@ function Preview({ formData, selectedSections }) {
         clearTimeout(inactivityTimerRef.current);
       }
       
+      if (pdfViewerArea) {
+        resizeObserver.unobserve(document.body);
+        resizeObserver.unobserve(pdfViewerArea);
+      }
+      resizeObserver.disconnect();
+
       // Cancel any in-progress compilation
       cleanupRef.current?.();
     };
@@ -271,7 +305,7 @@ function Preview({ formData, selectedSections }) {
           displayCanvas.width = canvas.width;
           displayCanvas.height = canvas.height;
           displayCanvas.style.width = "100%";
-          displayCanvas.style.maxWidth = "800px";
+          displayCanvas.style.maxWidth = `${canvasWidthPx}px`;
           
           // Copy content from active canvas to display canvas
           const displayCtx = displayCanvas.getContext('2d');
@@ -316,7 +350,7 @@ function Preview({ formData, selectedSections }) {
         <StatusIndicator error={error} isLoading={isLoading} pageRendered={pageRendered} />
       </div>
 
-      <div className="pdf-viewer flex justify-center items-center w-full mt-14">
+      <div id="pdf-viewer-area" className="pdf-viewer flex justify-center items-center w-full mt-14">
         <div ref={canvasContainerRef} className="canvas-container relative">
 
           {/* Display canvas - always visible */}
@@ -324,7 +358,8 @@ function Preview({ formData, selectedSections }) {
             <>
               <canvas
                 ref={displayCanvasRef}
-                className={`h-[994px] w-[768px] min-w-[768px] bg-white shadow-md dark:shadow-lg shadow-gray-800 dark:shadow-zinc-700 ${!pageRendered ? 'hidden' : ''}`}
+                style={{ height: canvasHeightPx + "px", width: canvasWidthPx + "px" }}
+                className={`bg-white shadow-md dark:shadow-lg shadow-gray-800 dark:shadow-zinc-700 ${!pageRendered ? 'hidden' : ''}`}
               ></canvas>
             </>
           )}
@@ -336,7 +371,7 @@ function Preview({ formData, selectedSections }) {
           ></canvas>
           
           {/* Only show skeleton when no canvas has been rendered yet */}
-          {(isLoading && !pageRendered) && <Skeleton />}
+          {(isLoading && !pageRendered) && <Skeleton height={canvasHeightPx} width={canvasWidthPx} />}
         </div>
       </div>
 
@@ -378,20 +413,10 @@ function createLaTeXFromFormData(formData, selectedSections) {
     { id: 'skills', renderFunc: (formData) => formatSkills(formData.skills) },
   ];
 
-  const renderedSections2 = sortedSections
+  const renderedSections = sortedSections
     .map(section => {
       if (sectionFunctionMapping.some(sfm => sfm.id === section.id && section.selected)) {
         return sectionFunctionMapping.find(s => s.id === section.id)?.renderFunc(formData);
-      }
-    
-      return "";
-    })
-    .join('\n');
-
-  const renderedSections = sectionFunctionMapping
-    .map(sfm => {
-      if (selectedSections.some(s => s.id === sfm.id && s.selected)) {
-        return sfm.renderFunc(formData);
       }
     
       return "";
@@ -432,7 +457,7 @@ function createLaTeXFromFormData(formData, selectedSections) {
 
 ${formatSummary(formData.personalInfo.summary)}
 
-${renderedSections2}
+${renderedSections}
 
 \\end{document}
 `;

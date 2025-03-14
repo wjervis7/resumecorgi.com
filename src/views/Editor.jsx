@@ -116,7 +116,6 @@ function Editor() {
   const [formData, setFormData] = useState(initialFormData);
   const [sections, setSections] = useState(initialSections);
 
-  // Handle form changes and trigger debounced update
   const handleChange = (section, field, value) => {
     setFormData(prevData => ({
       ...prevData,
@@ -282,7 +281,7 @@ function Editor() {
             ${currentMobileView !== 'preview' ? "hidden md:block" : ""}
             md:col-span-6 col-span-12
             overflow-x-auto mt-[74px]
-            p-5
+            p-3
             bg-zinc-600 dark:bg-zinc-800
             border-l-1 border-zinc-700 
             dark:text-white
