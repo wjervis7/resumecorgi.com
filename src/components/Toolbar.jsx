@@ -1,6 +1,16 @@
 import StatusIndicator from "./StatusIndicator";
 
-function Toolbar({ error, isLoading, pageRendered, currentPage, totalPages, onPrevious, onNext }) {
+function Toolbar({ 
+  error, 
+  isLoading, 
+  pageRendered, 
+  currentPage, 
+  totalPages, 
+  onPrevious, 
+  onNext,
+  onDownloadPdf,
+  onDownloadLaTeX
+}) {
   const buttonCss =
     `px-2.5 py-2
     text-sm font-semibold text-gray-900 dark:text-white
@@ -57,7 +67,8 @@ function Toolbar({ error, isLoading, pageRendered, currentPage, totalPages, onPr
               </button>
               <button type="button"
                 className={`${buttonCss} border border-e-0 rounded-s-lg flex items-center justify-center ms-1.5`}
-                title="Download LaTeX">
+                title="Download LaTeX"
+                onClick={onDownloadLaTeX}>
                 <span className="flex items-center">
                   <span className="sr-only">Download</span>
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.125" stroke="currentColor" className="size-5 mr-1">
@@ -68,7 +79,8 @@ function Toolbar({ error, isLoading, pageRendered, currentPage, totalPages, onPr
               </button>
               <button type="button"
                 className={`${buttonCss} border rounded-e-lg flex items-center justify-center`}
-                title="Download PDF">
+                title="Download PDF"
+                onClick={onDownloadPdf}>
                 <span className="flex items-center">
                   <span className="sr-only">Download</span>
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.125" stroke="currentColor" className="size-5 mr-1">
@@ -121,7 +133,8 @@ function Toolbar({ error, isLoading, pageRendered, currentPage, totalPages, onPr
               </button>
               <button type="button"
                 className={`${buttonCss} border border-e-0 rounded-s-lg flex items-center justify-center ms-1.5`}
-                title="Download LaTeX">
+                title="Download LaTeX"
+                onClick={onDownloadLaTeX}>
                 <span className="flex items-center">
                   <span className="sr-only">Download</span>
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.125" stroke="currentColor" className="size-5 mr-1">
@@ -132,7 +145,8 @@ function Toolbar({ error, isLoading, pageRendered, currentPage, totalPages, onPr
               </button>
               <button type="button"
                 className={`${buttonCss} border rounded-e-lg flex items-center justify-center`}
-                title="Download PDF">
+                title="Download PDF"
+                onClick={onDownloadPdf}>
                 <span className="flex items-center">
                   <span className="sr-only">Download</span>
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.125" stroke="currentColor" className="size-5 mr-1">

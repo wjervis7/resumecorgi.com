@@ -26,6 +26,7 @@ function Preview({ formData, selectedSections }) {
 
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [pdfBuffer, setPdfBuffer] = useState(null);
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pageRendered, setPageRendered] = useState(false);
   const [pageRendering, setPageRendering] = useState(false);
@@ -209,6 +210,7 @@ function Preview({ formData, selectedSections }) {
       }
       
       // Load the PDF
+      const cachedBuffer = result.pdf.buffer.slice(0);
       const loadingTask = pdfjsLib.getDocument({ data: result.pdf.buffer });
       loadingTask.promise.then(pdf => {
         if (!mounted) {
@@ -217,6 +219,7 @@ function Preview({ formData, selectedSections }) {
           return;
         }
         
+        setPdfBuffer(cachedBuffer);
         setPdfDoc(pdf);
         setNumPages(pdf.numPages);
         renderPage(pdf, 1);
@@ -343,6 +346,39 @@ function Preview({ formData, selectedSections }) {
     renderPage(pdfDoc, currentPage + 1);
   };
 
+  const downloadPdf = () => {
+    if (!pdfBuffer) return;
+
+    console.log(pdfBuffer);
+    
+    // Use the cached PDF buffer that's already in sync with what's displayed...
+    const blob = new Blob([pdfBuffer], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = "resume.pdf";
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const downloadLaTeX = () => {
+    const blob = new Blob([compiledLaTeX], { type: 'application/x-tex' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = "resume.tex";
+    document.body.appendChild(link);
+    link.click();
+    
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <>
       <h2 className="text-lg sr-only">PDF Preview</h2>
@@ -356,6 +392,8 @@ function Preview({ formData, selectedSections }) {
           totalPages={numPages}
           onPrevious={() => previousPage()}
           onNext={() => nextPage()}
+          onDownloadPdf={() => downloadPdf()}
+          onDownloadLaTeX={() => downloadLaTeX()}
           />
       </div>
 
