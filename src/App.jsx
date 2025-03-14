@@ -15,7 +15,7 @@ function App() {
 
   return (
     <>
-      <div className={"bg-gray-100 dark:bg-[oklch(0.176_0.0055_285.85)] dark:bg-zinc- bg-blend-darken overflow-hidden"}>
+      <div className={"bg-gray-50 dark:bg-[oklch(0.176_0.0055_285.85)] dark:bg-zinc- bg-blend-darken overflow-hidden"}>
         <div className={"relative flex flex-col justify-center items-center min-h-screen mx-auto xl:px-0"}>
 
           {viewState === 'landing' && (
