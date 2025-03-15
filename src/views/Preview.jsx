@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useMemo } from "react";
 import * as pdfjsLib from 'pdfjs-dist';
-import EngineManager from "../components/EngineManager";
+import EngineManager from "../lib/EngineManager";
 import Skeleton from "../components/Skeleton";
 import Toolbar from "../components/Toolbar";
 import { createLaTeXFromFormData } from "../lib/LaTeXHelpers";
