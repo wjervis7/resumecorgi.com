@@ -1,11 +1,20 @@
-import Button from '../../components/Button.jsx'
-import Input from '../../components/Input.jsx'
-import RichTextbox from '../../components/RichTextbox.jsx';
+import React from 'react';
+import Button from '../../components/Button';
+import Input from '../../components/Input';
+import RichTextbox from '../../components/RichTextbox';
 
-function Education({ education = [], handleChange, setFormData }) {
+import { FormData, Education as EducationInfo } from '../../types';
+
+interface EducationProps {
+  education?: EducationInfo[];
+  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  setFormData: React.Dispatch<React.SetStateAction<FormData>>;
+}
+
+function Education({ education = [], setFormData }: EducationProps) {
   
-  const addEducation = () => {
-    const newEducation = {
+  const addEducation = (): void => {
+    const newEducation: EducationInfo = {
       degree: '',
       institution: '',
       location: '',
@@ -20,7 +29,7 @@ function Education({ education = [], handleChange, setFormData }) {
     }));
   };
 
-  const removeEducation = (index) => {
+  const removeEducation = (index: number): void => {
     setFormData(prevData => {
       const updatedEducation = [...prevData.education];
       updatedEducation.splice(index, 1);
@@ -68,7 +77,7 @@ function Education({ education = [], handleChange, setFormData }) {
               name: `degree${index}`, 
               value: edu.degree
             }} 
-            handleChange={(e) => {
+            handleChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               const updatedEducation = { ...edu, degree: e.target.value };
               const updatedEducations = [...education];
               updatedEducations[index] = updatedEducation;
@@ -88,7 +97,7 @@ function Education({ education = [], handleChange, setFormData }) {
               name: `institution${index}`, 
               value: edu.institution
             }} 
-            handleChange={(e) => {
+            handleChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               const updatedEducation = { ...edu, institution: e.target.value };
               const updatedEducations = [...education];
               updatedEducations[index] = updatedEducation;
@@ -108,7 +117,7 @@ function Education({ education = [], handleChange, setFormData }) {
               name: `institutionLocation${index}`, 
               value: edu.location
             }} 
-            handleChange={(e) => {
+            handleChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               const updatedEducation = { ...edu, location: e.target.value };
               const updatedEducations = [...education];
               updatedEducations[index] = updatedEducation;
@@ -128,7 +137,7 @@ function Education({ education = [], handleChange, setFormData }) {
               name: `graduationDate${index}`, 
               value: edu.graduationDate 
             }} 
-            handleChange={(e) => {
+            handleChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               const updatedEducation = { ...edu, graduationDate: e.target.value };
               const updatedEducations = [...education];
               updatedEducations[index] = updatedEducation;
@@ -148,7 +157,7 @@ function Education({ education = [], handleChange, setFormData }) {
               name: `gpa${index}`, 
               value: edu.gpa
             }} 
-            handleChange={(e) => {
+            handleChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               const updatedEducation = { ...edu, gpa: e.target.value };
               const updatedEducations = [...education];
               updatedEducations[index] = updatedEducation;
@@ -166,7 +175,7 @@ function Education({ education = [], handleChange, setFormData }) {
 
           <RichTextbox
              content={edu.accomplishments || ''}
-             onInput={(e) => {
+             onInput={(e: React.FormEvent<HTMLElement>) => {
               const updatedEducation = { ...edu, accomplishments: e.currentTarget.innerHTML };
               const updatedEducations = [...education];
               updatedEducations[index] = updatedEducation;
@@ -185,7 +194,7 @@ function Education({ education = [], handleChange, setFormData }) {
         className="text-sm"
         onClick={addEducation} />
     </>
-  )
+  );
 }
 
-export default Education
+export default Education;
