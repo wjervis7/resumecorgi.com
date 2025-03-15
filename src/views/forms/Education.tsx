@@ -7,7 +7,6 @@ import { FormData, Education as EducationInfo } from '../../types';
 
 interface EducationProps {
   education?: EducationInfo[];
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   setFormData: React.Dispatch<React.SetStateAction<FormData>>;
 }
 
