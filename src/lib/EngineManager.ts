@@ -1,4 +1,4 @@
-import { PdfTeXEngine } from '../types'
+import { PdfTeXEngine } from '../types';
 
 const EngineManager = (() => {
   let instance: PdfTeXEngine | null = null;
@@ -7,7 +7,23 @@ const EngineManager = (() => {
   let loadPromise: Promise<PdfTeXEngine> | null = null;
 
   // Set up PDF.js worker once for the entire application
-  window.pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${window.pdfjsLib.version}/pdf.worker.min.mjs`;
+  if (typeof window !== 'undefined' && window.pdfjsLib) {
+    window.pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${window.pdfjsLib.version}/pdf.worker.min.mjs`;
+  }
+
+  // Register service worker for caching
+  const registerServiceWorker = async (): Promise<void> => {
+    if ('serviceWorker' in navigator) {
+      try {
+        const registration = await navigator.serviceWorker.register('/service-worker.js', {
+          scope: '/'
+        });
+        console.log('Service worker registered:', registration.scope);
+      } catch (error) {
+        console.error('Service worker registration failed:', error);
+      }
+    }
+  };
 
   const loadScript = (src: string): Promise<void> => {
     return new Promise((resolve, reject) => {
@@ -36,10 +52,22 @@ const EngineManager = (() => {
     isLoading = true;
     loadPromise = (async () => {
       try {
+        // Register service worker for caching TexLive assets
+        await registerServiceWorker();
+        
+        // Load the PdfTeXEngine script
         await loadScript("PdfTeXEngine.js");
         
         const pdfTeXEngine = new window.PdfTeXEngine();
         await pdfTeXEngine.loadEngine();
+        
+        // TODO: Wait for the service worker to be activated?
+        // if (navigator.serviceWorker.controller) {
+        //   console.log('Service worker is active and controlling the page');
+        // } else {
+        //   console.log('Service worker is registered but not yet controlling the page');
+        //   window.location.reload();
+        // }
         
         instance = pdfTeXEngine;
         engineReady = true;
