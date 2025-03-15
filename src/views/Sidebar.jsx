@@ -1,5 +1,4 @@
 import SortableNav from "../components/SortableNav";
-import SectionEditor from "./SectionEditor";
 
 function Sidebar({ sections, handleMoveUp, handleMoveDown, handleSectionSelected, handleMoveTo }) {
   const sortedSections = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
