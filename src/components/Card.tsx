@@ -1,4 +1,14 @@
-function Card({ children, rightElement }) {
+import { ReactNode } from 'react';
+
+interface CardProps {
+  children: ReactNode;
+  rightElement?: ReactNode;
+}
+
+function Card({
+  children,
+  rightElement
+}: CardProps) {
   return (
     <div className="flex flex-co w-full mb-3 xs:flex-row">
       <div className="w-full sm:mb-0">

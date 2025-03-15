@@ -1,14 +1,13 @@
-import Preview from './Preview.jsx'
+import Preview from './Preview'
 import { useState } from 'react'
-import Corgi from '../components/Corgi.jsx'
-import PersonalInfo from './forms/PersonalInfo.jsx'
-import Experience from './forms/Experience.jsx'
-import Education from './forms/Education.jsx'
-import Card from '../components/Card.jsx'
-import Skills from './forms/Skills.jsx'
-import Sidebar from './Sidebar.jsx'
-import Button from '../components/Button.jsx'
-import Footer from '../components/Footer.jsx'
+import PersonalInfo from './forms/PersonalInfo'
+import Experience from './forms/Experience'
+import Education from './forms/Education'
+import Card from '../components/Card'
+import Skills from './forms/Skills'
+import Sidebar from './Sidebar'
+import Button from '../components/Button'
+import Footer from '../components/Footer'
 
 function Editor() {
   const [currentMobileView, setCurrentMobileView] = useState('form');

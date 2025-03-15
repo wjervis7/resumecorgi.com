@@ -1,4 +1,20 @@
-function Button({ onClick, text = "", className = "", theme = "primary", parentClassName = "" }) {
+import React from 'react';
+
+interface ButtonProps {
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  text?: string;
+  className?: string;
+  theme?: 'default' | 'primary' | 'interaction';
+  parentClassName?: string;
+}
+
+function Button({
+  onClick,
+  text = "",
+  className = "",
+  theme = "primary",
+  parentClassName = "" 
+}: ButtonProps) {
   const themeClasses = {
     default:
       `
