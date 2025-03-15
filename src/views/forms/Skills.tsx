@@ -1,12 +1,19 @@
-import Button from '../../components/Button.jsx'
-import Input from '../../components/Input.jsx'
+import React from 'react';
+import Button from '../../components/Button';
+import Input from '../../components/Input';
+import { FormData, Skill } from '../../types';
 
-function Skills({ skills = [], handleChange, setFormData }) {
+interface SkillsProps {
+  skills?: Skill[];
+  setFormData: React.Dispatch<React.SetStateAction<FormData>>;
+}
+
+function Skills({ skills = [], setFormData }: SkillsProps) {
   
-  const addSkillCategory = () => {
-    const newSkillCategory = {
-      category: '',
-      skillList: []
+  const addSkillCategory = (): void => {
+    const newSkillCategory: Skill = {
+      category: "",
+      skillList: ""
     };
     
     setFormData(prevData => ({
@@ -15,7 +22,7 @@ function Skills({ skills = [], handleChange, setFormData }) {
     }));
   };
 
-  const removeSkillCategory = (index) => {
+  const removeSkillCategory = (index: number): void => {
     setFormData(prevData => {
       const updatedSkills = [...prevData.skills];
       updatedSkills.splice(index, 1);
@@ -26,7 +33,7 @@ function Skills({ skills = [], handleChange, setFormData }) {
     });
   };
 
-  const updateSkillCategory = (index, value) => {
+  const updateSkillCategory = (index: number, value: string): void => {
     setFormData(prevData => {
       const updatedSkills = [...prevData.skills];
       updatedSkills[index].category = value;
@@ -37,7 +44,7 @@ function Skills({ skills = [], handleChange, setFormData }) {
     });
   };
 
-  const updateSkills = (categoryIndex, value) => {
+  const updateSkills = (categoryIndex: number, value: string): void => {
     setFormData(prevData => {
       const updatedSkills = [...prevData.skills];
       updatedSkills[categoryIndex].skillList = value;
@@ -88,7 +95,7 @@ function Skills({ skills = [], handleChange, setFormData }) {
               name: `category${categoryIndex}`, 
               value: skillCategory.category
             }} 
-            handleChange={(e) => updateSkillCategory(categoryIndex, e.target.value)} 
+            handleChange={(e: React.ChangeEvent<HTMLInputElement>) => updateSkillCategory(categoryIndex, e.target.value)} 
           />
           
           <Input 
@@ -99,7 +106,7 @@ function Skills({ skills = [], handleChange, setFormData }) {
               name: `skills${categoryIndex}`, 
               value: skillCategory.skillList
             }} 
-            handleChange={(e) => updateSkills(categoryIndex, e.target.value)}
+            handleChange={(e: React.ChangeEvent<HTMLInputElement>) => updateSkills(categoryIndex, e.target.value)}
             placeholder="Example: JavaScript, React, Node.js" 
           />
         </div>
@@ -112,7 +119,7 @@ function Skills({ skills = [], handleChange, setFormData }) {
         onClick={addSkillCategory} 
       />
     </>
-  )
+  );
 }
 
-export default Skills
+export default Skills;
