@@ -4,7 +4,7 @@ interface ButtonProps {
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   text?: string;
   className?: string;
-  theme?: 'default' | 'primary' | 'interaction';
+  theme?: 'default' | 'primary' | 'interaction' | 'danger' | 'success' | 'warning';
   parentClassName?: string;
 }
 
@@ -34,6 +34,24 @@ function Button({
         group-hover:bg-sky-300 dark:group-hover:bg-blue-700
         group-active:bg-sky-200 dark:group-active:bg-blue-600
       `,
+    danger:
+      `
+        bg-red-200 dark:bg-red-800
+        group-hover:bg-red-300 dark:group-hover:bg-red-700
+        group-active:bg-red-200 dark:group-active:bg-red-600
+      `,
+    success:
+      `
+        bg-green-200 dark:bg-green-800
+        group-hover:bg-green-300 dark:group-hover:bg-green-700
+        group-active:bg-green-200 dark:group-active:bg-green-600
+      `,
+    warning:
+      `
+        bg-yellow-200 dark:bg-yellow-800
+        group-hover:bg-yellow-300 dark:group-hover:bg-yellow-700
+        group-active:bg-yellow-200 dark:group-active:bg-yellow-600
+      `
   }
 
   return (

@@ -1,14 +1,9 @@
-import { Experience, Education, Skill, FormData } from "../types";
+import { Experience, Education, Skill, FormData, Section } from "../types";
 
 /**
  * Resume LaTeX Generator
  * Converts form data into LaTeX resume format
  */
-interface Section {
-  id: string;
-  selected: boolean;
-  sortOrder: number;
-}
 
 // Helper functions
 const utils = {
