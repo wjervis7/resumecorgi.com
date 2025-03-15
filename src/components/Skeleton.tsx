@@ -1,5 +1,6 @@
 interface SkeletonProps {
   width?: string | number;
+  height?: string | number;
 }
 
 function Skeleton({ width }: SkeletonProps) {

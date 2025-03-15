@@ -1,7 +1,7 @@
 import StatusIndicator from "./StatusIndicator";
 
 interface ToolbarProps {
-  error?: boolean;
+  error: string | null;
   isLoading?: boolean;
   pageRendered?: boolean;
   currentPage: number;

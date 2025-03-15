@@ -1,18 +1,4 @@
-interface PdfTeXEngine {
-  loadEngine: () => Promise<void>;
-}
-
-declare global {
-  interface Window {
-    PdfTeXEngine: new () => PdfTeXEngine;
-    pdfjsLib: {
-      version: string;
-      GlobalWorkerOptions: {
-        workerSrc: string;
-      };
-    };
-  }
-}
+import { PdfTeXEngine } from '../types'
 
 const EngineManager = (() => {
   let instance: PdfTeXEngine | null = null;

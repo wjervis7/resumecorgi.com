@@ -4,36 +4,53 @@ import EngineManager from "../lib/EngineManager";
 import Skeleton from "../components/Skeleton";
 import Toolbar from "../components/Toolbar";
 import { createLaTeXFromFormData } from "../lib/LaTeXHelpers";
+import { FormData, Section } from "../types";
 
-function Preview({ formData, selectedSections }) {
-  const compilationQueue = useRef([]);
-  const isProcessing = useRef(false);
+interface CompilationQueueItem {
+  resolve: (value: any) => void;
+  reject: (reason?: any) => void;
+}
 
-  const prevFormDataRef = useRef(null);
-  const prevSelectedSectionsRef = useRef(null);
-  const debounceTimerRef = useRef(null);
-  const cleanupRef = useRef(null);
-  const activeCanvasRef = useRef(null);
-  const displayCanvasRef = useRef(null);
-  const canvasContainerRef = useRef(null);
-  const lastEditTimeRef = useRef(0);
-  const inactivityTimerRef = useRef(null);
-  const [localPreviewState, setLocalPreviewState] = useState({
+interface PreviewState {
+  formData: FormData | null;
+  selectedSections: Section[] | null;
+  compiling: boolean;
+}
+
+interface PreviewProps {
+  formData: FormData;
+  selectedSections: Section[];
+}
+
+function Preview({ formData, selectedSections }: PreviewProps) {
+  const compilationQueue = useRef<CompilationQueueItem[]>([]);
+  const isProcessing = useRef<boolean>(false);
+
+  const prevFormDataRef = useRef<FormData | null>(null);
+  const prevSelectedSectionsRef = useRef<Section[] | null>(null);
+  const debounceTimerRef = useRef<number | null>(null);
+  const cleanupRef = useRef<(() => void) | null>(null);
+  const activeCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const displayCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const canvasContainerRef = useRef<HTMLDivElement | null>(null);
+  const lastEditTimeRef = useRef<number>(0);
+  const inactivityTimerRef = useRef<number | null>(null);
+  const [localPreviewState, setLocalPreviewState] = useState<PreviewState>({
     formData: null,
     selectedSections: null,
     compiling: false
   });
 
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [pdfBuffer, setPdfBuffer] = useState(null);
-  const [pdfDoc, setPdfDoc] = useState(null);
-  const [pageRendered, setPageRendered] = useState(false);
-  const [pageRendering, setPageRendering] = useState(false);
-  const [pageNumPending, setPageNumPending] = useState(null);
-  const [numPages, setNumPages] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [canvasWidthPx, setCanvasWidthPx] = useState(768);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [pdfBuffer, setPdfBuffer] = useState<ArrayBuffer | null>(null);
+  const [pdfDoc, setPdfDoc] = useState<any>(null);
+  const [pageRendered, setPageRendered] = useState<boolean>(false);
+  const [pageRendering, setPageRendering] = useState<boolean>(false);
+  const [pageNumPending, setPageNumPending] = useState<number | null>(null);
+  const [numPages, setNumPages] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [canvasWidthPx, setCanvasWidthPx] = useState<number>(768);
 
   const scale = 1;
   const debounceShortMs = 50;
@@ -58,7 +75,7 @@ function Preview({ formData, selectedSections }) {
     const updateCanvasWidth = () => {
       if (pdfViewerArea) {
         const viewerWidth = pdfViewerArea.clientWidth || document.body.clientWidth;
-        console.log('Updating canvas width', canvasWidthPx, viewerWidth)
+        console.log('Updating canvas width', canvasWidthPx, viewerWidth);
         setCanvasWidthPx(Math.min(viewerWidth, maxWidth));
       }
     };
@@ -120,19 +137,19 @@ function Preview({ formData, selectedSections }) {
     lastEditTimeRef.current = now;
     
     // Set debounce timer
-    debounceTimerRef.current = setTimeout(() => {
+    debounceTimerRef.current = window.setTimeout(() => {
       compileLaTeX()
         .then(() => {
           console.log('Compilation completed successfully');
           setLocalPreviewState(prev => ({ ...prev, compiling: false }));
           
           // Start inactivity timer
-          inactivityTimerRef.current = setTimeout(() => {
+          inactivityTimerRef.current = window.setTimeout(() => {
             // This will make the next edit considered "sparse"
             lastEditTimeRef.current = 0;
           }, 2000);
         })
-        .catch(err => {
+        .catch((err: Error) => {
           console.error('Compilation failed:', err);
           setLocalPreviewState(prev => ({ ...prev, compiling: false }));
         });
@@ -157,9 +174,9 @@ function Preview({ formData, selectedSections }) {
       // Cancel any in-progress compilation
       cleanupRef.current?.();
     };
-  }, [formData, selectedSections, compiledLaTeX]);
+  }, [formData, selectedSections, compiledLaTeX, pageRendered, canvasWidthPx]);
 
-  const compileLaTeX = async () => {
+  const compileLaTeX = async (): Promise<any> => {
     // Queue the compilation request and wait for it to process
     return new Promise((resolve, reject) => {
       compilationQueue.current.push({ resolve, reject });
@@ -167,7 +184,7 @@ function Preview({ formData, selectedSections }) {
     });
   };
 
-  const processQueue = async () => {
+  const processQueue = async (): Promise<void> => {
     // If already processing or queue is empty, do nothing
     if (isProcessing.current || compilationQueue.current.length === 0) return;
     
@@ -175,7 +192,7 @@ function Preview({ formData, selectedSections }) {
     isProcessing.current = true;
     
     // Get the next item from the queue
-    const { resolve, reject } = compilationQueue.current.shift();
+    const { resolve, reject } = compilationQueue.current.shift()!;
     
     let mounted = true;
     const cleanup = () => {
@@ -194,7 +211,7 @@ function Preview({ formData, selectedSections }) {
       if (!mounted) {
         isProcessing.current = false;
         processQueue(); // Process next in queue
-        return cleanup;
+        return;
       }
   
       // Prepare and compile the LaTeX
@@ -206,7 +223,7 @@ function Preview({ formData, selectedSections }) {
       if (!mounted) {
         isProcessing.current = false;
         processQueue(); // Process next in queue
-        return cleanup;
+        return;
       }
       
       // Load the PDF
@@ -247,7 +264,7 @@ function Preview({ formData, selectedSections }) {
         isProcessing.current = false;
         processQueue();
       });
-    } catch (err) {
+    } catch (err: any) {
       if (mounted) {
         console.error("Failed to compile LaTeX:", err);
         setError(`Failed to compile LaTeX: ${err.message}`);
@@ -260,11 +277,9 @@ function Preview({ formData, selectedSections }) {
       isProcessing.current = false;
       processQueue();
     }
-    
-    return cleanup;
   };
 
-  const renderPage = (pdf, pageNum) => {
+  const renderPage = (pdf: any, pageNum: number): void => {
     if (pageRendering) {
       setPageNumPending(pageNum);
       return;
@@ -273,7 +288,7 @@ function Preview({ formData, selectedSections }) {
     setPageRendering(true);
     
     // Using promise to fetch the page
-    pdf.getPage(pageNum).then(page => {
+    pdf.getPage(pageNum).then((page: any) => {
       // Use the hidden active canvas for rendering
       const canvas = activeCanvasRef.current;
   
@@ -283,6 +298,11 @@ function Preview({ formData, selectedSections }) {
       }
   
       const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        setPageRendering(false);
+        return;
+      }
+      
       ctx.imageSmoothingQuality = 'high';
       ctx.imageSmoothingEnabled = false;
       
@@ -313,7 +333,9 @@ function Preview({ formData, selectedSections }) {
           
           // Copy content from active canvas to display canvas
           const displayCtx = displayCanvas.getContext('2d');
-          displayCtx.drawImage(canvas, 0, 0);
+          if (displayCtx) {
+            displayCtx.drawImage(canvas, 0, 0);
+          }
         }
         
         setPageRendered(true);
@@ -324,11 +346,11 @@ function Preview({ formData, selectedSections }) {
           renderPage(pdfDoc, pageNumPending);
           setPageNumPending(null);
         }
-      }).catch(error => {
+      }).catch((error: Error) => {
         console.error('Error rendering page:', error);
         setPageRendering(false);
       });
-    }).catch(error => {
+    }).catch((error: Error) => {
       console.error('Error getting page:', error);
       setPageRendering(false);
     });
@@ -336,17 +358,17 @@ function Preview({ formData, selectedSections }) {
     setCurrentPage(pageNum);
   };
 
-  const previousPage = () => {
+  const previousPage = (): void => {
     if (currentPage <= 1 || !pdfDoc) return;
     renderPage(pdfDoc, currentPage - 1);
   };
 
-  const nextPage = () => {
+  const nextPage = (): void => {
     if (currentPage >= numPages || !pdfDoc) return;
     renderPage(pdfDoc, currentPage + 1);
   };
 
-  const downloadPdf = () => {
+  const downloadPdf = (): void => {
     if (!pdfBuffer) return;
 
     console.log(pdfBuffer);
@@ -365,7 +387,7 @@ function Preview({ formData, selectedSections }) {
     URL.revokeObjectURL(url);
   };
 
-  const downloadLaTeX = () => {
+  const downloadLaTeX = (): void => {
     const blob = new Blob([compiledLaTeX], { type: 'application/x-tex' });
     const url = URL.createObjectURL(blob);
     
@@ -390,11 +412,11 @@ function Preview({ formData, selectedSections }) {
           pageRendered={pageRendered} 
           currentPage={currentPage}
           totalPages={numPages}
-          onPrevious={() => previousPage()}
-          onNext={() => nextPage()}
-          onDownloadPdf={() => downloadPdf()}
-          onDownloadLaTeX={() => downloadLaTeX()}
-          />
+          onPrevious={previousPage}
+          onNext={nextPage}
+          onDownloadPdf={downloadPdf}
+          onDownloadLaTeX={downloadLaTeX}
+        />
       </div>
 
       <div id="pdf-viewer-area" className="pdf-viewer flex justify-center items-center w-full">

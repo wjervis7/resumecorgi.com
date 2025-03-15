@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface StatusIndicatorProps {
-  error?: boolean;
+  error: string | null;
   isLoading?: boolean;
   pageRendered?: boolean;
 }

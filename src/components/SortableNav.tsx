@@ -15,13 +15,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-
-interface Section {
-  id: string;
-  displayName: string;
-  href: string;
-  sortable: boolean;
-}
+import { NavSection } from '../types';
 
 interface SortableNavItemProps {
   id: string;
@@ -31,7 +25,7 @@ interface SortableNavItemProps {
 }
 
 interface SortableNavProps {
-  sections: Section[];
+  sections: NavSection[];
   handleMoveTo: (oldIndex: number, newIndex: number) => void;
 }
 

@@ -1,25 +1,34 @@
-import Preview from './Preview'
-import { useState } from 'react'
-import PersonalInfo from './forms/PersonalInfo'
-import Experience from './forms/Experience'
-import Education from './forms/Education'
-import Card from '../components/Card'
-import Skills from './forms/Skills'
-import Sidebar from './Sidebar'
-import Button from '../components/Button'
-import Footer from '../components/Footer'
+import { JSX, useState } from 'react';
+import Preview from './Preview';
+import PersonalInfo from './forms/PersonalInfo';
+import Experience from './forms/Experience';
+import Education from './forms/Education';
+import Card from '../components/Card';
+import Skills from './forms/Skills';
+import Sidebar from './Sidebar';
+import Button from '../components/Button';
+import Footer from '../components/Footer';
+import {
+  FormData,
+  Section
+} from '../types';
+
+interface SectionRenderItem {
+  id: string;
+  renderFunc: () => JSX.Element;
+}
 
 function Editor() {
-  const [currentMobileView, setCurrentMobileView] = useState('form');
+  const [currentMobileView, setCurrentMobileView] = useState<string>('form');
 
-  const initialSections = [
+  const initialSections: Section[] = [
     { id: 'personalInfo', displayName: 'About You', href: '#start', selected: true, originalOrder: 0, sortOrder: 0, required: true, sortable: false },
     { id: 'experience', displayName: 'Experience', href: '#experience', selected: true, originalOrder: 1, sortOrder: 1, required: false, sortable: true },
     { id: 'education', displayName: 'Education', href: '#education', selected: true, originalOrder: 2, sortOrder: 2, required: false, sortable: true },
     { id: 'skills', displayName: 'Skills', href: '#skills', selected: true, originalOrder: 3, sortOrder: 3, required: false, sortable: true },
-  ]
+  ];
 
-  const initialFormData = {
+  const initialFormData: FormData = {
     "personalInfo": {
       "name": "James P. Sullivan",
       "contact0": "james.sullivan@monstersinc.com",
@@ -83,7 +92,7 @@ function Editor() {
     ]
   };
 
-  const sectionRenderMapping = [
+  const sectionRenderMapping: SectionRenderItem[] = [
     {
       id: 'personalInfo',
       renderFunc: () =>
@@ -99,32 +108,34 @@ function Editor() {
       renderFunc: () =>
         <>
           <Card>
-            <Experience experiences={formData.experience} handleChange={handleChange} setFormData={setFormData} />
+            <Experience experiences={formData.experience} setFormData={setFormData} />
           </Card>
         </>
     },
     {
-      id: 'education', renderFunc: () =>
+      id: 'education', 
+      renderFunc: () =>
         <>
           <Card>
-            <Education education={formData.education} handleChange={handleChange} setFormData={setFormData} />
+            <Education education={formData.education} setFormData={setFormData} />
           </Card>
         </>
     },
     {
-      id: 'skills', renderFunc: () =>
+      id: 'skills', 
+      renderFunc: () =>
         <>
           <Card>
-            <Skills skills={formData.skills} handleChange={handleChange} setFormData={setFormData} />
+            <Skills skills={formData.skills} setFormData={setFormData} />
           </Card>
         </>
     },
   ];
 
-  const [formData, setFormData] = useState(initialFormData);
-  const [sections, setSections] = useState(initialSections);
+  const [formData, setFormData] = useState<FormData>(initialFormData);
+  const [sections, setSections] = useState<Section[]>(initialSections);
 
-  const handleChange = (section, field, value) => {
+  const handleChange = (section: string, field: string, value: string): void => {
     setFormData(prevData => ({
       ...prevData,
       [section]: {
@@ -134,7 +145,7 @@ function Editor() {
     }));
   };
 
-  const handleSectionSelected = (sectionId, checked) => {
+  const handleSectionSelected = (sectionId: string, checked: boolean): void => {
     setSections(prevSections =>
       prevSections.map(section =>
         section.id === sectionId
@@ -144,7 +155,7 @@ function Editor() {
     );
   };
 
-  const moveUp = (index) => {
+  const moveUp = (index: number): void => {
     // Get the current sorted order for reference
     const sortedSections = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
 
@@ -182,7 +193,7 @@ function Editor() {
     }));
   };
 
-  const moveDown = (index) => {
+  const moveDown = (index: number): void => {
     // Get the current sorted order for reference
     const sortedSections = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
 
@@ -220,7 +231,7 @@ function Editor() {
     }));
   };
 
-  const moveTo = (oldIndex, newIndex) => {
+  const moveTo = (oldIndex: number, newIndex: number): void => {
     // Create a copy of sorted sections
     const sortedSections = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
 
@@ -278,7 +289,7 @@ function Editor() {
               .filter(section => section.selected)
               .map(section => (
                 <div key={section.id}>
-                  {sectionRenderMapping.find(srm => srm.id === section.id).renderFunc()}
+                  {sectionRenderMapping.find(srm => srm.id === section.id)?.renderFunc()}
                 </div>
               ))}
 
@@ -336,7 +347,7 @@ function Editor() {
         </div>
       </div>
     </>
-  )
+  );
 }
 
-export default Editor
+export default Editor;

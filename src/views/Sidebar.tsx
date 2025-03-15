@@ -1,9 +1,17 @@
 import SortableNav from "../components/SortableNav";
+import { NavSection } from "../types";
 
-function Sidebar({ sections, handleMoveUp, handleMoveDown, handleSectionSelected, handleMoveTo }) {
-  const sortedSections = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
-  
-  const canMoveUp = (section) => {
+interface SidebarProps {
+  sections: NavSection[];
+  handleMoveTo: (oldIndex: number, newIndex: number) => void;
+  handleMoveUp?: (index: number) => void;
+  handleMoveDown?: (index: number) => void;
+  handleSectionSelected?: (sectionId: string, checked: boolean) => void;
+}
+
+function Sidebar({ sections, handleMoveTo }: SidebarProps) {
+  // TODO: refactor into its own thing
+  const canMoveUp = (section: NavSection, sortedSections: NavSection[]): boolean => {
     if (!section.sortable) return false;
     
     // Find previous sortable section
@@ -20,7 +28,8 @@ function Sidebar({ sections, handleMoveUp, handleMoveDown, handleSectionSelected
     return hasPrevSortable;
   }
 
-  const canMoveDown = (section) => {
+  // TODO: refactor into its own thing
+  const canMoveDown = (section: NavSection, sortedSections: NavSection[]): boolean => {
     if (!section.sortable) return false;
     
     // Find next sortable section
@@ -40,7 +49,7 @@ function Sidebar({ sections, handleMoveUp, handleMoveDown, handleSectionSelected
   return (
     <>
       <div className="">
-        <SortableNav sections={sections} handleMoveTo={handleMoveTo}  />
+        <SortableNav sections={sections} handleMoveTo={handleMoveTo} />
       </div>
     </>
   );

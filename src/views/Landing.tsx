@@ -1,8 +1,12 @@
-import Button from '../components/Button.jsx'
-import Corgi from '../components/Corgi.jsx'
-import Footer from '../components/Footer.jsx'
+import Button from '../components/Button';
+import Corgi from '../components/Corgi';
+import Footer from '../components/Footer';
 
-function Landing({ onStart }) {
+interface LandingProps {
+  onStart: () => void;
+}
+
+function Landing({ onStart }: LandingProps) {
   return (
     <>
       <div className="w-full text-center">
@@ -16,8 +20,8 @@ function Landing({ onStart }) {
                 Let's build a beautiful resume that showcases your talent.
               </h2>
               <p className="text-gray-950 mb-5 dark:text-gray-50 text-sm w-full md:w-2/5 mx-auto">
-              It's free, optimized for scanning software,
-              and secure. Your data never leaves your device.
+                It's free, optimized for scanning software,
+                and secure. Your data never leaves your device.
               </p>
               <Button onClick={onStart} text="Start Building" />
             </div>
@@ -30,7 +34,7 @@ function Landing({ onStart }) {
         <Footer className="absolute bottom-[1rem] md:bottom-[1rem] left-0 right-0" />
       </div>
     </>
-  )
+  );
 }
 
-export default Landing
+export default Landing;
