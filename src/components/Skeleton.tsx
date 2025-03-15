@@ -1,6 +1,10 @@
-function Skeleton({ width }) {
+interface SkeletonProps {
+  width?: string | number;
+}
+
+function Skeleton({ width }: SkeletonProps) {
   const aspectRatio = 11 / 8.5;
-  const calculatedHeight = width ? `${parseFloat(width) * aspectRatio}px` : "auto";
+  const calculatedHeight = width ? `${parseFloat(width.toString()) * aspectRatio}px` : "auto";
   
   // Use width prop or default to 100% of container
   const displayWidth = width || "100%";
@@ -124,7 +128,7 @@ function Skeleton({ width }) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default Skeleton;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   DndContext,
   closestCenter,
@@ -6,6 +6,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  DragEndEvent
 } from '@dnd-kit/core';
 import {
   SortableContext,
@@ -15,7 +16,26 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-const SortableNavItem = ({ id, displayName, href, sortable }) => {
+interface Section {
+  id: string;
+  displayName: string;
+  href: string;
+  sortable: boolean;
+}
+
+interface SortableNavItemProps {
+  id: string;
+  displayName: string;
+  href: string;
+  sortable: boolean;
+}
+
+interface SortableNavProps {
+  sections: Section[];
+  handleMoveTo: (oldIndex: number, newIndex: number) => void;
+}
+
+const SortableNavItem: React.FC<SortableNavItemProps> = ({ id, displayName, href, sortable }) => {
   const {
     attributes,
     listeners,
@@ -29,7 +49,7 @@ const SortableNavItem = ({ id, displayName, href, sortable }) => {
     transition,
   };
 
-  const anchorCss = `w-full py-1 hover:underline`
+  const anchorCss = `w-full py-1 hover:underline`;
 
   if (!sortable) {
     return (
@@ -54,18 +74,18 @@ const SortableNavItem = ({ id, displayName, href, sortable }) => {
             border-1 border-black dark:border-zinc-600 rounded-[0.45rem]
           `}>
           <div className="flex justify-between items-center w-full">
-          <a href={href} className={`${anchorCss}`}>{displayName}</a>
-          <div className="p-2 rounded-full invisible">
-            <span>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5" />
-              </svg>
-            </span>
+            <a href={href} className={`${anchorCss}`}>{displayName}</a>
+            <div className="p-2 rounded-full invisible">
+              <span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-4">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5" />
+                </svg>
+              </span>
+            </div>
           </div>
         </div>
-        </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -101,6 +121,7 @@ const SortableNavItem = ({ id, displayName, href, sortable }) => {
             <div 
               className="p-2 rounded-full hover:cursor-grab" 
               {...listeners}
+              {...attributes}
             >
               <svg 
                 xmlns="http://www.w3.org/2000/svg" 
@@ -121,11 +142,10 @@ const SortableNavItem = ({ id, displayName, href, sortable }) => {
         </div>
       </div>
     </div>
-  )
+  );
 };
 
-const SortableNav = ({sections, handleMoveTo}) => {
-
+const SortableNav: React.FC<SortableNavProps> = ({ sections, handleMoveTo }) => {
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -133,12 +153,12 @@ const SortableNav = ({sections, handleMoveTo}) => {
     })
   );
 
-  const handleDragEnd = (event) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     
-    if (active.id !== over.id) {
+    if (active.id !== over?.id && over) {
       const oldIndex = sections.findIndex(s => s.id === active.id);
-      const newIndex = sections.findIndex(s => s.id == over.id);
+      const newIndex = sections.findIndex(s => s.id === over.id);
 
       if (!sections[newIndex].sortable) return;
 
@@ -153,12 +173,18 @@ const SortableNav = ({sections, handleMoveTo}) => {
       onDragEnd={handleDragEnd}
     >
       <SortableContext 
-        items={sections}
+        items={sections.map(section => section.id)}
         strategy={verticalListSortingStrategy}
       >
         <div>
           {sections.map((section) => (
-            <SortableNavItem key={section.id} id={section.id} displayName={section.displayName} href={section.href} sortable={section.sortable} />
+            <SortableNavItem 
+              key={section.id} 
+              id={section.id} 
+              displayName={section.displayName} 
+              href={section.href} 
+              sortable={section.sortable} 
+            />
           ))}
         </div>
       </SortableContext>

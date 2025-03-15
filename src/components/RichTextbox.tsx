@@ -1,19 +1,24 @@
 import React, { useRef, useEffect } from 'react';
 
-function RichTextbox({ content, onInput }) {
-  const mounted = useRef(false);
-  const editableRef = useRef(null);
+interface RichTextboxProps {
+  content?: string;
+  onInput?: (event: React.FormEvent<HTMLElement>) => void;
+}
 
-  const getInitialContent = () => content || '<ul><li></li></ul>';
+function RichTextbox({ content, onInput }: RichTextboxProps) {
+  const mounted = useRef<boolean>(false);
+  const editableRef = useRef<HTMLElement | null>(null);
 
-   // Set initial content on first render
-   useEffect(() => {
-    if (!mounted.current) {
+  const getInitialContent = (): string => content || '<ul><li></li></ul>';
+
+  // Set initial content on first render
+  useEffect(() => {
+    if (!mounted.current && editableRef.current) {
       editableRef.current.innerHTML = getInitialContent();
     }
 
     // ensure if field is empty we start with bullets
-    if (!content || !content.includes('<li>')) {
+    if (editableRef.current && (!content || !content.includes('<li>'))) {
       editableRef.current.innerHTML = '<ul><li></li></ul>';
     }
 
@@ -38,7 +43,7 @@ function RichTextbox({ content, onInput }) {
       >
       </section>
     </>
-  )
+  );
 }
 
-export default RichTextbox
+export default RichTextbox;

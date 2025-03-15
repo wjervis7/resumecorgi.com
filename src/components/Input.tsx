@@ -1,4 +1,26 @@
-function Input({ type = "text", label, placeholder = "", formData, handleChange }) {
+import { ChangeEvent } from 'react';
+
+interface FormDataInput {
+  id: string;
+  name: string;
+  value: string;
+}
+
+interface InputProps {
+  type?: string;
+  label: string;
+  placeholder?: string;
+  formData: FormDataInput;
+  handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
+}
+
+function Input({
+  type = "text",
+  label,
+  placeholder = "",
+  formData,
+  handleChange
+}: InputProps) {
   return(
     <>
       <div>

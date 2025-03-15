@@ -1,16 +1,28 @@
 import StatusIndicator from "./StatusIndicator";
 
-function Toolbar({ 
-  error, 
-  isLoading, 
-  pageRendered, 
-  currentPage, 
-  totalPages, 
-  onPrevious, 
+interface ToolbarProps {
+  error?: boolean;
+  isLoading?: boolean;
+  pageRendered?: boolean;
+  currentPage: number;
+  totalPages: number;
+  onPrevious: () => void;
+  onNext: () => void;
+  onDownloadPdf: () => void;
+  onDownloadLaTeX: () => void;
+}
+
+function Toolbar({
+  error,
+  isLoading,
+  pageRendered,
+  currentPage,
+  totalPages,
+  onPrevious,
   onNext,
   onDownloadPdf,
   onDownloadLaTeX
-}) {
+}: ToolbarProps) {
   const buttonCss =
     `px-2.5 py-2
     text-sm font-semibold text-gray-900 dark:text-white
@@ -18,8 +30,7 @@ function Toolbar({
     border-gray-300
     hover:bg-gray-300 dark:hover:bg-zinc-700
     hover:cursor-pointer
-    dark:bg-zinc-600 dark:border-zinc-500
-`;
+    dark:bg-zinc-600 dark:border-zinc-500`;
 
   return (
     <>
@@ -160,7 +171,7 @@ function Toolbar({
         </div>
       </div>
     </>
-  )
+  );
 }
 
 export default Toolbar;

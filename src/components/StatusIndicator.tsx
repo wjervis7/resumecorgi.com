@@ -1,5 +1,29 @@
-const StatusIndicator = ({ error, isLoading, pageRendered }) => {
-  let status = {
+import React from 'react';
+
+interface StatusIndicatorProps {
+  error?: boolean;
+  isLoading?: boolean;
+  pageRendered?: boolean;
+}
+
+interface StatusState {
+  color: string;
+  animation: string;
+  text: string;
+  bgLight: string;
+  bgDark: string;
+  textLight: string;
+  textDark: string;
+  dotLight: string;
+  dotDark: string;
+}
+
+const StatusIndicator: React.FC<StatusIndicatorProps> = ({
+  error,
+  isLoading,
+  pageRendered
+}) => {
+  let status: StatusState = {
     color: "green",
     animation: "",
     text: "Ready",

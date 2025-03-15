@@ -1,13 +1,29 @@
+interface PdfTeXEngine {
+  loadEngine: () => Promise<void>;
+}
+
+declare global {
+  interface Window {
+    PdfTeXEngine: new () => PdfTeXEngine;
+    pdfjsLib: {
+      version: string;
+      GlobalWorkerOptions: {
+        workerSrc: string;
+      };
+    };
+  }
+}
+
 const EngineManager = (() => {
-  let instance = null;
+  let instance: PdfTeXEngine | null = null;
   let isLoading = false;
   let engineReady = false;
-  let loadPromise = null;
+  let loadPromise: Promise<PdfTeXEngine> | null = null;
 
   // Set up PDF.js worker once for the entire application
-  pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
+  window.pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${window.pdfjsLib.version}/pdf.worker.min.mjs`;
 
-  const loadScript = (src) => {
+  const loadScript = (src: string): Promise<void> => {
     return new Promise((resolve, reject) => {
       // Check if script already exists
       if (document.querySelector(`script[src="${src}"]`)) {
@@ -27,17 +43,15 @@ const EngineManager = (() => {
     });
   };
 
-  const initialize = async () => {
-    if (engineReady) return Promise.resolve(instance);
+  const initialize = async (): Promise<PdfTeXEngine> => {
+    if (engineReady) return Promise.resolve(instance!);
     if (loadPromise) return loadPromise;
 
     isLoading = true;
     loadPromise = (async () => {
       try {
-        // Load the PdfTeXEngine script
         await loadScript("PdfTeXEngine.js");
         
-        // Initialize the engine
         const pdfTeXEngine = new window.PdfTeXEngine();
         await pdfTeXEngine.loadEngine();
         

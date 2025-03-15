@@ -1,4 +1,26 @@
-function Textbox({ rows = 3, label, placeholder = "", formData, handleChange }) {
+import React from 'react';
+
+interface FormData {
+  id: string;
+  name: string;
+  value: string;
+}
+
+interface TextboxProps {
+  rows?: number;
+  label: string;
+  placeholder?: string;
+  formData: FormData;
+  handleChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+}
+
+function Textbox({
+  rows = 3,
+  label,
+  placeholder = "",
+  formData,
+  handleChange
+}: TextboxProps) {
   return(
     <>
       <div>
@@ -28,7 +50,7 @@ function Textbox({ rows = 3, label, placeholder = "", formData, handleChange }) 
         </div>
       </div>
     </>
-  )
+  );
 }
 
-export default Textbox
+export default Textbox;

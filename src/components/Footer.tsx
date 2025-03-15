@@ -1,6 +1,8 @@
 import Corgi from "./Corgi"
 
-function Footer({ className = "absolute bottom-[150px] md:bottom-0 left-0 right-0" }) {
+function Footer({
+  className = "absolute bottom-[150px] md:bottom-0 left-0 right-0" 
+}) {
   return (
     <div className={`${className} w-full text-center pb-2.5`}>
       <div className="px-5">
