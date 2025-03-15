@@ -1,7 +1,14 @@
+import { Experience, Education, Skill, FormData } from "../types";
+
 /**
  * Resume LaTeX Generator
  * Converts form data into LaTeX resume format
  */
+interface Section {
+  id: string;
+  selected: boolean;
+  sortOrder: number;
+}
 
 // Helper functions
 const utils = {
@@ -10,7 +17,7 @@ const utils = {
    * @param {string} contact - Contact information (email, URL, etc.)
    * @returns {string} Formatted href
    */
-  getHref: (contact) => {
+  getHref: (contact: string): string => {
     if (contact.includes('@')) return `mailto:${contact}`;
     if (contact.includes('linkedin')) return `https://www.${contact.replace(/^(https?:\/\/)?(www\.)?/, '')}`;
     if (contact.includes('http')) return contact;
@@ -22,14 +29,14 @@ const utils = {
    * @param {string} htmlContent - HTML containing bullet points
    * @returns {string} Formatted LaTeX bullet points
    */
-  extractBulletPoints: (htmlContent, defaultContent = '') => {
+  extractBulletPoints: (htmlContent?: string, defaultContent: string = ''): string => {
     if (!htmlContent) return defaultContent;
     
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = htmlContent;
     
     return Array.from(tempDiv.querySelectorAll('li'))
-      .map(li => li.textContent.trim())
+      .map(li => li.textContent?.trim() || '')
       .filter(item => item && item.length > 0)
       .map(item => `  \\item ${item}`)
       .join('\n');
@@ -43,7 +50,7 @@ const formatters = {
    * @param {string} summary - Summary text
    * @returns {string} Formatted LaTeX summary section
    */
-  formatSummary: (summary) => {
+  formatSummary: (summary?: string): string => {
     if (!summary || !summary.length) {
       return '';
     }
@@ -59,7 +66,7 @@ const formatters = {
    * @param {Array} experience - Array of experience objects
    * @returns {string} Formatted LaTeX experience section
    */
-  formatExperience: (experience) => {
+  formatExperience: (experience?: Experience[]): string => {
     if (!experience || !experience.length) {
       return '';
     }
@@ -93,7 +100,7 @@ ${accomplishments}
    * @param {Array} education - Array of education objects
    * @returns {string} Formatted LaTeX education section
    */
-  formatEducation: (education) => {
+  formatEducation: (education?: Education[]): string => {
     if (!education || !education.length) {
       return '';
     }
@@ -134,7 +141,7 @@ ${accomplishments}
    * @param {Array} skills - Array of skill category objects
    * @returns {string} Formatted LaTeX skills section
    */
-  formatSkills: (skills) => {
+  formatSkills: (skills?: Skill[]): string => {
     if (!skills || !skills.length) {
       return '';
     }
@@ -161,7 +168,7 @@ ${accomplishments}
  * @param {Array} selectedSections - Sections to include in resume
  * @returns {string} Complete LaTeX document
  */
-function createLaTeXFromFormData(formData, selectedSections) {
+function createLaTeXFromFormData(formData: FormData, selectedSections: Section[]): string {
   const sortedSections = [...selectedSections].sort((a, b) => a.sortOrder - b.sortOrder);
 
   const name = formData.personalInfo.name || 'Your Name';
@@ -187,7 +194,7 @@ function createLaTeXFromFormData(formData, selectedSections) {
   const renderedSections = sortedSections
     .map(section => {
       if (sectionFunctionMapping.some(sfm => sfm.id === section.id && section.selected)) {
-        return sectionFunctionMapping.find(s => s.id === section.id)?.renderFunc();
+        return sectionFunctionMapping.find(s => s.id === section.id)?.renderFunc() || "";
       }
       return "";
     })
@@ -239,3 +246,5 @@ export {
   utils,
   formatters
 };
+
+export type { Section };
