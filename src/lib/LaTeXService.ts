@@ -154,9 +154,7 @@ ${this.utils.formatItemize(accomplishments, {vspaceBefore: '-10pt'})}
     }
 
     const sectionHeading = `% skills section
-% \\vspace{-5pt}
 \\section*{Skills}
-%\\vspace{20pt}
 `;
       
     return sectionHeading + skills.map((skill) => {
@@ -247,8 +245,7 @@ const standardTemplate: TemplateConfig = {
 
 % contact information
 \\centerline{${contacts}}
-
-%\\vspace{-10pt}`,
+`,
   
   sectionFormatters: {},  // Will be populated with formatters
   
@@ -313,9 +310,18 @@ class LaTeXResumeGenerator {
     // Add selected sections
     output += sortedSections
       .filter(section => section.selected && template.sectionFormatters[section.id])
-      .map(section => {
+      .map((section, index) => {
         const formatter = template.sectionFormatters[section.id];
-        return formatter(formData[section.id as keyof FormData]);
+        const sectionContent = formatter(formData[section.id as keyof FormData]);
+        
+        // If not the first section and not empty, ensure consistent spacing
+        if (index > 0 && sectionContent.trim().length > 0) {
+          // Ensure section starts with proper spacing
+          if (!sectionContent.startsWith('\n\n')) {
+            return `\n\n${sectionContent}`;
+          }
+        }
+        return sectionContent;
       })
       .join('\n');
     
