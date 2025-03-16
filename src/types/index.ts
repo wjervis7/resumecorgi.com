@@ -57,9 +57,10 @@ export interface FormData {
 }
 
 export interface Sortable {
+  id: string;
   sortable: boolean;
-  originalOrder: number;
   sortOrder: number;
+  originalOrder?: number;
 }
 
 export interface NavSection extends Sortable {

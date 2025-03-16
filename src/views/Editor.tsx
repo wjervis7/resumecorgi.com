@@ -97,19 +97,19 @@ function Editor() {
   };
 
   const handleSectionSelected = (sectionId: string, checked: boolean): void => {
-    setSections(prevSections => toggleSectionSelected(prevSections, sectionId, checked));
+    setSections(prevSections => toggleSectionSelected(prevSections, sectionId, checked) as Section[]);
   };
 
   const handleMoveUp = (index: number): void => {
-    setSections(prevSections => moveUp(prevSections, index));
+    setSections(prevSections => moveUp(prevSections, index) as Section[]);
   };
 
   const handleMoveDown = (index: number): void => {
-    setSections(prevSections => moveDown(prevSections, index));
+    setSections(prevSections => moveDown(prevSections, index) as Section[]);
   };
 
   const handleMoveTo = (oldIndex: number, newIndex: number): void => {
-    setSections(prevSections => moveTo(prevSections, oldIndex, newIndex));
+    setSections(prevSections => moveTo(prevSections, oldIndex, newIndex) as Section[]);
   };
 
   // clear localStorage data and reset to defaults

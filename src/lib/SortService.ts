@@ -1,4 +1,4 @@
-import { Section } from '../types';
+import { NavSection, Sortable } from '../types';
 
 /**
  * Moves a section up in the sorted order
@@ -6,7 +6,7 @@ import { Section } from '../types';
  * @param index Index of the section to move
  * @returns New array with updated section order
  */
-export const moveUp = (sections: Section[], index: number): Section[] => {
+export const moveUp = (sections: Sortable[], index: number): Sortable[] => {
   // Get the current sorted order for reference
   const sortedSections = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
 
@@ -50,7 +50,7 @@ export const moveUp = (sections: Section[], index: number): Section[] => {
  * @param index Index of the section to move
  * @returns New array with updated section order
  */
-export const moveDown = (sections: Section[], index: number): Section[] => {
+export const moveDown = (sections: Sortable[], index: number): Sortable[] => {
   // Get the current sorted order for reference
   const sortedSections = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
 
@@ -95,7 +95,7 @@ export const moveDown = (sections: Section[], index: number): Section[] => {
  * @param newIndex Desired position index
  * @returns New array with updated section order
  */
-export const moveTo = (sections: Section[], oldIndex: number, newIndex: number): Section[] => {
+export const moveTo = (sections: Sortable[], oldIndex: number, newIndex: number): Sortable[] => {
   // Create a copy of sorted sections
   const sortedSections = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
 
@@ -123,10 +123,10 @@ export const moveTo = (sections: Section[], oldIndex: number, newIndex: number):
  * @returns New array with updated selection
  */
 export const toggleSectionSelected = (
-  sections: Section[], 
+  sections: NavSection[], 
   sectionId: string, 
   checked: boolean
-): Section[] => {
+): NavSection[] => {
   return sections.map(section =>
     section.id === sectionId
       ? { ...section, selected: checked }
