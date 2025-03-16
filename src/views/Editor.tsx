@@ -190,7 +190,7 @@ function Editor() {
               sectionRefs={sectionRefs}
             />
 
-            <div className="mt-3 px-3">
+            <div className="mt-[0.285rem] px-3">
               {sortedSections
                 .filter(section => section.selected)
                 .map(section => (

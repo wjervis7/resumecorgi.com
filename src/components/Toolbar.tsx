@@ -36,7 +36,7 @@ function Toolbar({
     <>
       <div className="
           bg-zinc-600/93 dark:bg-zinc-800/93
-          px-0 pt-[0.875rem] pb-3 mb-0 
+          px-0 pt-[0.375rem] pb-1.5 mb-0 
           border-0 border-gray-400 dark:border-zinc-600
           rounded-m">
         

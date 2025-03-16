@@ -71,18 +71,23 @@ const ScrollSpy = ({
     <div className="
       sticky top-0 z-10 
       bg-white dark:bg-zinc-950 border-b border-gray-300 dark:border-zinc-800
-      flex justify-center
-      px-3 w-full">
-      <ul className="flex flex-wrap w-full justify-between text-sm text-center">
+      flex overflow-x-auto justify-center
+      px-3 w-full
+      [&::-webkit-scrollbar]:h-1.5
+      [&::-webkit-scrollbar-track]:bg-zinc-300
+      [&::-webkit-scrollbar-thumb]:bg-zinc-400
+      dark:[&::-webkit-scrollbar-track]:bg-zinc-800
+      dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600">
+      <ul className="flex flex-nowrap min-w-max lg:min-w-0 lg:w-full lg:justify-between text-sm text-center">
         {sections
           .filter(section => section.selected)
           .map(section => (
-            <li className="flex-grow" key={section.id}>
+            <li className="lg:flex-grow whitespace-nowrap" key={section.id}>
                 <a href={section.href}
                    onClick={e => scrollToSection(e, section.id)}
                    className={`
-                    w-full
-                    inline-block p-5
+                    lg:w-full
+                    inline-block px-2 pt-3 pb-2.5
                     text-gray-900 dark:text-gray-100
                     border-b-3 border-transparent
                     ${ activeSection === section.id
@@ -92,16 +97,6 @@ const ScrollSpy = ({
             </li>
           ))}
     </ul>
-
-      <style>{`
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .hide-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
     </div>
   );
 };
