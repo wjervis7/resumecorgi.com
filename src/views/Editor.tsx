@@ -10,6 +10,7 @@ import Button from '../components/Button';
 import Footer from '../components/Footer';
 import { FormData, Section } from '../types';
 import { loadFromStorage, saveToStorage, clearStorage } from '../lib/StorageService';
+import { moveUp, moveDown, moveTo, toggleSectionSelected } from '../lib/SortService';
 
 interface SectionRenderItem {
   id: string;
@@ -96,115 +97,22 @@ function Editor() {
   };
 
   const handleSectionSelected = (sectionId: string, checked: boolean): void => {
-    setSections(prevSections =>
-      prevSections.map(section =>
-        section.id === sectionId
-          ? { ...section, selected: checked }
-          : section
-      )
-    );
+    setSections(prevSections => toggleSectionSelected(prevSections, sectionId, checked));
   };
 
-  const moveUp = (index: number): void => {
-    // Get the current sorted order for reference
-    const sortedSections = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
-
-    // Find the section in the sortedSections array by id
-    const sectionId = sections[index].id;
-    const sortedIndex = sortedSections.findIndex(section => section.id === sectionId);
-    const item = sortedSections[sortedIndex];
-
-    // Cannot move if it's not sortable
-    if (!item.sortable) return;
-
-    // Find the previous sortable item (if any)
-    let prevSortableIndex = -1;
-    for (let i = sortedIndex - 1; i >= 0; i--) {
-      if (sortedSections[i].sortable) {
-        prevSortableIndex = i;
-        break;
-      }
-    }
-
-    // If no previous sortable item, we can't move up
-    if (prevSortableIndex === -1) return;
-
-    const prevItem = sortedSections[prevSortableIndex];
-
-    // Update sections with swapped sortOrders
-    setSections(sections.map(section => {
-      if (section.id === item.id) {
-        return { ...section, sortOrder: prevItem.sortOrder };
-      }
-      if (section.id === prevItem.id) {
-        return { ...section, sortOrder: item.sortOrder };
-      }
-      return section;
-    }));
+  const handleMoveUp = (index: number): void => {
+    setSections(prevSections => moveUp(prevSections, index));
   };
 
-  const moveDown = (index: number): void => {
-    // Get the current sorted order for reference
-    const sortedSections = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
-
-    // Find the section in the sortedSections array by id
-    const sectionId = sections[index].id;
-    const sortedIndex = sortedSections.findIndex(section => section.id === sectionId);
-    const item = sortedSections[sortedIndex];
-
-    // Cannot move if it's not sortable
-    if (!item.sortable) return;
-
-    // Find the next sortable item (if any)
-    let nextSortableIndex = -1;
-    for (let i = sortedIndex + 1; i < sortedSections.length; i++) {
-      if (sortedSections[i].sortable) {
-        nextSortableIndex = i;
-        break;
-      }
-    }
-
-    // If no next sortable item, we can't move down
-    if (nextSortableIndex === -1) return;
-
-    const nextItem = sortedSections[nextSortableIndex];
-
-    // Update sections with swapped sortOrders
-    setSections(sections.map(section => {
-      if (section.id === item.id) {
-        return { ...section, sortOrder: nextItem.sortOrder };
-      }
-      if (section.id === nextItem.id) {
-        return { ...section, sortOrder: item.sortOrder };
-      }
-      return section;
-    }));
+  const handleMoveDown = (index: number): void => {
+    setSections(prevSections => moveDown(prevSections, index));
   };
 
-  const moveTo = (oldIndex: number, newIndex: number): void => {
-    // Create a copy of sorted sections
-    const sortedSections = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
-
-    // Get items by actual array indices (not sort values)
-    const itemToMove = sortedSections[oldIndex];
-
-    // Remove the item from its position
-    sortedSections.splice(oldIndex, 1);
-
-    // Insert the item at the new position
-    sortedSections.splice(newIndex, 0, itemToMove);
-
-    // Reassign all sortOrder values sequentially (0, 1, 2, 3, ...)
-    const updatedSections = sortedSections.map((section, index) => ({
-      ...section,
-      sortOrder: index
-    }));
-
-    // Set the new state
-    setSections(updatedSections);
+  const handleMoveTo = (oldIndex: number, newIndex: number): void => {
+    setSections(prevSections => moveTo(prevSections, oldIndex, newIndex));
   };
 
-  // Create reset function to clear localStorage data and reset to defaults
+  // clear localStorage data and reset to defaults
   const resetToDefaults = () => {
     if (window.confirm('Are you sure you want to reset all your data? This cannot be undone.')) {
       const { formData: initialFormData, sections: initialSections } = clearStorage();
@@ -226,7 +134,13 @@ function Editor() {
           bg-gray-50 dark:bg-zinc-950
           mt-[74px]`}>
           <div className="px-3 pt-3">
-            <Sidebar sections={sortedSections} handleSectionSelected={handleSectionSelected} handleMoveUp={moveUp} handleMoveDown={moveDown} handleMoveTo={moveTo} />
+            <Sidebar 
+              sections={sortedSections} 
+              handleSectionSelected={handleSectionSelected} 
+              handleMoveUp={handleMoveUp} 
+              handleMoveDown={handleMoveDown} 
+              handleMoveTo={handleMoveTo} 
+            />
             
             {/* Reset Button */}
             <div className="mt-4 mb-2">
