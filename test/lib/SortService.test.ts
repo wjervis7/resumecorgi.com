@@ -1,7 +1,7 @@
 import { moveUp, moveDown, moveTo, toggleSectionSelected } from '../../src/lib/SortService';
 import { NavSection, Sortable } from '../../src/types';
 
-describe('SectionOrderingService', () => {
+describe('SortService', () => {
   const testSortables: Sortable[] = [
     { id: 'section1', sortable: true, sortOrder: 0 },
     { id: 'section2', sortable: true, sortOrder: 1 },
