@@ -1,4 +1,4 @@
-import { JSX, useState, useEffect } from 'react';
+import { JSX, useState, useEffect, useRef } from 'react';
 import Preview from './Preview';
 import PersonalInfo from './forms/PersonalInfo';
 import Experience from './forms/Experience';
@@ -8,17 +8,21 @@ import Skills from './forms/Skills';
 import Sidebar from './Sidebar';
 import Button from '../components/Button';
 import Footer from '../components/Footer';
+import ScrollSpy from '../components/ScrollSpy';
 import { FormData, Section } from '../types';
 import { loadFromStorage, saveToStorage, clearStorage } from '../lib/StorageService';
 import { moveUp, moveDown, moveTo, toggleSectionSelected } from '../lib/SortService';
 
 interface SectionRenderItem {
   id: string;
+  title: string;
   renderFunc: () => JSX.Element;
 }
 
 function Editor() {
   const [currentMobileView, setCurrentMobileView] = useState<string>('form');
+  const sectionRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+  const formContainerRef = useRef<HTMLDivElement | null>(null);
   
   // Load data from localStorage or use initial data
   const { formData: savedFormData, sections: savedSections } = loadFromStorage();
@@ -49,6 +53,7 @@ function Editor() {
   const sectionRenderMapping: SectionRenderItem[] = [
     {
       id: 'personalInfo',
+      title: 'About You',
       renderFunc: () =>
         <>
           <Card>
@@ -59,6 +64,7 @@ function Editor() {
     },
     {
       id: 'experience',
+      title: 'Experience',
       renderFunc: () =>
         <>
           <Card>
@@ -68,6 +74,7 @@ function Editor() {
     },
     {
       id: 'education', 
+      title: 'Education',
       renderFunc: () =>
         <>
           <Card>
@@ -77,6 +84,7 @@ function Editor() {
     },
     {
       id: 'skills', 
+      title: 'Skills',
       renderFunc: () =>
         <>
           <Card>
@@ -85,6 +93,12 @@ function Editor() {
         </>
     },
   ];
+
+  // Create a mapping of section IDs to their titles
+  const sectionTitles: Record<string, string> = sectionRenderMapping.reduce((acc, item) => {
+    acc[item.id] = item.title;
+    return acc;
+  }, {} as Record<string, string>);
 
   const handleChange = (section: string, field: string, value: string): void => {
     setFormData(prevData => ({
@@ -132,7 +146,7 @@ function Editor() {
           col-span-12 md:col-span-2
           h-screen md:h-auto
           bg-gray-50 dark:bg-zinc-950
-          mt-[74px]`}>
+          mt-[72px] md:mt-[76px]`}>
           <div className="px-3 pt-3">
             <Sidebar 
               sections={sortedSections} 
@@ -155,26 +169,40 @@ function Editor() {
 
           <Footer />
         </div>
-        <div className={`
+        <div 
+          ref={formContainerRef}
+          className={`
             ${currentMobileView !== 'form' ? "hidden" : ""} md:block
             bg-gray-50 dark:bg-zinc-950
             col-span-12 md:col-span-4
             border-0 md:border-l-1 md:border-zinc-500 dark:border-zinc-600
-            overflow-x-auto mt-[74px]
+            overflow-y-auto mt-[72px] md:mt-[76px]
             [&::-webkit-scrollbar]:w-1.5
             [&::-webkit-scrollbar-track]:bg-zinc-300
             [&::-webkit-scrollbar-thumb]:bg-zinc-400
             dark:[&::-webkit-scrollbar-track]:bg-zinc-800
             dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600`}>
-          <div className="w-full px-3 pt-3 mb-[75vh]" id="start">
+          <div className="w-full mb-[75vh]" id="start">
+            <ScrollSpy
+              sections={sortedSections}
+              sectionTitles={sectionTitles}
+              containerRef={formContainerRef}
+              sectionRefs={sectionRefs}
+            />
 
-            {sortedSections
-              .filter(section => section.selected)
-              .map(section => (
-                <div key={section.id}>
-                  {sectionRenderMapping.find(srm => srm.id === section.id)?.renderFunc()}
-                </div>
-              ))}
+            <div className="mt-3 px-3">
+              {sortedSections
+                .filter(section => section.selected)
+                .map(section => (
+                  <div 
+                    key={section.id}
+                    ref={(el: HTMLDivElement | null) => { sectionRefs.current[section.id] = el; }}
+                    id={`section-${section.id}`}
+                  >
+                    {sectionRenderMapping.find(srm => srm.id === section.id)?.renderFunc()}
+                  </div>
+                ))}
+            </div>
 
           </div>
         </div>
@@ -182,7 +210,7 @@ function Editor() {
         <div className={`
             ${currentMobileView !== 'preview' ? "hidden md:block" : ""}
             md:col-span-6 col-span-12
-            overflow-x-none overflow-y-scroll mt-[74px]
+            overflow-x-none overflow-y-scroll mt-[72px] md:mt-[76px]
             ps-3 pe-2 pt-0 pb-3
             bg-zinc-600 dark:bg-zinc-800
             border-l-1 border-zinc-700 
