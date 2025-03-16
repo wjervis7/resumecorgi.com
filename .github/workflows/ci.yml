@@ -18,10 +18,19 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
 
-      - name: Build
+      - name: Install Dependencies
         shell: pwsh
         run: |
           npm ci
+
+      - name: Test
+        shell: pwsh
+        run: |
+          npm run test
+
+      - name: Build
+        shell: pwsh
+        run: |
           npm run build
 
       - name: Deploy to Azure Static Web Apps
