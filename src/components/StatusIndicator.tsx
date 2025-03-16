@@ -7,6 +7,7 @@ interface StatusIndicatorProps {
 }
 
 interface StatusState {
+  visibility: string;
   color: string;
   animation: string;
   text: string;
@@ -24,6 +25,7 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
   pageRendered
 }) => {
   let status: StatusState = {
+    visibility: "hidden lg:block",
     color: "green",
     animation: "",
     text: "Ready",
@@ -37,6 +39,7 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
 
   if (error) {
     status = {
+      visibility: "block",
       color: "red",
       animation: "",
       text: "Error",
@@ -49,6 +52,7 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
     };
   } else if (!pageRendered) {
     status = {
+      visibility: "block",
       color: "purple",
       animation: "animate-ping",
       text: "Initializing...",
@@ -61,6 +65,7 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
     };
   } else if (isLoading) {
     status = {
+      visibility: "block",
       color: "blue",
       animation: "animate-ping",
       text: "Rendering...",
@@ -74,7 +79,7 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
   }
 
   return (
-    <div className="block text-center">
+    <div className={`${status.visibility} text-center`}>
       <span className="sr-only">Status: {status.text}</span>
       <span className={`
         inline-flex items-center

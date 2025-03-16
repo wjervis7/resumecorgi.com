@@ -87,7 +87,7 @@ const ScrollSpy = ({
                    onClick={e => scrollToSection(e, section.id)}
                    className={`
                     lg:w-full
-                    inline-block px-2 pt-3 pb-2.5
+                    inline-block px-4 lg:px-2 pt-3 pb-2.5
                     text-gray-900 dark:text-gray-100
                     border-b-3 border-transparent
                     ${ activeSection === section.id

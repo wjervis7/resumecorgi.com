@@ -139,14 +139,14 @@ function Editor() {
 
   return (
     <>
-      <div className="grid md:grid-cols-12 grid-cols-12 gap-0 w-full h-screen">
+      <div className="grid lg:grid-cols-12 grid-cols-12 gap-0 w-full h-screen">
         <div className={`
-          ${currentMobileView !== 'sections' ? "hidden" : ""} md:block
+          ${currentMobileView !== 'sections' ? "hidden" : ""} lg:block
           relative
-          col-span-12 md:col-span-2
-          h-screen md:h-auto
+          col-span-12 lg:col-span-2
+          h-screen lg:h-auto
           bg-gray-50 dark:bg-zinc-950
-          mt-[72px] md:mt-[76px]`}>
+          mt-[72px] lg:mt-[76px]`}>
           <div className="px-3 pt-3">
             <Sidebar 
               sections={sortedSections} 
@@ -172,11 +172,11 @@ function Editor() {
         <div 
           ref={formContainerRef}
           className={`
-            ${currentMobileView !== 'form' ? "hidden" : ""} md:block
+            ${currentMobileView !== 'form' ? "hidden" : ""} lg:block
             bg-gray-50 dark:bg-zinc-950
-            col-span-12 md:col-span-4
-            border-0 md:border-l-1 md:border-zinc-500 dark:border-zinc-600
-            overflow-y-auto mt-[72px] md:mt-[76px]
+            col-span-12 lg:col-span-4
+            border-0 lg:border-l-1 lg:border-zinc-500 dark:border-zinc-600
+            overflow-y-auto mt-[74px] lg:mt-[74px]
             [&::-webkit-scrollbar]:w-1.5
             [&::-webkit-scrollbar-track]:bg-zinc-300
             [&::-webkit-scrollbar-thumb]:bg-zinc-400
@@ -190,7 +190,7 @@ function Editor() {
               sectionRefs={sectionRefs}
             />
 
-            <div className="mt-[0.285rem] px-3">
+            <div className="mt-[0.295rem] px-3">
               {sortedSections
                 .filter(section => section.selected)
                 .map(section => (
@@ -208,9 +208,9 @@ function Editor() {
         </div>
 
         <div className={`
-            ${currentMobileView !== 'preview' ? "hidden md:block" : ""}
-            md:col-span-6 col-span-12
-            overflow-x-none overflow-y-scroll mt-[72px] md:mt-[76px]
+            ${currentMobileView !== 'preview' ? "hidden lg:block" : ""}
+            lg:col-span-6 col-span-12
+            overflow-x-none overflow-y-scroll mt-[74px] lg:mt-[74px]
             ps-3 pe-2 pt-0 pb-3
             bg-zinc-600 dark:bg-zinc-800
             border-l-1 border-zinc-700 
@@ -228,7 +228,7 @@ function Editor() {
         text-gray-900 dark:text-gray-100
         bg-white dark:bg-zinc-950
         bottom-0 left-0 right-0 
-        md:hidden
+        lg:hidden
         px-2 pt-3 pb-3.5
         flex justify-between space-1
         border-t-1 border-gray-900 dark:border-zinc-600`}>
