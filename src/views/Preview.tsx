@@ -3,7 +3,7 @@ import * as pdfjsLib from 'pdfjs-dist';
 import EngineManager from "../lib/EngineManager";
 import Skeleton from "../components/Skeleton";
 import Toolbar from "../components/Toolbar";
-import { createLaTeXFromFormData } from "../lib/LaTeXHelpers";
+import { createLaTeXFromFormData } from "../lib/LaTeXService";
 import { FormData, Section } from "../types";
 
 interface CompilationQueueItem {
