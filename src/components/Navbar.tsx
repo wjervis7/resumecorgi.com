@@ -27,7 +27,7 @@ function Navbar({
               </span>
             </div>
           </div>
-          <div className="col-span-1 text-right">
+          <div className="col-span-1 text-right pt-4.5">
               <LightSwitch />
           </div>
         </div>

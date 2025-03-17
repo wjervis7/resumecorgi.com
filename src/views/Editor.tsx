@@ -148,7 +148,7 @@ function Editor() {
             hover:cursor-pointer dark:text-zinc-200 rounded-full
             dark:hover:bg-zinc-800 dark:hover:text-zinc-200" />
         } />
-        <AppSidebar sections={sortedSections} handleMoveTo={handleMoveTo} />
+        <AppSidebar sections={sortedSections} handleMoveTo={handleMoveTo} resetData={() => resetToDefaults() } />
         <div className="grid lg:grid-cols-12 grid-cols-12 gap-0 w-full h-screen">
           <div className={`
           ${currentMobileView !== 'sections' ? "hidden" : ""} hidden /lg:block
@@ -239,17 +239,9 @@ function Editor() {
         bg-white dark:bg-zinc-800
         bottom-0 left-0 right-0 
         lg:hidden
-        px-1 pt-1 pb-1.5
+        px-4 pt-1.5 pb-2
         flex justify-between space-1
         border-t-1 border-gray-900 dark:border-zinc-700`}>
-          <div className="flex-1 pe-2">
-            <Button
-              theme={currentMobileView === 'sections' ? 'primary' : 'default'}
-              text="Sections"
-              className="w-full"
-              parentClassName="w-full"
-              onClick={() => setCurrentMobileView('sections')} />
-          </div>
           <div className="flex-1 pe-2">
             <Button
               theme={currentMobileView === 'form' ? 'primary' : 'default'}
