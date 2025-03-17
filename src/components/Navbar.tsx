@@ -16,7 +16,7 @@ function Navbar({
           bg-white dark:bg-zinc-950
           border-b-1 border-gray-400 dark:border-zinc-700
           py-1.5 /py-[1.25rem] px-3
-          z-1000">
+          z-49">
         <div className="grid grid-cols-2">
           <div className="col-span-1 text-left">
             <div>

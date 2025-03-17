@@ -1,4 +1,4 @@
-import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel } from "@/components/ui/sidebar"
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarTrigger } from "@/components/ui/sidebar"
 import { NavSection } from "@/types";
 import SortableNav from "./SortableNav";
 import Footer from "./Footer";
@@ -14,8 +14,15 @@ interface SidebarProps {
 
 function AppSidebar({ sections, handleMoveTo, resetData, sampleData }: SidebarProps) {
   return (
-    <Sidebar className="border-none dark:border-zinc-700">
-      <SidebarContent className="mt-[75px] bg-gray-50 dark:bg-zinc-800 overflow-hidden">
+    <Sidebar className="border-none">
+      <SidebarContent className="mt-0 lg:mt-[75px] bg-gray-50 dark:bg-zinc-800 overflow-hidden">
+        <SidebarGroup className="block lg:hidden">
+          <SidebarGroupContent>
+            <SidebarTrigger className="
+              hover:cursor-pointer dark:text-zinc-200 rounded-full
+              dark:hover:bg-zinc-800 dark:hover:text-zinc-200" />
+          </SidebarGroupContent>
+        </SidebarGroup>
         <SidebarGroup>
           <SidebarGroupLabel className="text-gray-700 dark:text-zinc-300 font-normal">Sections</SidebarGroupLabel>
           <SidebarGroupContent>

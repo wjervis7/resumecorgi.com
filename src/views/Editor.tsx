@@ -117,14 +117,6 @@ function Editor() {
     setSections(prevSections => toggleSectionSelected(prevSections, sectionId, checked) as Section[]);
   };
 
-  const handleMoveUp = (index: number): void => {
-    setSections(prevSections => moveUp(prevSections, index) as Section[]);
-  };
-
-  const handleMoveDown = (index: number): void => {
-    setSections(prevSections => moveDown(prevSections, index) as Section[]);
-  };
-
   const handleMoveTo = (oldIndex: number, newIndex: number): void => {
     setSections(prevSections => moveTo(prevSections, oldIndex, newIndex) as Section[]);
   };
@@ -148,38 +140,11 @@ function Editor() {
             hover:cursor-pointer dark:text-zinc-200 rounded-full
             dark:hover:bg-zinc-800 dark:hover:text-zinc-200" />
         } />
-        <AppSidebar sections={sortedSections} handleMoveTo={handleMoveTo} resetData={() => resetToDefaults() } />
+        <AppSidebar 
+          sections={sortedSections}
+          handleMoveTo={handleMoveTo}
+          resetData={() => resetToDefaults() } />
         <div className="grid lg:grid-cols-12 grid-cols-12 gap-0 w-full h-screen">
-          <div className={`
-          ${currentMobileView !== 'sections' ? "hidden" : ""} hidden /lg:block
-          relative
-          col-span-12 lg:col-span-2
-          h-screen lg:h-auto
-          bg-gray-50 dark:bg-zinc-800
-          mt-[72px] lg:mt-[74px]`}>
-            <div className="px-3 pt-3">
-              <SidebarTrigger />
-              <Sidebar
-                sections={sortedSections}
-                handleSectionSelected={handleSectionSelected}
-                handleMoveUp={handleMoveUp}
-                handleMoveDown={handleMoveDown}
-                handleMoveTo={handleMoveTo}
-              />
-
-              {/* Reset Button */}
-              <div className="mt-4 mb-2">
-                <Button
-                  theme="primary"
-                  text="Reset to Default"
-                  className="w-full"
-                  onClick={resetToDefaults}
-                />
-              </div>
-            </div>
-
-            <Footer />
-          </div>
           <div
             ref={formContainerRef}
             className={`
