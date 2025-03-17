@@ -31,12 +31,12 @@ function RichTextbox({ content, onInput }: RichTextboxProps) {
         ref={editableRef}
         className="
           relative w-full px-3 py-3 text-sm text-black dark:text-white 
-          bg-slate-50 dark:bg-zinc-900 
-          border-1 border-black dark:border-zinc-500 rounded-lg
-          hover:border-lime-500 dark:hover:border-lime-400
-          hover:bg-lime-50 dark:hover:bg-lime-950
-          focus:outline-lime-500 focus:outline-3 focus:border-lime-500 focus:ring-lime-500 dark:focus:border-lime-300 dark:focus:border-transparent
-          focus:bg-lime-50 dark:focus:bg-lime-950 list-disc list-inside"
+          bg-gray-50 dark:bg-zinc-800
+          border-1 border-gray-200 dark:border-zinc-700 rounded-lg
+          hover:border-purple-200 dark:hover:border-purple-600
+          hover:bg-purple-50 dark:hover:bg-purple-900
+          focus:outline-purple-600/75 focus:outline-3 focus:border-purple-600/75 focus:ring-purple-600/75 dark:focus:border-purple-600/75 dark:focus:border-transparent
+          focus:bg-purple-50 dark:focus:bg-purple-950 list-disc list-inside"
         contentEditable
         suppressContentEditableWarning={true}
         onInput={onInput}

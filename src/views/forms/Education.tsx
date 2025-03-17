@@ -4,6 +4,7 @@ import Input from '../../components/Input';
 import RichTextbox from '../../components/RichTextbox';
 
 import { FormData, Education as EducationInfo } from '../../types';
+import Separator from '../../components/Separator';
 
 interface EducationProps {
   education?: EducationInfo[];
@@ -51,7 +52,7 @@ function Education({ education = [], setFormData }: EducationProps) {
       {education.map((edu, index) => (
         <div key={index} className="mb-3">
           {index !== 0 && index !== education.length && (
-            <div className="border-t-1 border-gray-400 dark:border-zinc-700 -mx-3 mb-5"></div>
+            <Separator />
           )}
           <h3 className="text-medium font-bold mb-1.5 text-gray-900 dark:text-gray-200">
             {index === 0 ? 'Most Recent Education' : `Education #${index + 1}`}
@@ -63,6 +64,7 @@ function Education({ education = [], setFormData }: EducationProps) {
                   onClick={() => removeEducation(index)}
                   parentClassName="mb-1"
                   className="text-sm"
+                  theme="danger"
                 />
               </>
             )}
@@ -189,7 +191,7 @@ function Education({ education = [], setFormData }: EducationProps) {
 
       <Button
         text="Add Another Education"
-        theme="interaction"
+        theme="success"
         className="text-sm"
         onClick={addEducation} />
     </>

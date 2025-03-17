@@ -70,15 +70,15 @@ const ScrollSpy = ({
   return (
     <div className="
       sticky top-0 z-10 
-      bg-white dark:bg-zinc-950 border-b border-gray-300 dark:border-zinc-800
+      bg-white dark:bg-zinc-900 border-b border-gray-300 dark:border-zinc-800
       flex overflow-x-auto justify-center
-      px-3 w-full
+      px-4 w-full
       [&::-webkit-scrollbar]:h-1.5
       [&::-webkit-scrollbar-track]:bg-zinc-300
       [&::-webkit-scrollbar-thumb]:bg-zinc-400
       dark:[&::-webkit-scrollbar-track]:bg-zinc-800
       dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600">
-      <ul className="flex flex-nowrap min-w-max lg:min-w-0 lg:w-full lg:justify-between text-sm text-center">
+      <ul className="flex flex-nowrap min-w-max lg:min-w-0 lg:w-full lg:justify-between text-sm text-center font-semibold">
         {sections
           .filter(section => section.selected)
           .map(section => (
@@ -89,10 +89,10 @@ const ScrollSpy = ({
                     lg:w-full
                     inline-block px-4 lg:px-2 pt-3 pb-2.5
                     text-gray-900 dark:text-gray-100
-                    border-b-3 border-transparent
+                    border-b-4 border-transparent
                     ${ activeSection === section.id
                       ? "active text-purple-800 dark:text-purple-100 border-purple-800! bg-purple-800/0 dark:bg-purple-800/0"
-                      : "hover:bg-gray-50 dark:hover:bg-zinc-800 dark:hover:text-gray-200"}`}
+                      : "hover:bg-gray-50 dark:hover:bg-zinc-700 dark:hover:text-gray-200"}`}
                   >{sectionTitles[section.id] || section.id}</a>
             </li>
           ))}

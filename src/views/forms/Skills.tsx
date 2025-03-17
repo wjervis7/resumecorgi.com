@@ -2,6 +2,7 @@ import React from 'react';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import { FormData, Skill } from '../../types';
+import Separator from '../../components/Separator';
 
 interface SkillsProps {
   skills?: Skill[];
@@ -67,7 +68,7 @@ function Skills({ skills = [], setFormData }: SkillsProps) {
       {skills.map((skillCategory, categoryIndex) => (
         <div key={categoryIndex} className="mb-4">
           {categoryIndex !== 0 && categoryIndex !== skills.length && (
-            <div className="border-t-1 border-gray-400 dark:border-zinc-700 -mx-3 mb-5"></div>
+            <Separator />
           )}
           
           <div className="flex items-center mb-2">
@@ -79,6 +80,7 @@ function Skills({ skills = [], setFormData }: SkillsProps) {
                 <span className="ms-3"></span>
                 <Button
                   text="Remove Category"
+                  theme="danger"
                   onClick={() => removeSkillCategory(categoryIndex)}
                   parentClassName="mb-1 ml-2"
                   className="text-sm"
@@ -114,7 +116,7 @@ function Skills({ skills = [], setFormData }: SkillsProps) {
 
       <Button
         text="Add Another Skill Category"
-        theme="interaction"
+        theme="success"
         className="text-sm"
         onClick={addSkillCategory} 
       />

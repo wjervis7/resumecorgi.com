@@ -145,8 +145,8 @@ function Editor() {
           relative
           col-span-12 lg:col-span-2
           h-screen lg:h-auto
-          bg-gray-50 dark:bg-zinc-950
-          mt-[72px] lg:mt-[76px]`}>
+          bg-gray-50 dark:bg-zinc-800
+          mt-[72px] lg:mt-[74px]`}>
           <div className="px-3 pt-3">
             <Sidebar 
               sections={sortedSections} 
@@ -173,15 +173,15 @@ function Editor() {
           ref={formContainerRef}
           className={`
             ${currentMobileView !== 'form' ? "hidden" : ""} lg:block
-            bg-gray-50 dark:bg-zinc-950
+            bg-gray-50 dark:bg-zinc-800
             col-span-12 lg:col-span-4
-            border-0 lg:border-l-1 lg:border-zinc-500 dark:border-zinc-600
+            border-0 lg:border-l-1 lg:border-zinc-500 dark:border-zinc-700
             overflow-y-auto mt-[74px] lg:mt-[74px]
             [&::-webkit-scrollbar]:w-1.5
             [&::-webkit-scrollbar-track]:bg-zinc-300
             [&::-webkit-scrollbar-thumb]:bg-zinc-400
             dark:[&::-webkit-scrollbar-track]:bg-zinc-800
-            dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600`}>
+            dark:[&::-webkit-scrollbar-thumb]:bg-zinc-700`}>
           <div className="w-full mb-[75vh]" id="start">
             <ScrollSpy
               sections={sortedSections}
@@ -190,7 +190,7 @@ function Editor() {
               sectionRefs={sectionRefs}
             />
 
-            <div className="mt-[0.295rem] px-3">
+            <div className="mt-3 px-4">
               {sortedSections
                 .filter(section => section.selected)
                 .map(section => (
@@ -225,13 +225,12 @@ function Editor() {
       </div>
       <div className={`
         fixed
-        text-gray-900 dark:text-gray-100
-        bg-white dark:bg-zinc-950
+        bg-white dark:bg-zinc-800
         bottom-0 left-0 right-0 
         lg:hidden
-        px-2 pt-3 pb-3.5
+        px-1 pt-1 pb-1.5
         flex justify-between space-1
-        border-t-1 border-gray-900 dark:border-zinc-600`}>
+        border-t-1 border-gray-900 dark:border-zinc-700`}>
         <div className="flex-1 pe-2">
           <Button
             theme={currentMobileView === 'sections' ? 'primary' : 'default'}

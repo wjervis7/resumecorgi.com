@@ -23,7 +23,7 @@ function Landing({ onStart }: LandingProps) {
                 It's free, optimized for scanning software,
                 and secure. Your data never leaves your device.
               </p>
-              <Button onClick={onStart} text="Start Building" />
+              <Button onClick={onStart} text="Start Building" className="px-5 py-2" />
             </div>
           </div>
           <div className="hidden /lg:block mt-4 lg:mt-0 lg:me-auto">

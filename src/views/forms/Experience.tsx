@@ -4,6 +4,7 @@ import Input from '../../components/Input.js'
 import RichTextbox from '../../components/RichTextbox.js';
 
 import { FormData, Experience as ExperienceInfo } from '../../types';
+import Separator from '../../components/Separator.js';
 
 interface ExperienceProps {
   experiences?: ExperienceInfo[];
@@ -50,7 +51,7 @@ function Experience({ experiences = [], setFormData }: ExperienceProps) {
       {experiences.map((experience, index) => (
         <div key={index} className="mb-3">
           {index !== 0 && index !== experiences.length && (
-            <div className="border-t-1 border-gray-400 dark:border-zinc-700 -mx-3 mb-5"></div>
+            <Separator />
           )}
           <h3 className="text-medium font-bold mb-1.5 text-gray-900 dark:text-gray-200">
             {index === 0 ? 'Most Recent Position' : `Position #${index + 1}`}
@@ -59,6 +60,7 @@ function Experience({ experiences = [], setFormData }: ExperienceProps) {
                 <span className="ms-3"></span>
                 <Button
                   text="Remove"
+                  theme="danger"
                   onClick={() => removeExperience(index)}
                   parentClassName="mb-1"
                   className="text-sm"
@@ -168,7 +170,7 @@ function Experience({ experiences = [], setFormData }: ExperienceProps) {
 
       <Button
         text="Add Another Company"
-        theme="interaction"
+        theme="success"
         className="text-sm"
         onClick={addExperience} />
     </>

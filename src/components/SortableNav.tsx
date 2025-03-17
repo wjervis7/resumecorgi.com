@@ -51,21 +51,21 @@ const SortableNavItem: React.FC<SortableNavItemProps> = ({ id, displayName, href
         <span className="
           absolute top-0 left-0 
           w-full h-full 
-          mt-[0.2rem]
-          bg-black dark:bg-zinc-700
-          rounded-[0.5rem]
+          mt-[0.2rem] ms-[0.2rem]
+          bg-black
+          rounded-lg
           group-hover:translate-x-[3px] group-hover:translate-y-[1px]
           transition
           duration-150
         "></span>
         <div
           className={`
-            bg-white dark:bg-zinc-800
-            group-active:bg-gray-100 dark:group-active:bg-zinc-700
+            bg-white dark:bg-zinc-700
+            group-active:bg-gray-100 dark:group-active:bg-zinc-600
             relative w-full
             ps-3 pe-1.5 py-1.5
             font-bold text-black dark:text-white
-            border-1 border-black dark:border-zinc-600 rounded-[0.45rem]
+            border-1 border-black rounded-[0.45rem]
           `}>
           <div className="flex justify-between items-center w-full">
             <a href={href} className={`${anchorCss}`}>{displayName}</a>
@@ -91,21 +91,21 @@ const SortableNavItem: React.FC<SortableNavItemProps> = ({ id, displayName, href
       <span className="
         absolute top-0 left-0 
         w-full h-full 
-        mt-[0.2rem]
-        bg-black dark:bg-zinc-700
-        rounded-[0.5rem]
+        mt-[0.2rem] ms-[0.2rem]
+        bg-black
+        rounded-lg
         group-hover:translate-x-[3px] group-hover:translate-y-[1px]
         transition
         duration-150
       "></span>
       <div
         className={`
-          bg-white dark:bg-zinc-800
-          group-active:bg-gray-100 dark:group-active:bg-zinc-700
+          bg-white dark:bg-zinc-700
+          group-active:bg-gray-100 dark:group-active:bg-zinc-600
           relative w-full
           ps-3 pe-1.5 py-1.5
           font-bold text-black dark:text-white
-          border-1 border-black dark:border-zinc-600 rounded-[0.45rem]
+          border-1 border-black rounded-[0.45rem]
         `}
       >
         <div className="flex justify-between items-center w-full">

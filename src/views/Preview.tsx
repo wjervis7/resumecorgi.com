@@ -56,7 +56,7 @@ function Preview({ formData, selectedSections }: PreviewProps) {
   const debounceShortMs = 50;
   const debounceLongMs = 600;
   const debounceInactivityIntervalMs = 1000;
-  const maxWidth = 768;
+  const maxWidth = 800;
 
   // Use memoized LaTeX to avoid recreating it on every render
   const compiledLaTeX = useMemo(() => {
@@ -419,7 +419,7 @@ function Preview({ formData, selectedSections }: PreviewProps) {
         />
       </div>
 
-      <div id="pdf-viewer-area" className="pdf-viewer flex justify-center items-center w-full">
+      <div id="pdf-viewer-area" className="pdf-viewer flex justify-center items-center w-full mt-2">
         <div ref={canvasContainerRef} className="canvas-container relative">
 
           {/* Display canvas - always visible */}
