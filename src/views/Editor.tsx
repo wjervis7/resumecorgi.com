@@ -12,6 +12,9 @@ import ScrollSpy from '../components/ScrollSpy';
 import { FormData, Section } from '../types';
 import { loadFromStorage, saveToStorage, clearStorage } from '../lib/StorageService';
 import { moveUp, moveDown, moveTo, toggleSectionSelected } from '../lib/SortService';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import AppSidebar from '@/components/AppSidebar';
+import Navbar from '@/components/Navbar';
 
 interface SectionRenderItem {
   id: string;
@@ -23,10 +26,10 @@ function Editor() {
   const [currentMobileView, setCurrentMobileView] = useState<string>('form');
   const sectionRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   const formContainerRef = useRef<HTMLDivElement | null>(null);
-  
+
   // Load data from localStorage or use initial data
   const { formData: savedFormData, sections: savedSections } = loadFromStorage();
-  
+
   const [formData, setFormData] = useState<FormData>(savedFormData);
   const [sections, setSections] = useState<Section[]>(savedSections);
 
@@ -44,7 +47,7 @@ function Editor() {
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
-    
+
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
@@ -73,7 +76,7 @@ function Editor() {
         </>
     },
     {
-      id: 'education', 
+      id: 'education',
       title: 'Education',
       renderFunc: () =>
         <>
@@ -83,7 +86,7 @@ function Editor() {
         </>
     },
     {
-      id: 'skills', 
+      id: 'skills',
       title: 'Skills',
       renderFunc: () =>
         <>
@@ -139,42 +142,50 @@ function Editor() {
 
   return (
     <>
-      <div className="grid lg:grid-cols-12 grid-cols-12 gap-0 w-full h-screen">
-        <div className={`
-          ${currentMobileView !== 'sections' ? "hidden" : ""} lg:block
+      <SidebarProvider>
+        <Navbar menuButton={
+          <SidebarTrigger className="
+            hover:cursor-pointer dark:text-zinc-200 rounded-full
+            dark:hover:bg-zinc-800 dark:hover:text-zinc-200" />
+        } />
+        <AppSidebar sections={sortedSections} handleMoveTo={handleMoveTo} />
+        <div className="grid lg:grid-cols-12 grid-cols-12 gap-0 w-full h-screen">
+          <div className={`
+          ${currentMobileView !== 'sections' ? "hidden" : ""} hidden /lg:block
           relative
           col-span-12 lg:col-span-2
           h-screen lg:h-auto
           bg-gray-50 dark:bg-zinc-800
           mt-[72px] lg:mt-[74px]`}>
-          <div className="px-3 pt-3">
-            <Sidebar 
-              sections={sortedSections} 
-              handleSectionSelected={handleSectionSelected} 
-              handleMoveUp={handleMoveUp} 
-              handleMoveDown={handleMoveDown} 
-              handleMoveTo={handleMoveTo} 
-            />
-            
-            {/* Reset Button */}
-            <div className="mt-4 mb-2">
-              <Button
-                theme="primary"
-                text="Reset to Default"
-                className="w-full"
-                onClick={resetToDefaults}
+            <div className="px-3 pt-3">
+              <SidebarTrigger />
+              <Sidebar
+                sections={sortedSections}
+                handleSectionSelected={handleSectionSelected}
+                handleMoveUp={handleMoveUp}
+                handleMoveDown={handleMoveDown}
+                handleMoveTo={handleMoveTo}
               />
-            </div>
-          </div>
 
-          <Footer />
-        </div>
-        <div 
-          ref={formContainerRef}
-          className={`
+              {/* Reset Button */}
+              <div className="mt-4 mb-2">
+                <Button
+                  theme="primary"
+                  text="Reset to Default"
+                  className="w-full"
+                  onClick={resetToDefaults}
+                />
+              </div>
+            </div>
+
+            <Footer />
+          </div>
+          <div
+            ref={formContainerRef}
+            className={`
             ${currentMobileView !== 'form' ? "hidden" : ""} lg:block
             bg-gray-50 dark:bg-zinc-800
-            col-span-12 lg:col-span-4
+            col-span-12 lg:col-span-5
             border-0 lg:border-l-1 lg:border-zinc-500 dark:border-zinc-700
             overflow-y-auto mt-[74px] lg:mt-[74px]
             [&::-webkit-scrollbar]:w-1.5
@@ -182,34 +193,34 @@ function Editor() {
             [&::-webkit-scrollbar-thumb]:bg-zinc-400
             dark:[&::-webkit-scrollbar-track]:bg-zinc-800
             dark:[&::-webkit-scrollbar-thumb]:bg-zinc-700`}>
-          <div className="w-full mb-[75vh]" id="start">
-            <ScrollSpy
-              sections={sortedSections}
-              sectionTitles={sectionTitles}
-              containerRef={formContainerRef}
-              sectionRefs={sectionRefs}
-            />
+            <div className="w-full mb-[75vh]" id="start">
+              <ScrollSpy
+                sections={sortedSections}
+                sectionTitles={sectionTitles}
+                containerRef={formContainerRef}
+                sectionRefs={sectionRefs}
+              />
 
-            <div className="mt-3 px-4">
-              {sortedSections
-                .filter(section => section.selected)
-                .map(section => (
-                  <div 
-                    key={section.id}
-                    ref={(el: HTMLDivElement | null) => { sectionRefs.current[section.id] = el; }}
-                    id={`section-${section.id}`}
-                  >
-                    {sectionRenderMapping.find(srm => srm.id === section.id)?.renderFunc()}
-                  </div>
-                ))}
+              <div className="mt-3 px-4">
+                {sortedSections
+                  .filter(section => section.selected)
+                  .map(section => (
+                    <div
+                      key={section.id}
+                      ref={(el: HTMLDivElement | null) => { sectionRefs.current[section.id] = el; }}
+                      id={`section-${section.id}`}
+                    >
+                      {sectionRenderMapping.find(srm => srm.id === section.id)?.renderFunc()}
+                    </div>
+                  ))}
+              </div>
+
             </div>
-
           </div>
-        </div>
 
-        <div className={`
+          <div className={`
             ${currentMobileView !== 'preview' ? "hidden lg:block" : ""}
-            lg:col-span-6 col-span-12
+            lg:col-span-7 col-span-12
             overflow-x-none overflow-y-scroll mt-[74px] lg:mt-[74px]
             ps-3 pe-2 pt-0 pb-3
             bg-zinc-600 dark:bg-zinc-800
@@ -220,10 +231,10 @@ function Editor() {
             [&::-webkit-scrollbar-thumb]:bg-zinc-400
             dark:[&::-webkit-scrollbar-track]:bg-zinc-800
             dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600`}>
-          <Preview formData={formData} selectedSections={sections} />
+            <Preview formData={formData} selectedSections={sections} />
+          </div>
         </div>
-      </div>
-      <div className={`
+        <div className={`
         fixed
         bg-white dark:bg-zinc-800
         bottom-0 left-0 right-0 
@@ -231,31 +242,32 @@ function Editor() {
         px-1 pt-1 pb-1.5
         flex justify-between space-1
         border-t-1 border-gray-900 dark:border-zinc-700`}>
-        <div className="flex-1 pe-2">
-          <Button
-            theme={currentMobileView === 'sections' ? 'primary' : 'default'}
-            text="Sections"
-            className="w-full"
-            parentClassName="w-full"
-            onClick={() => setCurrentMobileView('sections')} />
+          <div className="flex-1 pe-2">
+            <Button
+              theme={currentMobileView === 'sections' ? 'primary' : 'default'}
+              text="Sections"
+              className="w-full"
+              parentClassName="w-full"
+              onClick={() => setCurrentMobileView('sections')} />
+          </div>
+          <div className="flex-1 pe-2">
+            <Button
+              theme={currentMobileView === 'form' ? 'primary' : 'default'}
+              text="Form"
+              className="w-full"
+              parentClassName="w-full"
+              onClick={() => setCurrentMobileView('form')} />
+          </div>
+          <div className="flex-1">
+            <Button
+              theme={currentMobileView === 'preview' ? 'primary' : 'default'}
+              text="Preview"
+              className="w-full"
+              parentClassName="w-full"
+              onClick={() => setCurrentMobileView('preview')} />
+          </div>
         </div>
-        <div className="flex-1 pe-2">
-          <Button
-            theme={currentMobileView === 'form' ? 'primary' : 'default'}
-            text="Form"
-            className="w-full"
-            parentClassName="w-full"
-            onClick={() => setCurrentMobileView('form')} />
-        </div>
-        <div className="flex-1">
-          <Button
-            theme={currentMobileView === 'preview' ? 'primary' : 'default'}
-            text="Preview"
-            className="w-full"
-            parentClassName="w-full"
-            onClick={() => setCurrentMobileView('preview')} />
-        </div>
-      </div>
+      </SidebarProvider>
     </>
   );
 }

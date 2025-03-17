@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 
+type Theme = 'system' | 'light' | 'dark';
+
 function LightSwitch() {
-  const themes = ['system', 'light', 'dark'];
-  const [currentTheme, setCurrentTheme] = useState(() => {
-    const saved = localStorage.getItem('theme');
+  const themes: Theme[] = ['system', 'light', 'dark'];
+  const [currentTheme, setCurrentTheme] = useState<Theme>(() => {
+    const saved = localStorage.getItem('theme') as Theme | null;
     return saved && themes.includes(saved) ? saved : 'system'; // Default to system
   });
 
@@ -21,20 +23,20 @@ function LightSwitch() {
   }, [currentTheme]);
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
+    const savedTheme = localStorage.getItem('theme') as Theme | null;
     if (savedTheme && themes.includes(savedTheme)) {
       setCurrentTheme(savedTheme);
     }
   }, []);
 
-  const handleThemeChange = (theme) => {
+  const handleThemeChange = (theme: Theme): void => {
     setCurrentTheme(theme);
   };
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     
-    const handleChange = () => {
+    const handleChange = (): void => {
       if (currentTheme === 'system') {
         document.documentElement.setAttribute('data-theme', '');
         document.documentElement.setAttribute('data-theme', mediaQuery.matches ? 'dark' : 'light');
@@ -59,7 +61,7 @@ function LightSwitch() {
         tabIndex={currentTheme === 'system' ? 0 : -1}
         data-checked={currentTheme === 'system' ? "" : undefined}
         onClick={() => handleThemeChange('system')}
-        onKeyDown={(e) => {
+        onKeyDown={(e: React.KeyboardEvent) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             handleThemeChange('system');
@@ -84,7 +86,7 @@ function LightSwitch() {
         tabIndex={currentTheme === 'light' ? 0 : -1}
         data-checked={currentTheme === 'light' ? "" : undefined}
         onClick={() => handleThemeChange('light')}
-        onKeyDown={(e) => {
+        onKeyDown={(e: React.KeyboardEvent) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             handleThemeChange('light');
@@ -115,7 +117,7 @@ function LightSwitch() {
         tabIndex={currentTheme === 'dark' ? 0 : -1}
         data-checked={currentTheme === 'dark' ? "" : undefined}
         onClick={() => handleThemeChange('dark')}
-        onKeyDown={(e) => {
+        onKeyDown={(e: React.KeyboardEvent) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             handleThemeChange('dark');

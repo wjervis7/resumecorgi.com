@@ -47,21 +47,21 @@ const SortableNavItem: React.FC<SortableNavItemProps> = ({ id, displayName, href
 
   if (!sortable) {
     return (
-      <div ref={setNodeRef} className={`relative block group mb-[0.725rem]`}>
+      <div ref={setNodeRef} className={`relative block group/sections mb-[0.725rem]`}>
         <span className="
           absolute top-0 left-0 
           w-full h-full 
           mt-[0.2rem] ms-[0.2rem]
           bg-black
           rounded-lg
-          group-hover:translate-x-[3px] group-hover:translate-y-[1px]
+          group-hover/sections:translate-x-[3px] group-hover/sections:translate-y-[1px]
           transition
           duration-150
         "></span>
         <div
           className={`
             bg-white dark:bg-zinc-700
-            group-active:bg-gray-100 dark:group-active:bg-zinc-600
+            group-active/sections:bg-gray-100 dark:group-active/sections:bg-zinc-600
             relative w-full
             ps-3 pe-1.5 py-1.5
             font-bold text-black dark:text-white
@@ -86,7 +86,7 @@ const SortableNavItem: React.FC<SortableNavItemProps> = ({ id, displayName, href
     <div 
       ref={setNodeRef} 
       style={style} 
-      className={`relative block group mb-[0.725rem]`}
+      className={`relative block group/sections mb-[0.725rem]`}
     >
       <span className="
         absolute top-0 left-0 
@@ -94,14 +94,14 @@ const SortableNavItem: React.FC<SortableNavItemProps> = ({ id, displayName, href
         mt-[0.2rem] ms-[0.2rem]
         bg-black
         rounded-lg
-        group-hover:translate-x-[3px] group-hover:translate-y-[1px]
+        group-hover/sections:translate-x-[3px] group-hover/sections:translate-y-[1px]
         transition
         duration-150
       "></span>
       <div
         className={`
           bg-white dark:bg-zinc-700
-          group-active:bg-gray-100 dark:group-active:bg-zinc-600
+          group-active/sections:bg-gray-100 dark:group-active/sections:bg-zinc-600
           relative w-full
           ps-3 pe-1.5 py-1.5
           font-bold text-black dark:text-white
