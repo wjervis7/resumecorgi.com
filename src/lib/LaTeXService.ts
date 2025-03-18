@@ -103,15 +103,17 @@ class SectionFormatters {
     const sectionHeading = `\\section*{Experience}
 `;
 
-    return sectionHeading + experience.map(job => {
+    return sectionHeading + experience.map((job, index) => {
       const title = job.title || 'Position Title';
       const company = job.company || 'Company Name';
       const dateRange = `${job.start || 'Start'} -- ${job.end || 'End'}`;
       const accomplishments = this.utils.extractBulletPoints(this.utils.escapeLaTeX(job.accomplishments));
+      const isLastItem = index === experience.length - 1;
 
       return `% experience section
 \\textbf{${this.utils.escapeLaTeX(title)},} {${this.utils.escapeLaTeX(company)}} \\hfill ${this.utils.escapeLaTeX(dateRange)} \\\\
-${this.utils.formatItemize(accomplishments, {vspaceAfter: '-10pt'})}`;
+${this.utils.formatItemize(accomplishments, {vspaceAfter: '-5pt'})}
+\\vspace{${isLastItem ? `-5` : `0`}pt}`;
     }).join('\n\n');
   }
 
@@ -139,8 +141,8 @@ ${this.utils.formatItemize(accomplishments, {vspaceAfter: '-10pt'})}`;
 
       return `${mainLine}
 ${gpaLine}
-${this.utils.formatItemize(accomplishments, {vspaceAfter: '-10pt'})}
-%\\vspace{${isLastItem ? `-10` : `3`}pt}`;
+${this.utils.formatItemize(accomplishments, {vspaceAfter: '-5pt'})}
+\\vspace{${isLastItem ? `-5` : `0`}pt}`;
     }).join('\n\n');
   }
 
