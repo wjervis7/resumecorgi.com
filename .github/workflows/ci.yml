@@ -33,6 +33,12 @@ jobs:
         run: |
           npm run build
 
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: resumecorgi.com
+          path: dist/
+
       - name: Deploy to Azure Static Web Apps
         id: deploy
         uses: Azure/static-web-apps-deploy@v1
