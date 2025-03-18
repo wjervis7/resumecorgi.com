@@ -119,8 +119,13 @@ const SortableNavItem: React.FC<SortableNavItemProps> = ({ id, displayName, href
             <div 
               className="p-2 rounded-full hover:cursor-pointer"
               onClick={() => onSelected(id)}
+              tabIndex={0}
+              title={selected ? `Hide ${displayName}` : `Show ${displayName}`}
             >
 
+              <span className="sr-only">
+                {selected ? `Hide ${displayName}` : `Show ${displayName}`}
+              </span>
               {selected && (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -163,10 +168,12 @@ const SortableNavItem: React.FC<SortableNavItemProps> = ({ id, displayName, href
 
           {sortable && (
             <div 
-              className="p-2 rounded-full hover:cursor-grab" 
+              className="p-2 rounded-full hover:cursor-grab"
+              title={`Reorder ${displayName}`}
               {...listeners}
               {...attributes}
             >
+              <span className="sr-only">{`Reorder ${displayName}`}</span>
               <svg 
                 xmlns="http://www.w3.org/2000/svg" 
                 fill="none" 
