@@ -87,7 +87,7 @@ class SectionFormatters {
 
     return `
 \\section*{Summary}
-{${summary}}
+{${this.utils.escapeLaTeX(summary)}}
 %\\vspace{-10pt}
 `;
   }
@@ -107,11 +107,11 @@ class SectionFormatters {
       const title = job.title || 'Position Title';
       const company = job.company || 'Company Name';
       const dateRange = `${job.start || 'Start'} -- ${job.end || 'End'}`;
-      const accomplishments = this.utils.extractBulletPoints(job.accomplishments);
+      const accomplishments = this.utils.extractBulletPoints(this.utils.escapeLaTeX(job.accomplishments));
 
       return `% experience section
-\\textbf{${title},} {${company}} \\hfill ${dateRange} \\\\
-${this.utils.formatItemize(accomplishments)}`;
+\\textbf{${this.utils.escapeLaTeX(title)},} {${this.utils.escapeLaTeX(company)}} \\hfill ${this.utils.escapeLaTeX(dateRange)} \\\\
+${this.utils.formatItemize(accomplishments, {vspaceAfter: '-10pt'})}`;
     }).join('\n\n');
   }
 
@@ -124,24 +124,23 @@ ${this.utils.formatItemize(accomplishments)}`;
     }
     
     const sectionHeading = `% education section
-% \\vspace{-5pt}
 \\section*{Education}`;
 
     return sectionHeading + education.map((edu, index) => {
       const degree = edu.degree || 'Degree';
       const institution = edu.institution || 'Institution';
-      const year = edu.graduationDate || 'Year';
-      const accomplishments = this.utils.extractBulletPoints(edu.accomplishments);
+      const year = edu.graduationDate || '';
+      const accomplishments = this.utils.extractBulletPoints(this.utils.escapeLaTeX(edu.accomplishments));
 
-      const locationText = edu.location && edu.location.length > 0 ? ` -- ${edu.location}` : "";
-      const mainLine = `\\textbf{${degree},} ${institution}${locationText} \\hfill ${year} \\\\`;
-      const gpaLine = edu.gpa && edu.gpa.length > 0 ? `\\textbf{GPA:} ${edu.gpa} \\\\` : "";
+      const locationText = edu.location && edu.location.length > 0 ? ` -- ${this.utils.escapeLaTeX(edu.location)}` : "";
+      const mainLine = `\\textbf{${this.utils.escapeLaTeX(degree)},} ${this.utils.escapeLaTeX(institution)}${locationText} \\hfill ${this.utils.escapeLaTeX(year)} \\\\`;
+      const gpaLine = edu.gpa && edu.gpa.length > 0 ? `\\textbf{GPA:} ${this.utils.escapeLaTeX(edu.gpa)} \\\\` : "";
       const isLastItem = index === education.length - 1;
 
       return `${mainLine}
 ${gpaLine}
-${this.utils.formatItemize(accomplishments, {vspaceBefore: '-10pt'})}
-\\vspace{${isLastItem ? `-5` : `3`}pt}`;
+${this.utils.formatItemize(accomplishments, {vspaceAfter: '-10pt'})}
+%\\vspace{${isLastItem ? `-10` : `3`}pt}`;
     }).join('\n\n');
   }
 
@@ -161,7 +160,7 @@ ${this.utils.formatItemize(accomplishments, {vspaceBefore: '-10pt'})}
       const category = skill.category || "Category";
       const skillsList = skill.skillList || "";
 
-      return `\\textbf{${category}:} ${skillsList}`;
+      return `\\textbf{${this.utils.escapeLaTeX(category)}:} ${this.utils.escapeLaTeX(skillsList)}`;
     }).join('\n\n');
   }
   
@@ -296,7 +295,7 @@ class LaTeXResumeGenerator {
     // Format contact line
     const contactLine = contacts.length > 0 
       ? contacts.map(c => `\\href{${this.utils.getHref(c)}}{${c}}`).join(' | ')
-      : 'your.email@example.com';
+      : '';
     
     // Start building document
     let output = template.preamble;
