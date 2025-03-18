@@ -151,7 +151,7 @@ function Editor() {
             ${currentMobileView !== 'form' ? "hidden" : ""} lg:block
             bg-gray-50 dark:bg-zinc-800
             col-span-12 lg:col-span-5
-            border-0 lg:border-l-1 lg:border-zinc-500 dark:border-zinc-700
+            border-0 lg:border-zinc-500 dark:border-zinc-700
             overflow-y-auto mt-[74px] lg:mt-[74px]
             [&::-webkit-scrollbar]:w-1.5
             [&::-webkit-scrollbar-track]:bg-zinc-300
@@ -189,7 +189,7 @@ function Editor() {
             overflow-x-none overflow-y-scroll mt-[74px] lg:mt-[74px]
             ps-3 pe-2 pt-0 pb-3
             bg-zinc-600 dark:bg-zinc-800
-            border-l-1 border-zinc-700 
+            border-l-0 lg:border-l-1 border-zinc-700 
             dark:text-white
             [&::-webkit-scrollbar]:w-1.5
             [&::-webkit-scrollbar-track]:bg-zinc-600
@@ -200,13 +200,13 @@ function Editor() {
           </div>
         </div>
         <div className={`
-        fixed
-        bg-white dark:bg-zinc-800
-        bottom-0 left-0 right-0 
-        lg:hidden
-        px-4 pt-1.5 pb-2
-        flex justify-between space-1
-        border-t-1 border-gray-900 dark:border-zinc-700`}>
+          fixed
+          bg-white dark:bg-zinc-800
+          bottom-0 left-0 right-0 
+          lg:hidden
+          px-4 pt-1.5 pb-2
+          flex justify-between space-1
+          border-t-1 border-gray-900 dark:border-zinc-700`}>
           <div className="flex-1 pe-2">
             <Button
               theme={currentMobileView === 'form' ? 'primary' : 'default'}

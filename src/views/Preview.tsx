@@ -405,7 +405,7 @@ function Preview({ formData, selectedSections }: PreviewProps) {
     <>
       <h2 className="text-lg sr-only">PDF Preview</h2>
   
-      <div className="sticky top-0 w-full z-50">
+      <div className="sticky top-0 w-full z-48">
         <Toolbar 
           error={error} 
           isLoading={isLoading} 

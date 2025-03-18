@@ -14,8 +14,8 @@ interface SidebarProps {
 
 function AppSidebar({ sections, handleMoveTo, resetData, sampleData }: SidebarProps) {
   return (
-    <Sidebar className="border-none">
-      <SidebarContent className="mt-0 lg:mt-[75px] bg-gray-50 dark:bg-zinc-800 overflow-hidden">
+    <Sidebar className="border-r-0 border-t-0 border-gray-400 dark:border-zinc-700">
+      <SidebarContent className="mt-0 lg:mt-[75px] bg-gray-100 dark:bg-zinc-800/95 overflow-hidden">
         <SidebarGroup className="block lg:hidden">
           <SidebarGroupContent>
             <SidebarTrigger className="
@@ -50,7 +50,7 @@ function AppSidebar({ sections, handleMoveTo, resetData, sampleData }: SidebarPr
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="bg-gray-50 dark:bg-zinc-800">
+      <SidebarFooter className="bg-gray-100/95 dark:bg-zinc-800/95">
         <Footer className="relative" />
       </SidebarFooter>
     </Sidebar>
