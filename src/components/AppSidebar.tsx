@@ -1,8 +1,8 @@
-import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarTrigger } from "@/components/ui/sidebar"
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarTrigger } from "@/components/ui/sidebar"
 import { NavSection } from "@/types";
 import SortableNav from "./SortableNav";
 import Footer from "./Footer";
-import Button from "./Button";
+import { EraserIcon, FlaskConical } from "lucide-react";
 
 interface SidebarProps {
   sections: NavSection[];
@@ -10,6 +10,16 @@ interface SidebarProps {
   handleSectionSelected?: (sectionId: string, checked: boolean) => void;
   resetData?: () => void;
   sampleData?: () => void;
+}
+
+const clearForm = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, resetData?: () => void) => {
+  e.preventDefault();
+  resetData?.();
+}
+
+const loadSample = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, sampleData?: () => void) => {
+  e.preventDefault();
+  sampleData?.();
 }
 
 function AppSidebar({ sections, handleMoveTo, resetData, sampleData }: SidebarProps) {
@@ -24,7 +34,7 @@ function AppSidebar({ sections, handleMoveTo, resetData, sampleData }: SidebarPr
           </SidebarGroupContent>
         </SidebarGroup>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-gray-700 dark:text-zinc-300 font-normal">Sections</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-gray-700 dark:text-zinc-300">Sections</SidebarGroupLabel>
           <SidebarGroupContent>
             <div className="px-2">
               <SortableNav sections={sections} handleMoveTo={handleMoveTo} />
@@ -32,21 +42,26 @@ function AppSidebar({ sections, handleMoveTo, resetData, sampleData }: SidebarPr
           </SidebarGroupContent>
         </SidebarGroup>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-gray-700 dark:text-zinc-300 font-normal">Data</SidebarGroupLabel>
+          <SidebarGroupLabel>Data</SidebarGroupLabel>
           <SidebarGroupContent>
-            <div className="px-2">
-              <Button
-                  theme="default"
-                  text="Reset"
-                  onClick={resetData}
-                  />
-              <span className="me-2"></span>
-              <Button
-                  theme="default"
-                  text="Sample"
-                  onClick={resetData}
-                  />
-            </div>
+            <SidebarMenu>
+              <SidebarMenuItem key={"menu-clear-data"}>
+                <SidebarMenuButton asChild className="hover:bg-gray-200 dark:hover:bg-zinc-700">
+                  <a href={"#"} onClick={(e) => clearForm(e, resetData)}>
+                    <EraserIcon />
+                    <span>Clear Form</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem key={"menu-clear-data"}>
+                <SidebarMenuButton asChild className="hover:bg-gray-200 dark:hover:bg-zinc-700">
+                  <a href={"#"} onClick={(e) => loadSample(e, sampleData)}>
+                    <FlaskConical />
+                    <span>Load Sample</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>

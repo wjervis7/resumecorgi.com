@@ -8,6 +8,20 @@ export const initialSections: Section[] = [
 ];
 
 export const initialFormData: FormData = {
+  personalInfo: {
+    name: 'Your Name',
+    contact0: 'your.email@test.com',
+    contact1: '',
+    contact2: '',
+    contact3: '',
+    summary: ''
+  },
+  experience: [],
+  education: [],
+  skills: []
+};
+
+export const sampleFormData: FormData = {
   "personalInfo": {
     "name": "Sir Pembroke Waffleton III",
     "contact0": "royal.corginess@buckingham.bark",

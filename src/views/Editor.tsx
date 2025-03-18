@@ -5,16 +5,15 @@ import Experience from './forms/Experience';
 import Education from './forms/Education';
 import Card from '../components/Card';
 import Skills from './forms/Skills';
-import Sidebar from './Sidebar';
 import Button from '../components/Button';
-import Footer from '../components/Footer';
 import ScrollSpy from '../components/ScrollSpy';
 import { FormData, Section } from '../types';
 import { loadFromStorage, saveToStorage, clearStorage } from '../lib/StorageService';
-import { moveUp, moveDown, moveTo, toggleSectionSelected } from '../lib/SortService';
+import { moveTo, toggleSectionSelected } from '../lib/SortService';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import AppSidebar from '@/components/AppSidebar';
 import Navbar from '@/components/Navbar';
+import { initialFormData, sampleFormData } from '@/lib/DataInitializer';
 
 interface SectionRenderItem {
   id: string;
@@ -121,14 +120,21 @@ function Editor() {
     setSections(prevSections => moveTo(prevSections, oldIndex, newIndex) as Section[]);
   };
 
-  // clear localStorage data and reset to defaults
   const resetToDefaults = () => {
     if (window.confirm('Are you sure you want to reset all your data? This cannot be undone.')) {
-      const { formData: initialFormData, sections: initialSections } = clearStorage();
-      setFormData(initialFormData);
+      const { formData: targetFormData, sections: initialSections } = clearStorage(initialFormData);
+      setFormData(targetFormData);
       setSections(initialSections);
     }
   };
+
+  const resetToSampleData = () => {
+    if (window.confirm('Loading sample data will overwrite any edits you have made. This cannot be undone. Would you like to proceed?')) {
+      const { formData: targetFormData, sections: initialSections } = clearStorage(sampleFormData);
+      setFormData(targetFormData);
+      setSections(initialSections);
+    }
+  }
 
   const sortedSections = [...sections].sort((a, b) => a.sortOrder - b.sortOrder);
 
@@ -143,7 +149,8 @@ function Editor() {
         <AppSidebar 
           sections={sortedSections}
           handleMoveTo={handleMoveTo}
-          resetData={() => resetToDefaults() } />
+          resetData={() => resetToDefaults() }
+          sampleData={() => resetToSampleData() } />
         <div className="grid lg:grid-cols-12 grid-cols-12 gap-0 w-full h-screen">
           <div
             ref={formContainerRef}
