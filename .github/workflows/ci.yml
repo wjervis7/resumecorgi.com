@@ -1,4 +1,4 @@
-name: CI
+name: resumecorgi.com
 
 on:
   push:
@@ -8,9 +8,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  publish:
+  build:
     runs-on: ubuntu-latest
-    name: Publish
+    name: Build
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -18,23 +18,44 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
 
-      - name: Install Dependencies
-        shell: pwsh
-        run: |
-          npm ci
-
-      - name: Test
-        shell: pwsh
-        run: |
-          npm run test
-
       - name: Build
         shell: pwsh
         run: |
+          npm ci
+          npm run test
           npm run build
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
+        with:
+          name: resumecorgi.com
+          path: dist/
+
+  deploy-cloudflare:
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    name: Deploy (Cloudflare)
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: resumecorgi.com
+          path: dist/
+
+      - name: Deploy to Cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist/ --project-name=resumecorgi
+
+  deploy-azure:
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    name: Deploy (Azure)
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
         with:
           name: resumecorgi.com
           path: dist/
