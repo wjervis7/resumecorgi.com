@@ -7,7 +7,7 @@ import { EraserIcon, FlaskConical } from "lucide-react";
 interface SidebarProps {
   sections: NavSection[];
   handleMoveTo: (oldIndex: number, newIndex: number) => void;
-  handleSectionSelected?: (sectionId: string, checked: boolean) => void;
+  handleSectionSelected: (sectionId: string, checked: boolean) => void;
   resetData?: () => void;
   sampleData?: () => void;
 }
@@ -22,7 +22,7 @@ const loadSample = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, sampleDa
   sampleData?.();
 }
 
-function AppSidebar({ sections, handleMoveTo, resetData, sampleData }: SidebarProps) {
+function AppSidebar({ sections, handleMoveTo, handleSectionSelected, resetData, sampleData }: SidebarProps) {
   return (
     <Sidebar className="border-r-0 border-t-0 border-gray-400 dark:border-zinc-700">
       <SidebarContent className="mt-0 lg:mt-[75px] bg-gray-100 dark:bg-zinc-800/95 overflow-hidden">
@@ -37,7 +37,7 @@ function AppSidebar({ sections, handleMoveTo, resetData, sampleData }: SidebarPr
           <SidebarGroupLabel className="text-gray-700 dark:text-zinc-300">Sections</SidebarGroupLabel>
           <SidebarGroupContent>
             <div className="px-2">
-              <SortableNav sections={sections} handleMoveTo={handleMoveTo} />
+              <SortableNav sections={sections} handleMoveTo={handleMoveTo} handleSelected={handleSectionSelected} />
             </div>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -53,7 +53,7 @@ function AppSidebar({ sections, handleMoveTo, resetData, sampleData }: SidebarPr
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-              <SidebarMenuItem key={"menu-clear-data"}>
+              <SidebarMenuItem key={"menu-load-sample-data"}>
                 <SidebarMenuButton asChild className="hover:bg-gray-200 dark:hover:bg-zinc-700">
                   <a href={"#"} onClick={(e) => loadSample(e, sampleData)}>
                     <FlaskConical />

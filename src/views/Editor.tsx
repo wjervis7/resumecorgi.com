@@ -149,6 +149,7 @@ function Editor() {
         <AppSidebar 
           sections={sortedSections}
           handleMoveTo={handleMoveTo}
+          handleSectionSelected={handleSectionSelected}
           resetData={() => resetToDefaults() }
           sampleData={() => resetToSampleData() } />
         <div className="grid lg:grid-cols-12 grid-cols-12 gap-0 w-full h-screen">

@@ -68,6 +68,7 @@ export interface NavSection extends Sortable {
   displayName: string;
   href: string;
   selected: boolean;
+  required: boolean;
 }
 
 export interface Section extends Sortable, NavSection {

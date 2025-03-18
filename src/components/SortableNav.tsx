@@ -22,14 +22,18 @@ interface SortableNavItemProps {
   displayName: string;
   href: string;
   sortable: boolean;
+  required: boolean;
+  selected: boolean;
+  onSelected: (sectionId: string) => void;
 }
 
 interface SortableNavProps {
   sections: NavSection[];
   handleMoveTo: (oldIndex: number, newIndex: number) => void;
+  handleSelected: (sectionId: string, checked: boolean) => void;
 }
 
-const SortableNavItem: React.FC<SortableNavItemProps> = ({ id, displayName, href, sortable }) => {
+const SortableNavItem: React.FC<SortableNavItemProps> = ({ id, displayName, href, sortable, required, selected, onSelected }) => {
   const {
     attributes,
     listeners,
@@ -111,6 +115,52 @@ const SortableNavItem: React.FC<SortableNavItemProps> = ({ id, displayName, href
         <div className="flex justify-between items-center w-full">
           <a href={href} className={`${anchorCss}`}>{displayName}</a>
           
+          {!required && (
+            <div 
+              className="p-2 rounded-full hover:cursor-pointer"
+              onClick={() => onSelected(id)}
+            >
+
+              {selected && (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="lucide lucide-eye size-4"
+                  >
+                    <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
+                    <circle cx="12" cy="12" r="3" />
+                </svg>
+              )}
+
+              {!selected && (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="lucide lucide-eye-off size-4"
+                  >
+                  <path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/>
+                  <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/>
+                  <path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/>
+                  <path d="m2 2 20 20"/>
+                </svg>
+              )}
+            </div>
+          )}
+
           {sortable && (
             <div 
               className="p-2 rounded-full hover:cursor-grab" 
@@ -139,7 +189,7 @@ const SortableNavItem: React.FC<SortableNavItemProps> = ({ id, displayName, href
   );
 };
 
-const SortableNav: React.FC<SortableNavProps> = ({ sections, handleMoveTo }) => {
+const SortableNav: React.FC<SortableNavProps> = ({ sections, handleMoveTo, handleSelected }) => {
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -177,7 +227,10 @@ const SortableNav: React.FC<SortableNavProps> = ({ sections, handleMoveTo }) => 
               id={section.id} 
               displayName={section.displayName} 
               href={section.href} 
-              sortable={section.sortable} 
+              sortable={section.sortable}
+              required={section.required}
+              selected={section.selected}
+              onSelected={() => handleSelected(section.id, !section.selected)}
             />
           ))}
         </div>
