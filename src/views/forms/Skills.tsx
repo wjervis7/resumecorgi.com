@@ -75,7 +75,7 @@ function Skills({ skills = [], setFormData }: SkillsProps) {
             <h3 className="text-medium font-bold mb-1.5 text-gray-900 dark:text-gray-200">
               {`Skill Category #${categoryIndex + 1}`}
             </h3>
-            {categoryIndex > 0 && (
+            {categoryIndex >= 0 && (
               <>
                 <span className="ms-3"></span>
                 <Button
@@ -115,7 +115,7 @@ function Skills({ skills = [], setFormData }: SkillsProps) {
       ))}
 
       <Button
-        text="Add Another Skill Category"
+        text={skills.length > 0 ? `Add Another Skill Category` : `Add Skill Category`}
         theme="success"
         className="text-sm"
         onClick={addSkillCategory} 

@@ -11,11 +11,11 @@ describe('SortService', () => {
   ];
 
   const testNavSections: NavSection[] = [
-    { id: 'section1', displayName: 'Section 1', href: '#section1', selected: true, sortable: true, sortOrder: 0 },
-    { id: 'section2', displayName: 'Section 2', href: '#section2', selected: true, sortable: true, sortOrder: 1 },
-    { id: 'section3', displayName: 'Section 3', href: '#section3', selected: true, sortable: true, sortOrder: 2 },
-    { id: 'section4', displayName: 'Section 4', href: '#section4', selected: true, sortable: false, sortOrder: 3 },
-    { id: 'section5', displayName: 'Section 5', href: '#section5', selected: true, sortable: true, sortOrder: 4 }
+    { id: 'section1', displayName: 'Section 1', href: '#section1', selected: true, sortable: true, sortOrder: 0, required: false },
+    { id: 'section2', displayName: 'Section 2', href: '#section2', selected: true, sortable: true, sortOrder: 1, required: false },
+    { id: 'section3', displayName: 'Section 3', href: '#section3', selected: true, sortable: true, sortOrder: 2, required: false },
+    { id: 'section4', displayName: 'Section 4', href: '#section4', selected: true, sortable: false, sortOrder: 3, required: false },
+    { id: 'section5', displayName: 'Section 5', href: '#section5', selected: true, sortable: true, sortOrder: 4, required: false }
   ];
 
   describe('moveUp', () => {
@@ -178,7 +178,8 @@ describe('SortService', () => {
           href: '#section6', 
           selected: false, 
           sortable: true, 
-          sortOrder: 5 
+          sortOrder: 5,
+          required: false
         }
       ];
       

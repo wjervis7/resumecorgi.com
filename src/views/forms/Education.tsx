@@ -56,7 +56,7 @@ function Education({ education = [], setFormData }: EducationProps) {
           )}
           <h3 className="text-medium font-bold mb-1.5 text-gray-900 dark:text-gray-200">
             {index === 0 ? 'Most Recent Education' : `Education #${index + 1}`}
-            {index > 0 && (
+            {index >= 0 && (
               <>
                 <span className="ms-3"></span>
                 <Button
@@ -190,7 +190,7 @@ function Education({ education = [], setFormData }: EducationProps) {
       ))}
 
       <Button
-        text="Add Another Education"
+        text={education.length > 0 ? `Add Another Education` : `Add Education`}
         theme="success"
         className="text-sm"
         onClick={addEducation} />

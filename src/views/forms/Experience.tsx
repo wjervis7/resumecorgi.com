@@ -55,7 +55,7 @@ function Experience({ experiences = [], setFormData }: ExperienceProps) {
           )}
           <h3 className="text-medium font-bold mb-1.5 text-gray-900 dark:text-gray-200">
             {index === 0 ? 'Most Recent Position' : `Position #${index + 1}`}
-            {index > 0 && (
+            {index >= 0 && (
               <>
                 <span className="ms-3"></span>
                 <Button
@@ -169,7 +169,7 @@ function Experience({ experiences = [], setFormData }: ExperienceProps) {
       ))}
 
       <Button
-        text="Add Another Company"
+        text={experiences.length > 0 ? `Add Another Company` : `Add Company`}
         theme="success"
         className="text-sm"
         onClick={addExperience} />
