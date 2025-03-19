@@ -45,8 +45,8 @@ class LaTeXUtils {
    * Format LaTeX itemize environment
    */
   formatItemize(items: string, options: {vspaceBefore?: string, vspaceAfter?: string} = {}): string {
-    const vspaceBefore = options.vspaceBefore || '-9pt';
-    const vspaceAfter = options.vspaceAfter || '-4pt';
+    const vspaceBefore = options.vspaceBefore || '-6pt';
+    const vspaceAfter = options.vspaceAfter || '-3pt';
     
     return items && items.length > 0
       ? `\\begin{itemize}
@@ -88,7 +88,7 @@ class SectionFormatters {
     return `
 \\section*{Summary}
 {${this.utils.escapeLaTeX(summary)}}
-%\\vspace{-10pt}
+\\vspace{-3pt}
 `;
   }
 
@@ -112,8 +112,8 @@ class SectionFormatters {
 
       return `% experience section
 \\textbf{${this.utils.escapeLaTeX(title)},} {${this.utils.escapeLaTeX(company)}} \\hfill ${this.utils.escapeLaTeX(dateRange)} \\\\
-${this.utils.formatItemize(accomplishments, {vspaceAfter: '-5pt'})}
-\\vspace{${isLastItem ? `-5` : `0`}pt}`;
+${this.utils.formatItemize(accomplishments, {vspaceBefore: '-9pt', vspaceAfter: '-3pt'})}
+\\vspace{${isLastItem && accomplishments.length > 0 ? '-9pt' : '-3pt'}}`;
     }).join('\n\n');
   }
 
@@ -126,7 +126,8 @@ ${this.utils.formatItemize(accomplishments, {vspaceAfter: '-5pt'})}
     }
     
     const sectionHeading = `% education section
-\\section*{Education}`;
+\\section*{Education}
+`;
 
     return sectionHeading + education.map((edu, index) => {
       const degree = edu.degree || 'Degree';
@@ -141,8 +142,8 @@ ${this.utils.formatItemize(accomplishments, {vspaceAfter: '-5pt'})}
 
       return `${mainLine}
 ${gpaLine}
-${this.utils.formatItemize(accomplishments, {vspaceAfter: '-5pt'})}
-\\vspace{${isLastItem ? `-5` : `0`}pt}`;
+${this.utils.formatItemize(accomplishments, {vspaceBefore: '-9pt', vspaceAfter: '-3pt'})}
+\\vspace{${isLastItem && accomplishments.length > 0 ? '-9pt' : '-3pt'}}`;
     }).join('\n\n');
   }
 
@@ -156,13 +157,16 @@ ${this.utils.formatItemize(accomplishments, {vspaceAfter: '-5pt'})}
 
     const sectionHeading = `% skills section
 \\section*{Skills}
+\\vspace{-2pt}
 `;
       
-    return sectionHeading + skills.map((skill) => {
+    return sectionHeading + skills.map((skill, index) => {
       const category = skill.category || "Category";
       const skillsList = skill.skillList || "";
+      const isLastItem = index === skills.length - 1;
 
-      return `\\textbf{${this.utils.escapeLaTeX(category)}:} ${this.utils.escapeLaTeX(skillsList)}`;
+      return `\\textbf{${this.utils.escapeLaTeX(category)}:} ${this.utils.escapeLaTeX(skillsList)}
+\\vspace{${isLastItem ? '-3pt' : '0pt'}}`;
     }).join('\n\n');
   }
   
