@@ -1,3 +1,5 @@
+[![resumecorgi.com](https://github.com/chadgolden1/resumecorgi.com/actions/workflows/ci.yml/badge.svg)](https://github.com/chadgolden1/resumecorgi.com/actions/workflows/ci.yml)
+
 # resumecorgi.com 🐶
 Create professional, modern resumes without compromising your privacy. Resume Corgi is a browser-based tool that handles everything locally. Your data never leaves your device (unless you want it too!).
 

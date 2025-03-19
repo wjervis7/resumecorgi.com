@@ -2,8 +2,11 @@ name: resumecorgi.com
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE'
+      - '.gitignore'
 
   workflow_dispatch:
 
