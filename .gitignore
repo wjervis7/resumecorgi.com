@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# SwiftLaTeX dependencies
+external/SwiftLaTeX/extracted
+public/swiftlatexpdftex.*
+public/PdfTeXEngine.js
