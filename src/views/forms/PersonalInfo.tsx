@@ -44,9 +44,15 @@ function PersonalInfo({ personalInfo, handleChange }: PersonalInfoProps) {
       />
       <Input 
         type="text" 
-        label="Contact #3 (optional)" 
+        label="Contact #4 (optional)" 
         formData={{ id: "contact3", name: "contact3", value: personalInfo.contact3 }} 
         handleChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange('personalInfo', 'contact3', e.target.value)} 
+      />
+      <Input 
+        type="text" 
+        label="Contact #5 (optional)" 
+        formData={{ id: "contact4", name: "contact4", value: personalInfo.contact4 }} 
+        handleChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange('personalInfo', 'contact4', e.target.value)} 
       />
       <Textbox 
         rows={3} 

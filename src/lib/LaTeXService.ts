@@ -262,7 +262,7 @@ const standardTemplate: TemplateConfig = {
 \\vspace{5pt}
 
 % contact information
-\\centerline{${contacts}}
+${contacts}
 `,
   
   sectionFormatters: {},  // Will be populated with formatters
@@ -304,17 +304,35 @@ class LaTeXResumeGenerator {
     
     const name = formData.personalInfo.name || 'Your Name';
     
-    // Format contacts
+    const formatContacts = (contacts: string[]) => {
+      if (!contacts.length) return '';
+      
+      const items = contacts.map(c => `\\href{${this.utils.getHref(this.utils.escapeLaTeX(c))}}{${this.utils.escapeLaTeX(c)}}`);
+      const MAX_ITEMS_PER_LINE = 3;
+      let result = [];
+      
+      for (let i = 0; i < items.length; i += MAX_ITEMS_PER_LINE) {
+        const chunk = items.slice(i, i + MAX_ITEMS_PER_LINE);
+        result.push(chunk.join(' | '));
+      }
+      
+      return `
+        \\vspace{-0.5cm}
+        \\begin{center}
+          ${result.join(' \\\\\n      ')}
+        \\end{center}\\vspace{-0.5cm}
+      `;
+    };
+
     const contacts = [
       formData.personalInfo.contact0,
       formData.personalInfo.contact1,
-      formData.personalInfo.contact2
+      formData.personalInfo.contact2,
+      formData.personalInfo.contact3,
+      formData.personalInfo.contact4
     ].filter(Boolean);
-    
-    // Format contact line
-    const contactLine = contacts.length > 0 
-      ? contacts.map(c => `\\href{${this.utils.getHref(c)}}{${c}}`).join(' | ')
-      : '';
+
+    const contactLine = formatContacts(contacts);
     
     // Start building document
     let output = template.preamble;

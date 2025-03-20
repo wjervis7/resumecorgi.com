@@ -24,6 +24,7 @@ describe('LaTeXResumeGenerator', () => {
       contact1: 'linkedin.com/in/johndoe',
       contact2: '',
       contact3: '',
+      contact4: '',
       summary: 'Experienced developer'
     },
     experience: [

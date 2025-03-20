@@ -15,6 +15,7 @@ export const initialFormData: FormData = {
     contact1: '',
     contact2: '',
     contact3: '',
+    contact4: '',
     summary: ''
   },
   experience: [],
@@ -30,6 +31,7 @@ export const sampleFormData: FormData = {
     "contact1": "linkedin.com/in/pembroke-waffleton",
     "contact2": "@PemTheCorgi",
     "contact3": "",
+    "contact4": "",
     "summary": "Distinguished corgi with impeccable royal lineage and over 12 years of elite royal companionship experience. Appointed Royal Paw Holder to Her Majesty and recipient of the Most Noble Order of the Biscuit. Expert in dignified processions, garden inspections, and maintaining morale among palace staff. Holds court record for fastest ankle-circling sprint and led royal household to 6 years of record-breaking adorableness ratings."
   },
   "experience": [
