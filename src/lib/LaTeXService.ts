@@ -62,10 +62,20 @@ ${items}
    */
   escapeLaTeX(text: string): string {
     return text
+      // Handle LaTeX special characters
       .replace(/\\/g, '\\textbackslash{}')
       .replace(/[&%$#_{}]/g, '\\$&')
       .replace(/\^/g, '\\textasciicircum{}')
-      .replace(/~/g, '\\textasciitilde{}');
+      .replace(/~/g, '\\textasciitilde{}')
+      // Handle non-breaking space and other special spaces
+      .replace(/[\u00A0\u1680\u180e\u2000-\u200B\u202F\u205F\u3000\uFEFF]/g, ' ')
+      // Handle other special Unicode characters
+      .replace(/[\u2018\u2019]/g, "'")
+      .replace(/[\u201C\u201D]/g, '"')
+      .replace(/[\u2013\u2014]/g, '-')
+      .replace(/[\u2026]/g, '...')
+      // Remove any other non-ASCII characters that might cause issues
+      .replace(/[^\x00-\x7F]/g, '');
   }
 }
 
@@ -157,7 +167,6 @@ ${this.utils.formatItemize(accomplishments, {vspaceBefore: '-9pt', vspaceAfter: 
 
     const sectionHeading = `% skills section
 \\section*{Skills}
-\\vspace{-2pt}
 `;
       
     return sectionHeading + skills.map((skill, index) => {
@@ -178,23 +187,27 @@ ${this.utils.formatItemize(accomplishments, {vspaceBefore: '-9pt', vspaceAfter: 
       return '';
     }
 
-    const sectionHeading = `\\section*{Projects}
+    const sectionHeading = `% projects section
+\\section*{Projects}
 `;
 
-    return sectionHeading + projects.map(project => {
-      const title = project.title || 'Project Title';
-      //const description = project.description || '';
-      const technologies = project.technologies || '';
+    return sectionHeading + projects.map((project, index) => {
+      const title = project.name || 'Project Title';
+      const description = project.description || '';
+      const startDate = project.startDate || '';
+      const endDate = project.endDate || '';
+      const dateRange = startDate && endDate ? `${startDate} -- ${endDate}` : startDate || endDate || '';
+      const highlights = this.utils.extractBulletPoints(project.highlights);
       const url = project.url || '';
+      const isLastItem = index === projects.length - 1;
       
       const urlLine = url ? `\\href{${this.utils.getHref(url)}}{${url}} \\\\` : '';
-      const techLine = technologies ? `\\textbf{Technologies:} ${technologies} \\\\` : '';
-      const details = this.utils.extractBulletPoints(project.details);
 
-      return `\\textbf{${title}} \\hfill ${project.date || ''} \\\\
-${urlLine}
-${techLine}
-${this.utils.formatItemize(details)}`;
+      return `% project details
+\\textbf{${title}} \\hfill ${urlLine}
+\\textit{${description}} \\hfill ${dateRange} \\\\
+${this.utils.formatItemize(highlights, {vspaceBefore: '-9pt', vspaceAfter: '-3pt'})}
+\\vspace{${isLastItem && highlights.length > 0 ? '-9pt' : '-3pt'}}`;
     }).join('\n\n');
   }
 }

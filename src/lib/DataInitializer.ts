@@ -5,6 +5,7 @@ export const initialSections: Section[] = [
   { id: 'experience', displayName: 'Experience', href: '#experience', selected: true, originalOrder: 1, sortOrder: 1, required: false, sortable: true },
   { id: 'education', displayName: 'Education', href: '#education', selected: true, originalOrder: 2, sortOrder: 2, required: false, sortable: true },
   { id: 'skills', displayName: 'Skills', href: '#skills', selected: true, originalOrder: 3, sortOrder: 3, required: false, sortable: true },
+  //{ id: 'projects', displayName: 'Projects', href: '#projects', selected: true, originalOrder: 4, sortOrder: 4, required: false, sortable: true },
 ];
 
 export const initialFormData: FormData = {
@@ -18,7 +19,8 @@ export const initialFormData: FormData = {
   },
   experience: [],
   education: [],
-  skills: []
+  skills: [],
+  projects: []
 };
 
 export const sampleFormData: FormData = {
@@ -74,7 +76,7 @@ export const sampleFormData: FormData = {
       "location": "Woofshire, England",
       "graduationDate": "2008",
       "gpa": "3.9",
-      "accomplishments": "Graduated with highest honors in Royal Etiquette and Advanced Treat Acquisition. Captain of the Competitive Napping Team."
+      "accomplishments": "<ul><li>Graduated Magna Corg Laudbarke in Royal Etiquette and Advanced Treat Acquisition</li><li>Captain of the Competitive Napping Team</li></ul>"
     }
   ],
   "skills": [
@@ -89,6 +91,16 @@ export const sampleFormData: FormData = {
     {
       category: "Technical",
       skillList: "Advanced Tunneling, Sock Acquisition, Tennis Ball Tracking, Squirrel Detection Systems"
+    }
+  ],
+  "projects": [
+    {
+      "name": "Royal Corgi Training Academy",
+      "description": "Comprehensive Training Program for Royal Corgis",
+      "startDate": "2010",
+      "endDate": "2015",
+      "highlights": "<ul><li>Developed comprehensive training curriculum</li><li>42 percent increase in voluntary sock donation</li><li>29 percent growth in successful acquisitions</li></ul>",
+      "url": "https://www.royalcorgitrainingacademy.com"
     }
   ]
 };

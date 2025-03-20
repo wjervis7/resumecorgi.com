@@ -48,12 +48,22 @@ export interface Skill {
   skillList: string;
 }
 
+export interface Project {
+  name: string;
+  startDate: string;
+  endDate: string;
+  description: string;
+  highlights: string;
+  url: string;
+}
+
 export interface FormData {
   [key:string]: any;
   personalInfo: PersonalInfo;
   experience: Experience[];
   education: Education[];
   skills: Skill[];
+  projects: Project[];
 }
 
 export interface Sortable {

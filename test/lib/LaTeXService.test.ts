@@ -50,7 +50,8 @@ describe('LaTeXResumeGenerator', () => {
         category: 'Programming',
         skillList: 'JavaScript, TypeScript'
       }
-    ]
+    ],
+    projects: []
   };
 
   const mockSections: Section[] = [

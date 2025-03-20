@@ -14,6 +14,7 @@ import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import AppSidebar from '@/components/AppSidebar';
 import Navbar from '@/components/Navbar';
 import { initialFormData, sampleFormData } from '@/lib/DataInitializer';
+import Projects from './forms/Projects';
 
 interface SectionRenderItem {
   id: string;
@@ -94,6 +95,16 @@ function Editor() {
           </Card>
         </>
     },
+    {
+      id: 'projects',
+      title: 'Projects',
+      renderFunc: () =>
+        <>
+          <Card>
+            <Projects projects={formData.projects} setFormData={setFormData} />
+          </Card>
+        </>
+    }
   ];
 
   // Create a mapping of section IDs to their titles
