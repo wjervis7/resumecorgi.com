@@ -61,7 +61,7 @@ const ScrollSpy = ({
     const ref = sectionRefs.current[sectionId];
     if (ref && containerRef.current) {
       containerRef.current.scrollTo({
-        top: ref.offsetTop - 10, // Small offset for better visual appearance
+        top: ref.offsetTop - 133, // Offset by navbar, scrollspy nav, and padding height for better visual appearance
         behavior: 'instant'
       });
     }
