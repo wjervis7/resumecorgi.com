@@ -223,10 +223,9 @@ ${this.utils.formatItemize(highlights, {vspaceBefore: '-9pt', vspaceAfter: '-3pt
 \\section*{${this.utils.escapeLaTeX(section.title)}}
 `;
 
-    return sectionHeading + section.items.map((item: { name: string; description: string; details: string }, index: number) => {
-      //const itemName = item.name || `Item \\#${index + 1}`;
+    return sectionHeading + section.items.map((item: { name: string; description?: string; details?: string }, index: number) => {
       const itemName = item.name.length > 0 ? `${this.utils.escapeLaTeX(item.name)}` : `Item \\#${index + 1}`;
-      const description = item.description.length > 0 ? `\\textbf{,} ${this.utils.escapeLaTeX(item.description)}` : ""
+      const description = item && item.description && item.description.length > 0 ? `\\textbf{,} ${this.utils.escapeLaTeX(item.description)}` : ""
       const nameLine = `\\textbf{${itemName}}${description} \\\\`;
       const details = this.utils.extractBulletPoints(item.details);
       const isLastItem = index === section.items.length - 1;
@@ -385,7 +384,7 @@ class LaTeXResumeGenerator {
 
         let sectionContent: string = ""
 
-        if (section.id.includes("genericSection")) {
+        if (section.id.includes("genericSection") && formData.genericSections) {
           sectionContent = formatter(formData.genericSections[section.id as keyof FormData]);
         }
         else {

@@ -62,8 +62,8 @@ export interface GenericSection {
   title: string;
   items: {
     name: string;
-    description: string;
-    details: string;
+    description?: string;
+    details?: string;
   }[];
 }
 
@@ -74,7 +74,7 @@ export interface FormData {
   education: Education[];
   skills: Skill[];
   projects: Project[];
-  genericSections: { [key: string]: GenericSection };
+  genericSections?: { [key: string]: GenericSection };
 }
 
 export interface Removable {

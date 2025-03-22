@@ -21,12 +21,14 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
 
+      - name: Restore Dependencies
+        run: npm ci
+
+      - name: Run Tests
+        run: npm test
+
       - name: Build
-        shell: pwsh
-        run: |
-          npm ci
-          npm run test
-          npm run build
+        run: npm run build
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
