@@ -33,13 +33,13 @@ function Input({
             value={formData.value}
             onChange={handleChange}
             autoComplete="off"
-            className="relative w-full p-2 text-sm text-black dark:text-white 
+            className="transition-colors duration-50 relative w-full p-2 text-sm text-black dark:text-white 
                        bg-gray-50 dark:bg-zinc-800
                        border-1 border-gray-200 dark:border-zinc-700 rounded-lg
-                       hover:border-purple-200 dark:hover:border-purple-600
-                       hover:bg-purple-50 dark:hover:bg-purple-900
+                       hover:border-purple-200 dark:hover:border-purple-700
+                       hover:bg-purple-100 dark:hover:bg-purple-900/50
                        focus:outline-purple-600/75 focus:outline-3 focus:border-purple-600/75 focus:ring-purple-600/75 dark:focus:border-purple-600/75 dark:focus:border-transparent
-                       focus:bg-purple-50 dark:focus:bg-purple-950"
+                       focus:bg-purple-100 dark:focus:bg-purple-950/75"
             placeholder={placeholder}
           />
         </div>

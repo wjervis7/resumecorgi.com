@@ -56,17 +56,17 @@ const SortableNavItem: React.FC<SortableNavItemProps> = ({ id, section, onSelect
           mt-[0.2rem] ms-[0.2rem]
           bg-black
           rounded-lg
-          group-hover/sections:translate-x-[3px] group-hover/sections:translate-y-[1px]
+          group-hover/sections:translate-x-[2px] group-hover/sections:translate-y-[1px]
           transition
           duration-150
         "></span>
         <div
           className={`
-            bg-white dark:bg-zinc-700
-            group-active/sections:bg-gray-100 dark:group-active/sections:bg-zinc-600
+            bg-white dark:bg-zinc-900
+            group-active/sections:bg-gray-200 dark:group-active/sections:bg-zinc-700 dark:group-hover/sections:bg-zinc-800
             relative w-full
-            ps-3 pe-1.5 py-1
-            font-bold text-black dark:text-white
+            ps-3 pe-1.5 py-0.25
+            font-medium text-black dark:text-white
             border-1 border-black rounded-[0.45rem]
           `}>
           <div className="flex justify-between items-center w-full">
@@ -96,17 +96,17 @@ const SortableNavItem: React.FC<SortableNavItemProps> = ({ id, section, onSelect
         mt-[0.2rem] ms-[0.2rem]
         bg-black
         rounded-lg
-        group-hover/sections:translate-x-[3px] group-hover/sections:translate-y-[1px]
+        group-hover/sections:translate-x-[2px] group-hover/sections:translate-y-[1px]
         transition
         duration-150
       "></span>
       <div
         className={`
-          bg-white dark:bg-zinc-700
-          group-active/sections:bg-gray-100 dark:group-active/sections:bg-zinc-600
+          bg-white dark:bg-zinc-900
+          group-active/sections:bg-gray-200 group-hover/sections:bg-gray-100 dark:group-active/sections:bg-zinc-700 dark:group-hover/sections:bg-zinc-800
           relative w-full
-          ps-3 pe-1.5 py-1
-          font-bold text-black dark:text-white
+          ps-3 pe-1.5 py-0.25
+          font-medium text-black dark:text-white
           border-1 border-black rounded-[0.45rem]
         `}
       >

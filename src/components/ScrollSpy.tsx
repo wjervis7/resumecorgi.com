@@ -78,21 +78,21 @@ const ScrollSpy = ({
       [&::-webkit-scrollbar-thumb]:bg-zinc-400
       dark:[&::-webkit-scrollbar-track]:bg-zinc-800
       dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600">
-      <ul className="flex flex-nowrap min-w-max lg:min-w-0 lg:w-full lg:justify-between text-sm text-center font-semibold">
+      <ul className="flex flex-nowrap min-w-max lg:min-w-0 lg:w-full text-sm text-center font-semibold">
         {sections
           .filter(section => section.selected)
           .map(section => (
-            <li className="lg:flex-grow whitespace-nowrap" key={section.id}>
+            <li className="whitespace-nowrap" key={section.id}>
                 <a href={section.href}
                    onClick={e => scrollToSection(e, section.id)}
                    className={`
                     lg:w-full
-                    inline-block px-4 lg:px-2 pt-3 pb-2.5
+                    inline-block px-3 pt-3 pb-2.5
                     text-gray-900 dark:text-gray-100
                     border-b-4 border-transparent
                     ${ activeSection === section.id
-                      ? "active text-purple-800 dark:text-purple-100 border-purple-800! bg-purple-800/0 dark:bg-purple-800/0"
-                      : "hover:bg-gray-50 dark:hover:bg-zinc-700 dark:hover:text-gray-200"}`}
+                      ? "active text-purple-800 dark:text-purple-300 border-purple-700! bg-purple-800/0 dark:bg-purple-800/0"
+                      : "hover:bg-gray-100 dark:hover:bg-zinc-800 dark:hover:text-gray-200"}`}
                   >{sectionTitles[section.id] || "Section Title"}</a>
             </li>
           ))}

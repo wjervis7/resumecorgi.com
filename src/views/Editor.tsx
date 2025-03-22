@@ -235,6 +235,7 @@ function Editor() {
             ref={formContainerRef}
             className={`
             ${currentMobileView !== 'form' ? "hidden" : ""} lg:block
+            transition-colors
             bg-gray-50 dark:bg-zinc-800
             col-span-12 lg:col-span-5
             border-0 lg:border-zinc-500 dark:border-zinc-700
@@ -271,11 +272,12 @@ function Editor() {
 
           <div className={`
             ${currentMobileView !== 'preview' ? "hidden lg:block" : ""}
+            transition-colors
             lg:col-span-7 col-span-12
             overflow-x-none overflow-y-scroll mt-[74px] lg:mt-[74px]
             ps-3 pe-2 pt-0 pb-3
             bg-zinc-600 dark:bg-zinc-800
-            border-l-0 lg:border-l-1 border-zinc-700 
+            border-l-0 lg:border-l-1 border-zinc-700/50
             dark:text-white
             [&::-webkit-scrollbar]:w-1.5
             [&::-webkit-scrollbar-track]:bg-zinc-600

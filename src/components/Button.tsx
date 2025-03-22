@@ -104,6 +104,8 @@ function Button({
         absolute top-0 left-0 
         w-full h-full 
         mt-[0.2rem] ms-[0.2rem]
+        transition-all
+        duration-50
         ${themeShadowClasses[theme]}
         rounded-lg
         group-hover/button:mt-[0.3rem] group-hover/button:ms-[0.3rem]

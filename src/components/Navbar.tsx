@@ -12,9 +12,10 @@ function Navbar({
   return (
     <>
       <nav className="
+          transition-colors
           fixed left-0 top-0 w-full 
-          bg-white dark:bg-zinc-950
-          border-b-1 border-gray-400 dark:border-zinc-700
+          bg-white dark:bg-zinc-950/75
+          border-b-1 border-gray-300/75 dark:border-zinc-900
           py-1.5 /py-[1.25rem] px-3
           z-49">
         <div className="grid grid-cols-2">

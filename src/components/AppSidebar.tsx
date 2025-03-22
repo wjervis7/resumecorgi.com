@@ -29,18 +29,19 @@ function AppSidebar({ sections, handleMoveTo, handleSectionSelected, handleSecti
   return (
     <Sidebar
       className="
-        border-r-0 border-t-0 border-gray-400 dark:border-zinc-700
+        border-r-0 border-t-0 border-gray-300/75 dark:border-zinc-900 bg-gray-100 dark:bg-zinc-800/60
       ">
       <SidebarContent
         className="
-          mt-0 lg:mt-[75px] bg-gray-100 dark:bg-zinc-800/95
+          transition-colors
+          mt-0 lg:mt-[75px] bg-gray-100/10 dark:bg-zinc-800/60
           [&::-webkit-scrollbar]:w-1.5
           [&::-webkit-scrollbar-track]:bg-zinc-300
           [&::-webkit-scrollbar-thumb]:bg-zinc-400
           dark:[&::-webkit-scrollbar-track]:bg-zinc-800
           dark:[&::-webkit-scrollbar-thumb]:bg-zinc-700
         ">
-        <SidebarGroup className="block lg:hidden">
+        <SidebarGroup className="block lg:hidden py-0">
           <SidebarGroupContent>
             <SidebarTrigger className="
               hover:cursor-pointer dark:text-zinc-200 rounded-full
@@ -63,7 +64,7 @@ function AppSidebar({ sections, handleMoveTo, handleSectionSelected, handleSecti
           <SidebarGroupContent>
             <SidebarMenu>
                 <SidebarMenuItem key={"new-custom-section"}>
-                  <SidebarMenuButton asChild className="hover:bg-gray-200 dark:hover:bg-zinc-700">
+                  <SidebarMenuButton asChild className="py-0 hover:bg-gray-200 dark:hover:bg-zinc-950/70">
                     <a href={`#`}
                       onClick={(e) => { e.preventDefault(); onAddGenericSection?.() }}>
                       <ListPlus />
@@ -79,7 +80,7 @@ function AppSidebar({ sections, handleMoveTo, handleSectionSelected, handleSecti
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem key={"menu-clear-data"}>
-                <SidebarMenuButton asChild className="hover:bg-gray-200 dark:hover:bg-zinc-700">
+                <SidebarMenuButton asChild className="hover:bg-gray-200 dark:hover:bg-zinc-950/70">
                   <a href={"#"} onClick={(e) => clearForm(e, resetData)}>
                     <EraserIcon />
                     <span>Clear Form</span>
@@ -87,7 +88,7 @@ function AppSidebar({ sections, handleMoveTo, handleSectionSelected, handleSecti
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem key={"menu-load-sample-data"}>
-                <SidebarMenuButton asChild className="hover:bg-gray-200 dark:hover:bg-zinc-700">
+                <SidebarMenuButton asChild className="hover:bg-gray-200 dark:hover:bg-zinc-950/70">
                   <a href={"#"} onClick={(e) => loadSample(e, sampleData)}>
                     <FlaskConical />
                     <span>Load Sample</span>
@@ -98,8 +99,8 @@ function AppSidebar({ sections, handleMoveTo, handleSectionSelected, handleSecti
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="bg-gray-100/95 dark:bg-zinc-800/95">
-        <Footer className="relative" corgiSize={68} />
+      <SidebarFooter className="bg-gray-100/10 dark:bg-zinc-800/60">
+        <Footer className="relative" corgiSize={78} />
       </SidebarFooter>
     </Sidebar>
   )
