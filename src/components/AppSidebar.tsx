@@ -34,10 +34,10 @@ function AppSidebar({ sections, handleMoveTo, handleSectionSelected, handleSecti
         className="
           mt-0 lg:mt-[75px] bg-gray-100 dark:bg-zinc-800/95
           [&::-webkit-scrollbar]:w-1.5
-          [&::-webkit-scrollbar-track]:bg-zinc-600
+          [&::-webkit-scrollbar-track]:bg-zinc-300
           [&::-webkit-scrollbar-thumb]:bg-zinc-400
           dark:[&::-webkit-scrollbar-track]:bg-zinc-800
-          dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600
+          dark:[&::-webkit-scrollbar-thumb]:bg-zinc-700
         ">
         <SidebarGroup className="block lg:hidden">
           <SidebarGroupContent>
