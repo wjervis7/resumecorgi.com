@@ -26,8 +26,19 @@ const loadSample = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, sampleDa
 
 function AppSidebar({ sections, handleMoveTo, handleSectionSelected, handleSectionRemoved, resetData, sampleData, onAddGenericSection }: SidebarProps) {
   return (
-    <Sidebar className="border-r-0 border-t-0 border-gray-400 dark:border-zinc-700">
-      <SidebarContent className="mt-0 lg:mt-[75px] bg-gray-100 dark:bg-zinc-800/95">
+    <Sidebar
+      className="
+        border-r-0 border-t-0 border-gray-400 dark:border-zinc-700
+      ">
+      <SidebarContent
+        className="
+          mt-0 lg:mt-[75px] bg-gray-100 dark:bg-zinc-800/95
+          [&::-webkit-scrollbar]:w-1.5
+          [&::-webkit-scrollbar-track]:bg-zinc-600
+          [&::-webkit-scrollbar-thumb]:bg-zinc-400
+          dark:[&::-webkit-scrollbar-track]:bg-zinc-800
+          dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600
+        ">
         <SidebarGroup className="block lg:hidden">
           <SidebarGroupContent>
             <SidebarTrigger className="
@@ -37,7 +48,10 @@ function AppSidebar({ sections, handleMoveTo, handleSectionSelected, handleSecti
         </SidebarGroup>
         <SidebarGroup>
           <SidebarGroupLabel className="text-gray-700 dark:text-zinc-300">Sections</SidebarGroupLabel>
-          <SidebarGroupContent className="overflow-hidden">
+          <SidebarGroupContent
+            className="
+              overflow-hidden
+            ">
             <div className="px-2">
               <SortableNav sections={sections} handleMoveTo={handleMoveTo} handleSelected={handleSectionSelected} handleRemoved={handleSectionRemoved} />
             </div>
