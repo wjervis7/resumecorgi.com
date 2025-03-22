@@ -98,7 +98,7 @@ function AppSidebar({ sections, handleMoveTo, handleSectionSelected, handleSecti
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className="bg-gray-100/95 dark:bg-zinc-800/95">
-        <Footer className="relative" />
+        <Footer className="relative" corgiSize={68} />
       </SidebarFooter>
     </Sidebar>
   )
