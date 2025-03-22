@@ -423,8 +423,8 @@ function Preview({ formData, selectedSections }: PreviewProps) {
         />
       </div>
 
-      <div id="pdf-viewer-area" className="pdf-viewer flex justify-center items-center w-full mt-2">
-        <div ref={canvasContainerRef} className="canvas-container relative">
+      <div id="pdf-viewer-area" className="pdf-viewer flex justify-center items-center w-full mt-3">
+        <div ref={canvasContainerRef} className="canvas-container relative px-3 lg:px-0">
 
           {/* Display canvas - always visible */}
           {!error && (

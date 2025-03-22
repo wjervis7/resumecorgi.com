@@ -243,8 +243,8 @@ function Editor() {
             [&::-webkit-scrollbar]:w-1.5
             [&::-webkit-scrollbar-track]:bg-zinc-300
             [&::-webkit-scrollbar-thumb]:bg-zinc-400
-            dark:[&::-webkit-scrollbar-track]:bg-zinc-800
-            dark:[&::-webkit-scrollbar-thumb]:bg-zinc-700`}>
+            dark:[&::-webkit-scrollbar-track]:bg-zinc-950/25
+            dark:[&::-webkit-scrollbar-thumb]:bg-zinc-500/70`}>
             <div className="w-full mb-[75vh]" id="start">
               <ScrollSpy
                 sections={sortedSections}
@@ -275,15 +275,15 @@ function Editor() {
             transition-colors
             lg:col-span-7 col-span-12
             overflow-x-none overflow-y-scroll mt-[74px] lg:mt-[74px]
-            ps-3 pe-2 pt-0 pb-3
-            bg-zinc-600 dark:bg-zinc-800
-            border-l-0 lg:border-l-1 border-zinc-700/50
+            pt-0 pb-0
+            bg-zinc-600 dark:bg-zinc-700/75
+            border-l-0 lg:border-l-0 border-zinc-950/25
             dark:text-white
             [&::-webkit-scrollbar]:w-1.5
-            [&::-webkit-scrollbar-track]:bg-zinc-600
+            [&::-webkit-scrollbar-track]:bg-zinc-300
             [&::-webkit-scrollbar-thumb]:bg-zinc-400
-            dark:[&::-webkit-scrollbar-track]:bg-zinc-800
-            dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600`}>
+            dark:[&::-webkit-scrollbar-track]:bg-zinc-950/25
+            dark:[&::-webkit-scrollbar-thumb]:bg-zinc-500/70`}>
             <Preview formData={formData} selectedSections={sections} />
           </div>
         </div>
