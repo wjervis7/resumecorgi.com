@@ -30,7 +30,11 @@ function Toolbar({
     text-sm font-bold text-gray-950 hover:text-gray-50
     bg-gray-50 hover:bg-purple-800
     border-0
-    hover:cursor-pointer`;
+    hover:cursor-pointer
+    hover:shadow-lg hover:shadow-purple-500/30
+    active:shadow-inner
+    focus:outline-none focus:ring-3 focus:ring-purple-700 focus:ring-opacity-50
+    focus:bg-purple-900 focus:text-gray-50`;
 
   return (
     <>
