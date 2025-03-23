@@ -367,7 +367,9 @@ class LaTeXResumeGenerator {
     const formatContacts = (contacts: string[]) => {
       if (!contacts.length) return '';
 
-      const items = contacts.map(c => `\\href{${this.utils.getHref(this.utils.escapeLaTeX(c))}}{${this.utils.escapeLaTeX(c)}}`);
+      const items = contacts
+        .filter(c => c && c.length > 0)
+        .map(c => `\\href{${this.utils.getHref(this.utils.escapeLaTeX(c))}}{${this.utils.escapeLaTeX(c)}}`);
       const MAX_ITEMS_PER_LINE = 3;
       let result = [];
 
@@ -384,19 +386,11 @@ class LaTeXResumeGenerator {
       `;
     };
 
-    const contacts = [
-      formData.personalInfo.contact0,
-      formData.personalInfo.contact1,
-      formData.personalInfo.contact2,
-      formData.personalInfo.contact3,
-      formData.personalInfo.contact4
-    ].filter(Boolean);
-
-    const contactLine = formatContacts(contacts);
+    const contacts = formatContacts(formData.personalInfo.contacts || []);
 
     // Start building document
     let output = template.preamble;
-    output += template.documentHeader(name, contactLine);
+    output += template.documentHeader(name, contacts);
 
     // Add summary if included
     if (formData.personalInfo.summary) {
