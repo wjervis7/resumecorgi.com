@@ -65,11 +65,6 @@ function Preview({ formData, selectedSections }: PreviewProps) {
     return laTeX;
   }, [formData, selectedSections]);
 
-  const canvasHeightPx = useMemo(() => {
-    // Standard paper aspect ratio: 11/8.5 (letter size)
-    return Math.round(canvasWidthPx * (11 / 8.5));
-  }, [canvasWidthPx]);
-
   useEffect(() => {
     const pdfViewerArea = document.getElementById('pdf-viewer-area');
 
@@ -424,7 +419,7 @@ function Preview({ formData, selectedSections }: PreviewProps) {
       </div>
 
       <div id="pdf-viewer-area" className="pdf-viewer flex justify-center items-center w-full mt-3">
-        <div ref={canvasContainerRef} className="canvas-container relative px-3 lg:px-0">
+        <div ref={canvasContainerRef} className="grow canvas-container relative px-4 lg:px-3 w-auto">
 
           {/* Display canvas - always visible */}
           {!error && (
@@ -432,19 +427,20 @@ function Preview({ formData, selectedSections }: PreviewProps) {
               <canvas
                 ref={displayCanvasRef}
                 style={{ width: canvasWidthPx + "px" }}
-                className={`bg-white shadow-md dark:shadow-lg shadow-gray-800 dark:shadow-zinc-700 ${!pageRendered ? 'hidden' : ''}`}
+                className={`mx-auto bg-white shadow-md dark:shadow-lg shadow-gray-800 dark:shadow-zinc-700 ${!pageRendered ? 'hidden' : ''}`}
               ></canvas>
             </>
           )}
           
           {/* Active canvas - hidden, used for rendering */}
           <canvas 
-            ref={activeCanvasRef} 
+            ref={activeCanvasRef}
+            style={{ width: canvasWidthPx + "px" }}
             className="hidden"
           ></canvas>
           
           {/* Only show skeleton when no canvas has been rendered yet */}
-          {(isLoading && !pageRendered) && <Skeleton height={canvasHeightPx} width={canvasWidthPx} />}
+          {(isLoading && !pageRendered) && <Skeleton width={"100%"} />}
         </div>
       </div>
     </>

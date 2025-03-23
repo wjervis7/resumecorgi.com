@@ -41,7 +41,7 @@ function Toolbar({
           rounded-m">
         
         {/* Desktop layout - all in one row */}
-        <div className="hidden lg:flex lg:flex-row lg:justify-between rounded-lg max-w-[800px] mx-auto" role="group">
+        <div className="hidden lg:flex lg:flex-row lg:justify-between rounded-lg max-w-[800px] mx-auto px-3" role="group">
           <div className="flex-1 inline-flex items-center">
             <StatusIndicator error={error} isLoading={isLoading} pageRendered={pageRendered} />
           </div>
@@ -97,7 +97,7 @@ function Toolbar({
         </div>
         
         {/* Mobile layout - two rows */}
-        <div className="flex flex-col lg:hidden rounded-lg px-3" role="group">
+        <div className="flex flex-col lg:hidden rounded-lg px-4" role="group">
           {/* First row - status indicator only */}
           <div className="inline-flex items-center justify-center mb-0">
             <StatusIndicator error={error} isLoading={isLoading} pageRendered={pageRendered} />
