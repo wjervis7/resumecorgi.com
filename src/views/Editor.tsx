@@ -275,7 +275,7 @@ function Editor() {
             transition-colors
             lg:col-span-7 col-span-12
             overflow-x-none overflow-y-scroll mt-[74px] lg:mt-[74px]
-            pt-0 pb-0
+            pt-0 pb-3
             bg-zinc-600 dark:bg-zinc-700/75
             border-l-0 lg:border-l-0 border-zinc-950/25
             dark:text-white
