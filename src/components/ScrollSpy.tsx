@@ -91,7 +91,7 @@ const ScrollSpy = ({
                     text-gray-900 dark:text-gray-100
                     border-b-4 border-transparent
                     ${ activeSection === section.id
-                      ? "active text-purple-800 dark:text-purple-300 border-purple-700! bg-purple-800/0 dark:bg-purple-800/0"
+                      ? "active text-purple-800 dark:text-purple-400 border-purple-700! bg-purple-800/0 dark:bg-purple-800/0"
                       : "hover:bg-gray-100 dark:hover:bg-zinc-800 dark:hover:text-gray-200"}`}
                   >{sectionTitles[section.id] || "Section Title"}</a>
             </li>

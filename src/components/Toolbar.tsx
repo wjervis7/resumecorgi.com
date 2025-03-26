@@ -33,7 +33,7 @@ function Toolbar({
     hover:cursor-pointer
     hover:shadow-lg hover:shadow-purple-500/30
     active:shadow-inner
-    focus:outline-none focus:ring-3 focus:ring-purple-700 focus:ring-opacity-50
+    focus:outline-none focus:ring-3 focus:ring-purple-500 focus:ring-opacity-50
     focus:bg-purple-900 focus:text-gray-50`;
 
   return (
