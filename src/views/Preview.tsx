@@ -3,9 +3,9 @@ import * as pdfjsLib from 'pdfjs-dist';
 import EngineManager from "../lib/EngineManager";
 import Skeleton from "../components/Skeleton";
 import Toolbar from "../components/Toolbar";
-//import { latexGenerator } from "../lib/LaTeXService";
 import { FormData, Section } from "../types";
 import { TemplateFactory } from "@/lib/LaTeX/TemplateFactory";
+import { useResume } from '@/lib/ResumeContext';
 
 interface CompilationQueueItem {
   resolve: (value: unknown) => void;
@@ -18,13 +18,8 @@ interface PreviewState {
   compiling: boolean;
 }
 
-interface PreviewProps {
-  formData: FormData;
-  selectedSections: Section[];
-  templateId: string;
-}
-
-function Preview({ formData, selectedSections, templateId }: PreviewProps) {
+function Preview() {
+  const { formData, sections, selectedTemplate } = useResume();
   const scale = 1;
   const debounceShortMs = 50;
   const debounceLongMs = 600;
@@ -64,9 +59,9 @@ function Preview({ formData, selectedSections, templateId }: PreviewProps) {
 
   // Use memoized LaTeX to avoid recreating it on every render
   const compiledLaTeX = useMemo(() => {
-    let laTeX = TemplateFactory.createTemplate(templateId, formData, selectedSections).generateLaTeX();
+    let laTeX = TemplateFactory.createTemplate(selectedTemplate.id, formData, sections).generateLaTeX();
     return laTeX;
-  }, [formData, selectedSections, templateId]);
+  }, [formData, sections, selectedTemplate]);
 
   useEffect(() => {
     const pdfViewerArea = document.getElementById('pdf-viewer-area');
@@ -87,21 +82,21 @@ function Preview({ formData, selectedSections, templateId }: PreviewProps) {
 
     if (pdfViewerArea) {
       resizeObserver.observe(pdfViewerArea);
-      resizeObserver.observe(document.body);
     }
+    resizeObserver.observe(document.body);
 
     // Use JSON.stringify for deep comparison
     const currentFormDataString = JSON.stringify(formData);
     const prevFormDataString = JSON.stringify(prevFormDataRef.current);
   
-    const currentSelectedSectionsString = JSON.stringify(selectedSections);
+    const currentSelectedSectionsString = JSON.stringify(sections);
     const prevSelectedSectionsString = JSON.stringify(prevSelectedSectionsRef.current);
   
     // Skip if data hasn't changed
     if (
       pageRendered && currentFormDataString === prevFormDataString &&
       currentSelectedSectionsString === prevSelectedSectionsString &&
-      prevTemplateRef.current === templateId
+      prevTemplateRef.current === selectedTemplate.id
     ) {
       console.log('No changes detected. Skipping compilation');
       return;
@@ -110,11 +105,11 @@ function Preview({ formData, selectedSections, templateId }: PreviewProps) {
     // Store current values for next comparison
     prevFormDataRef.current = JSON.parse(currentFormDataString);
     prevSelectedSectionsRef.current = JSON.parse(currentSelectedSectionsString);
-    prevTemplateRef.current = templateId;
+    prevTemplateRef.current = selectedTemplate.id;
 
     setLocalPreviewState({
       formData,
-      selectedSections,
+      selectedSections: sections,
       compiling: true
     });
     
@@ -143,7 +138,6 @@ function Preview({ formData, selectedSections, templateId }: PreviewProps) {
     debounceTimerRef.current = window.setTimeout(() => {
       compileLaTeX()
         .then(() => {
-          console.log('Compilation completed successfully');
           setLocalPreviewState(prev => ({ ...prev, compiling: false }));
           
           // Start inactivity timer
@@ -169,15 +163,15 @@ function Preview({ formData, selectedSections, templateId }: PreviewProps) {
       }
       
       if (pdfViewerArea) {
-        resizeObserver.unobserve(document.body);
         resizeObserver.unobserve(pdfViewerArea);
       }
+      resizeObserver.unobserve(document.body);
       resizeObserver.disconnect();
 
       // Cancel any in-progress compilation
       cleanupRef.current?.();
     };
-  }, [formData, selectedSections, compiledLaTeX, pageRendered, canvasWidthPx]);
+  }, [formData, sections, compiledLaTeX, pageRendered, canvasWidthPx, selectedTemplate.id]);
 
   const compileLaTeX = async (): Promise<unknown> => {
     // Queue the compilation request and wait for it to process
@@ -213,6 +207,7 @@ function Preview({ formData, selectedSections, templateId }: PreviewProps) {
       
       if (!mounted) {
         isProcessing.current = false;
+        reject(new Error('Component unmounted'));
         processQueue(); // Process next in queue
         return;
       }
@@ -225,6 +220,7 @@ function Preview({ formData, selectedSections, templateId }: PreviewProps) {
       
       if (!mounted) {
         isProcessing.current = false;
+        reject(new Error('Component unmounted'));
         processQueue(); // Process next in queue
         return;
       }
@@ -239,6 +235,7 @@ function Preview({ formData, selectedSections, templateId }: PreviewProps) {
       loadingTask.promise.then(pdf => {
         if (!mounted) {
           isProcessing.current = false;
+          reject(new Error('Component unmounted'));
           processQueue(); // Process next in queue
           return;
         }
@@ -257,6 +254,7 @@ function Preview({ formData, selectedSections, templateId }: PreviewProps) {
       }).catch(error => {
         if (!mounted) {
           isProcessing.current = false;
+          reject(new Error('Component unmounted'));
           processQueue(); // Process next in queue
           return;
         }
@@ -380,8 +378,6 @@ function Preview({ formData, selectedSections, templateId }: PreviewProps) {
 
   const downloadPdf = (): void => {
     if (!pdfBuffer) return;
-
-    console.log(pdfBuffer);
     
     // Use the cached PDF buffer that's already in sync with what's displayed...
     const blob = new Blob([pdfBuffer], { type: 'application/pdf' });
