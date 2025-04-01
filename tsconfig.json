@@ -26,6 +26,6 @@
     "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true
   },
-  "include": ["src" , "test", "*.ts"],
+  "include": ["src" , "test", "*.ts", "plugins/*.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

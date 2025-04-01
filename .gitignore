@@ -27,3 +27,6 @@ dist-ssr
 external/SwiftLaTeX/extracted
 public/swiftlatexpdftex.*
 public/PdfTeXEngine.js
+
+# PDF.js
+public/pdf.worker.*

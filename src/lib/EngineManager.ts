@@ -8,7 +8,7 @@ const EngineManager = (() => {
 
   // Set up PDF.js worker once for the entire application
   if (typeof window !== 'undefined' && window.pdfjsLib) {
-    window.pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${window.pdfjsLib.version}/pdf.worker.min.mjs`;
+    window.pdfjsLib.GlobalWorkerOptions.workerSrc = `/pdf.worker.min.mjs`;
   }
 
   // Register service worker for caching
