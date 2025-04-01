@@ -7,7 +7,17 @@ import { FormData, Section } from "../types";
 import { TemplateFactory } from "@/lib/LaTeX/TemplateFactory";
 import { useResume } from '@/lib/ResumeContext';
 
-interface CompilationQueueItem {
+const INITIAL_DEBOUNCE_MS = 300;
+const MIN_DEBOUNCE_MS = 50;
+const MAX_DEBOUNCE_MS = 600;
+const TYPING_TIMEOUT_MS = 1000;
+const MAX_WIDTH = 800;
+
+interface CompilationJob {
+  id: number;
+  latex: string;
+  timestamp: number;
+  isCancelled: boolean;
   resolve: (value: unknown) => void;
   reject: (reason?: unknown) => void;
 }
@@ -21,31 +31,33 @@ interface PreviewState {
 function Preview() {
   const { formData, sections, selectedTemplate } = useResume();
   const scale = 1;
-  const debounceShortMs = 50;
-  const debounceLongMs = 600;
-  const debounceInactivityIntervalMs = 1000;
-  const maxWidth = 800;
 
-  const compilationQueue = useRef<CompilationQueueItem[]>([]);
-  const isProcessing = useRef<boolean>(false);
-
-  const prevTemplateRef = useRef<string | null>(null);
-  const prevFormDataRef = useRef<FormData | null>(null);
-  const prevSelectedSectionsRef = useRef<Section[] | null>(null);
-  const debounceTimerRef = useRef<number | null>(null);
-  const cleanupRef = useRef<(() => void) | null>(null);
+  const jobIdCounter = useRef<number>(0);
+  const activeJobRef = useRef<CompilationJob | null>(null);
+  const pendingJobRef = useRef<CompilationJob | null>(null);
+  const compilationTimesRef = useRef<number[]>([]);
+  const lastCompilationStartRef = useRef<number>(0);
+  const lastEditTimeRef = useRef<number>(0);
+  const adaptiveDebounceTimeRef = useRef<number>(INITIAL_DEBOUNCE_MS);
+  const typingModeTimerRef = useRef<number | null>(null);
+  const isTypingRef = useRef<boolean>(false);
+  
   const activeCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const displayCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const canvasContainerRef = useRef<HTMLDivElement | null>(null);
-  const lastEditTimeRef = useRef<number>(0);
-  const inactivityTimerRef = useRef<number | null>(null);
+  
+  const cleanupRef = useRef<(() => void) | null>(null);
+  
+  const prevTemplateRef = useRef<string | null>(null);
+  const prevFormDataRef = useRef<FormData | null>(null);
+  const prevSelectedSectionsRef = useRef<Section[] | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [localPreviewState, setLocalPreviewState] = useState<PreviewState>({
     formData: null,
     selectedSections: null,
     compiling: false
   });
-
+  
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [pdfBuffer, setPdfBuffer] = useState<ArrayBuffer | null>(null);
@@ -55,36 +67,111 @@ function Preview() {
   const [pageNumPending, setPageNumPending] = useState<number | null>(null);
   const [numPages, setNumPages] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [canvasWidthPx, setCanvasWidthPx] = useState<number>(maxWidth);
+  const [canvasWidthPx, setCanvasWidthPx] = useState<number>(MAX_WIDTH);
+  const [shouldRerender, setShouldRerender] = useState<boolean>(false);
+
 
   // Use memoized LaTeX to avoid recreating it on every render
   const compiledLaTeX = useMemo(() => {
-    let laTeX = TemplateFactory.createTemplate(selectedTemplate.id, formData, sections).generateLaTeX();
-    return laTeX;
+    return TemplateFactory.createTemplate(
+      selectedTemplate.id, 
+      formData, 
+      sections
+    ).generateLaTeX();
   }, [formData, sections, selectedTemplate]);
 
+  // Adaptive debounce time calculation
+  const updateAdaptiveDebounceTime = (compilationTime: number) => {
+    // Keep track of the last 5 compilation times
+    compilationTimesRef.current.push(compilationTime);
+    if (compilationTimesRef.current.length > 5) {
+      compilationTimesRef.current.shift();
+    }
+    
+    // Calculate average compilation time
+    const avgCompilationTime = compilationTimesRef.current.reduce(
+      (sum, time) => sum + time, 0
+    ) / compilationTimesRef.current.length;
+    
+    // Set debounce time based on compilation time
+    // For fast machines: debounce less (more responsive)
+    // For slow machines: debounce more (avoid too many compilations)
+    if (isTypingRef.current) {
+      // During active typing, use larger debounce to avoid overwhelming the system
+      adaptiveDebounceTimeRef.current = Math.min(
+        Math.max(avgCompilationTime * 0.8, MIN_DEBOUNCE_MS), 
+        MAX_DEBOUNCE_MS
+      );
+    } else {
+      // When not actively typing, we can be more responsive
+      adaptiveDebounceTimeRef.current = Math.min(
+        Math.max(avgCompilationTime * 0.4, MIN_DEBOUNCE_MS),
+        MAX_DEBOUNCE_MS / 2
+      );
+    }
+  };
+
+  // rerender when viewport size changes
   useEffect(() => {
     const pdfViewerArea = document.getElementById('pdf-viewer-area');
-
+    let resizeTimer: number | null = null;
+  
     const updateCanvasWidth = () => {
       if (pdfViewerArea) {
         const viewerWidth = pdfViewerArea.clientWidth || document.body.clientWidth;
-        setCanvasWidthPx(Math.min(viewerWidth, maxWidth));
+        const newWidth = Math.min(viewerWidth, MAX_WIDTH);
+        
+        if (newWidth !== canvasWidthPx) {
+          setCanvasWidthPx(newWidth);
+        }
       }
     };
-
+  
+    // Handle resize with simple debouncing
+    const handleResize = () => {
+      updateCanvasWidth();
+      
+      // Clear previous timer
+      if (resizeTimer) {
+        window.clearTimeout(resizeTimer);
+      }
+      
+      // Set new timer - this will trigger a rerender after resize stops
+      resizeTimer = window.setTimeout(() => {
+        setShouldRerender(prev => !prev); // Toggle to force effect to run
+      }, 250);
+    };
+  
     // Initial sizing
     updateCanvasWidth();
-
-    const resizeObserver = new ResizeObserver(() => {
-      updateCanvasWidth();
-    });
-
+  
+    // Set up resize handlers
+    window.addEventListener('resize', handleResize);
+    const resizeObserver = new ResizeObserver(handleResize);
+    
     if (pdfViewerArea) {
       resizeObserver.observe(pdfViewerArea);
     }
     resizeObserver.observe(document.body);
+  
+    return () => {
+      if (resizeTimer) window.clearTimeout(resizeTimer);
+      window.removeEventListener('resize', handleResize);
+      if (pdfViewerArea) resizeObserver.unobserve(pdfViewerArea);
+      resizeObserver.unobserve(document.body);
+      resizeObserver.disconnect();
+    };
+  }, [canvasWidthPx]);
 
+  useEffect(() => {
+    // Only rerender if we have a PDF loaded
+    if (pdfDoc && currentPage > 0 && pageRendered && !pageRendering) {
+      renderPage(pdfDoc, currentPage);
+    }
+  }, [shouldRerender, pdfDoc, canvasWidthPx]);
+
+  // Main effect for LaTeX compilation
+  useEffect(() => {
     // Use JSON.stringify for deep comparison
     const currentFormDataString = JSON.stringify(formData);
     const prevFormDataString = JSON.stringify(prevFormDataRef.current);
@@ -94,11 +181,11 @@ function Preview() {
   
     // Skip if data hasn't changed
     if (
-      pageRendered && currentFormDataString === prevFormDataString &&
+      pageRendered && 
+      currentFormDataString === prevFormDataString &&
       currentSelectedSectionsString === prevSelectedSectionsString &&
       prevTemplateRef.current === selectedTemplate.id
     ) {
-      console.log('No changes detected. Skipping compilation');
       return;
     }
     
@@ -107,124 +194,157 @@ function Preview() {
     prevSelectedSectionsRef.current = JSON.parse(currentSelectedSectionsString);
     prevTemplateRef.current = selectedTemplate.id;
 
+    // Update loading state to show compilation in progress
+    setIsLoading(true);
+
+    // Update local state
     setLocalPreviewState({
       formData,
       selectedSections: sections,
       compiling: true
     });
     
-    // Clear any pending debounce timer
-    if (debounceTimerRef.current) {
-      clearTimeout(debounceTimerRef.current);
-    }
-  
-    // Clear any pending inactivity timer
-    if (inactivityTimerRef.current) {
-      clearTimeout(inactivityTimerRef.current);
-    }
-    
-    // Determine if this is a "sparse" edit (long time since last edit)
+    // Update typing mode
     const now = Date.now();
-    const timeSinceLastEdit = now - (lastEditTimeRef.current || 0);
-    const isSparseEdit = timeSinceLastEdit > debounceInactivityIntervalMs;
-    
-    // Fast response for sparse edits, regular debounce for active typing
-    const debounceTime = isSparseEdit ? debounceShortMs : debounceLongMs;
-    
-    // Update last edit timestamp
     lastEditTimeRef.current = now;
+    isTypingRef.current = true;
     
-    // Set debounce timer
-    debounceTimerRef.current = window.setTimeout(() => {
-      compileLaTeX()
-        .then(() => {
-          setLocalPreviewState(prev => ({ ...prev, compiling: false }));
-          
-          // Start inactivity timer
-          inactivityTimerRef.current = window.setTimeout(() => {
-            // This will make the next edit considered "sparse"
-            lastEditTimeRef.current = 0;
-          }, 2000);
-        })
-        .catch((err: Error) => {
-          console.error('Compilation failed:', err);
-          setLocalPreviewState(prev => ({ ...prev, compiling: false }));
-        });
+    // Clear existing typing mode timer
+    if (typingModeTimerRef.current) {
+      clearTimeout(typingModeTimerRef.current);
+    }
+    
+    // Set a new typing mode timer
+    typingModeTimerRef.current = window.setTimeout(() => {
+      isTypingRef.current = false;
+    }, TYPING_TIMEOUT_MS);
+    
+    // Enqueue compilation job with debounce
+    const jobId = ++jobIdCounter.current;
+    const newJob: CompilationJob = {
+      id: jobId,
+      latex: compiledLaTeX,
+      timestamp: now,
+      isCancelled: false,
+      resolve: () => {},
+      reject: () => {}
+    };
+    
+    // Create a promise that will be resolved when the job completes
+    const compilationPromise = new Promise((resolve, reject) => {
+      newJob.resolve = resolve;
+      newJob.reject = reject;
+    });
+    
+    // Cancel any pending job (not the active one)
+    if (pendingJobRef.current) {
+      pendingJobRef.current.isCancelled = true;
+      pendingJobRef.current.reject(new Error('Cancelled by newer job'));
+    }
+    
+    // Set the new job as pending
+    pendingJobRef.current = newJob;
+    
+    // Debounce the actual compilation
+    const debounceTime = adaptiveDebounceTimeRef.current;
+    
+    setTimeout(() => {
+      // Only process if this job is still the pending one (wasn't cancelled)
+      if (pendingJobRef.current?.id === jobId && !pendingJobRef.current.isCancelled) {
+        // If no active job, process immediately
+        if (!activeJobRef.current) {
+          processCompilationJob(pendingJobRef.current);
+          pendingJobRef.current = null;
+        }
+        // Otherwise it will be processed when the active job completes
+      }
     }, debounceTime);
+    
+    // Return promise so calling code can await if needed
+    compilationPromise
+      .then(() => {
+        setLocalPreviewState(prev => ({ ...prev, compiling: false }));
+        // Make sure isLoading is properly reset if the compilation succeeds
+        // but the PDF loading fails for some reason
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        if (err.message !== 'Cancelled by newer job') {
+          console.error('Compilation failed:', err);
+        }
+        setLocalPreviewState(prev => ({ ...prev, compiling: false }));
+        // Ensure loading state is reset on errors
+        setIsLoading(false);
+      });
     
     // Cleanup
     return () => {
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
+      if (typingModeTimerRef.current) {
+        clearTimeout(typingModeTimerRef.current);
       }
       
-      if (inactivityTimerRef.current) {
-        clearTimeout(inactivityTimerRef.current);
+      // Cancel the pending job if component unmounts
+      if (pendingJobRef.current) {
+        pendingJobRef.current.isCancelled = true;
+        pendingJobRef.current.reject(new Error('Component unmounted'));
       }
       
-      if (pdfViewerArea) {
-        resizeObserver.unobserve(pdfViewerArea);
-      }
-      resizeObserver.unobserve(document.body);
-      resizeObserver.disconnect();
-
       // Cancel any in-progress compilation
       cleanupRef.current?.();
     };
-  }, [formData, sections, compiledLaTeX, pageRendered, canvasWidthPx, selectedTemplate.id]);
+  }, [formData, sections, compiledLaTeX, pageRendered, selectedTemplate.id]);
 
-  const compileLaTeX = async (): Promise<unknown> => {
-    // Queue the compilation request and wait for it to process
-    return new Promise((resolve, reject) => {
-      compilationQueue.current.push({ resolve, reject });
-      processQueue();
-    });
-  };
-
-  const processQueue = async (): Promise<void> => {
-    // If already processing or queue is empty, do nothing
-    if (isProcessing.current || compilationQueue.current.length === 0) return;
+  // Process a compilation job
+  const processCompilationJob = async (job: CompilationJob): Promise<void> => {
+    if (job.isCancelled) {
+      // Don't process cancelled jobs
+      return;
+    }
     
-    // Set processing flag to prevent concurrent executions
-    isProcessing.current = true;
-    
-    // Get the next item from the queue
-    const { resolve, reject } = compilationQueue.current.shift()!;
+    // Mark this job as active
+    activeJobRef.current = job;
     
     let mounted = true;
+    const compilationStartTime = Date.now();
+    lastCompilationStartRef.current = compilationStartTime;
+    
+    // Create cleanup function
     const cleanup = () => {
       mounted = false;
+      if (activeJobRef.current?.id === job.id) {
+        activeJobRef.current = null;
+      }
     };
+    
     cleanupRef.current = cleanup;
   
     try {
-      // Keep the previous PDF visible during loading
-      setIsLoading(true);
+      // Keep previous PDF visible during compilation
       setError(null);
   
       // Get the engine instance
       const engine = await EngineManager.getInstance();
       
-      if (!mounted) {
-        isProcessing.current = false;
-        reject(new Error('Component unmounted'));
-        processQueue(); // Process next in queue
+      if (!mounted || job.isCancelled) {
+        cleanup();
+        job.reject(new Error('Job cancelled or component unmounted'));
+        processNextJob();
         return;
       }
   
       // Prepare and compile the LaTeX
-      engine.writeMemFSFile("main.tex", compiledLaTeX);
+      engine.writeMemFSFile("main.tex", job.latex);
       engine.setEngineMainFile("main.tex");
   
       let result = await engine.compileLaTeX();
       
-      if (!mounted) {
-        isProcessing.current = false;
-        reject(new Error('Component unmounted'));
-        processQueue(); // Process next in queue
+      if (!mounted || job.isCancelled) {
+        cleanup();
+        job.reject(new Error('Job cancelled or component unmounted'));
+        processNextJob();
         return;
       }
-
+      
       if (result.status !== 0) {
         console.error(result.log);
       }
@@ -232,11 +352,12 @@ function Preview() {
       // Load the PDF
       const cachedBuffer = result.pdf.buffer.slice(0);
       const loadingTask = pdfjsLib.getDocument({ data: result.pdf.buffer });
+      
       loadingTask.promise.then(pdf => {
-        if (!mounted) {
-          isProcessing.current = false;
-          reject(new Error('Component unmounted'));
-          processQueue(); // Process next in queue
+        if (!mounted || job.isCancelled) {
+          cleanup();
+          job.reject(new Error('Job cancelled or component unmounted'));
+          processNextJob();
           return;
         }
         
@@ -245,48 +366,78 @@ function Preview() {
         setNumPages(pdf.numPages);
         renderPage(pdf, 1);
         setIsLoading(false);
+
         
-        resolve(pdf); // Resolve the promise with the result
+        // Calculate compilation time and update adaptive debounce
+        const compilationTime = Date.now() - compilationStartTime;
+        updateAdaptiveDebounceTime(compilationTime);
         
-        // Set processing to false and process the next item in the queue
-        isProcessing.current = false;
-        processQueue();
+        // Resolve the job's promise
+        job.resolve(pdf);
+        
+        // Clean up and process next job
+        cleanup();
+        processNextJob();
       }).catch(error => {
-        if (!mounted) {
-          isProcessing.current = false;
-          reject(new Error('Component unmounted'));
-          processQueue(); // Process next in queue
+        if (!mounted || job.isCancelled) {
+          cleanup();
+          job.reject(new Error('Job cancelled or component unmounted'));
+          processNextJob();
           return;
         }
         
         console.error('Error loading PDF:', error);
         setError(`Error loading PDF: ${error.message}`);
         setIsLoading(false);
+
         
-        reject(error); // Reject the promise with the error
+        // Reject the job's promise
+        job.reject(error);
         
-        // Set processing to false and process the next item in the queue
-        isProcessing.current = false;
-        processQueue();
+        // Clean up and process next job
+        cleanup();
+        processNextJob();
       });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      if (mounted) {
+      if (mounted && !job.isCancelled) {
         console.error("Failed to compile LaTeX:", err);
         setError(`Failed to compile LaTeX: ${err?.message}`);
         setIsLoading(false);
+
+        
+        // Reject the job's promise
+        job.reject(err);
       }
       
-      reject(err); // Reject the promise with the error
+      // Update loading state
+      setIsLoading(false);
       
-      // Set processing to false and process the next item in the queue
-      isProcessing.current = false;
-      processQueue();
+      // Clean up and process next job
+      cleanup();
+      processNextJob();
     }
   };
 
+  // Process the next job in the queue
+  const processNextJob = (): void => {
+    // If there's a pending job, process it
+    if (pendingJobRef.current && !pendingJobRef.current.isCancelled) {
+      const nextJob = pendingJobRef.current;
+      pendingJobRef.current = null;
+      processCompilationJob(nextJob);
+    }
+  };
+
+  // Render a page from the PDF
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const renderPage = (pdf: any, pageNum: number): void => {
+    // If a render is in progress and we're trying to render the same page,
+    // mark it as pending but don't start a new render
+    if (pageRendering && currentPage === pageNum) {
+      return;
+    }
+    
+    // If rendering a different page, set as pending
     if (pageRendering) {
       setPageNumPending(pageNum);
       return;
@@ -295,7 +446,6 @@ function Preview() {
     setPageRendering(true);
     
     // Using promise to fetch the page
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     pdf.getPage(pageNum).then((page: any) => {
       // Use the hidden active canvas for rendering
       const canvas = activeCanvasRef.current;
