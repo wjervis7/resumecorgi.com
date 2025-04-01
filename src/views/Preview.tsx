@@ -398,6 +398,7 @@ function Preview() {
         cleanup();
         processNextJob();
       });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       if (mounted && !job.isCancelled) {
         console.error("Failed to compile LaTeX:", err);
@@ -446,6 +447,7 @@ function Preview() {
     setPageRendering(true);
     
     // Using promise to fetch the page
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     pdf.getPage(pageNum).then((page: any) => {
       // Use the hidden active canvas for rendering
       const canvas = activeCanvasRef.current;
