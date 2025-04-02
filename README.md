@@ -15,7 +15,7 @@ Built with Vite, React 19, TypeScript, and Tailwind CSS, alongside several other
 - SwiftLaTeX for in-browser, WASM-based LaTeX compilation
 - PDF.js for seamless document generation
 - DND Kit for responsive drag-and-drop functionality
-- shadn/ui for accessible component architecture
+- shadcn/ui for accessible component architecture
 
 ## Quick Start
 Prerequisites: Node.js (LTS version) and npm
@@ -53,3 +53,4 @@ Apache License 2.0 — see the LICENSE file for details.
 - MANY thanks to the SwiftLaTeX team for their excellent in-browser LaTeX engine
 - The r/EngineeringResumes community for their inspiration and resources on resume creation
 - The r/EngineeringResumes template, see https://www.overleaf.com/project/662939053eb1dc8f0f3c617f
+- The [RenderCV](https://github.com/rendercv/rendercv) project, for their templates and inspiration
