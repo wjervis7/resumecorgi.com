@@ -27,6 +27,9 @@ jobs:
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
+        with:
+          node-version-file: package.json
+          cache: 'npm'
 
       - name: Restore Dependencies
         run: npm ci
@@ -47,6 +50,9 @@ jobs:
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
+        with:
+          node-version-file: package.json
+          cache: 'npm'
 
       - name: Restore Dependencies
         run: npm ci
@@ -77,4 +83,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy dist/ --project-name=${{ vars.CLOUDFLARE_PROJECT_NAME }}
+          command: pages deploy dist/ --project-name=resumecorgi
